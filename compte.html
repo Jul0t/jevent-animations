@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Mon compte — JEvent</title>
+
+  <style>
+    :root {
+      font-family: system-ui, sans-serif;
+      color-scheme: dark;
+      background: #111827;
+      color: #f9fafb;
+    }
+
+    body {
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    main {
+      padding: 30px;
+      background: #1f2937;
+      border-radius: 16px;
+    }
+
+    button,
+    .button {
+      display: inline-block;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #9147ff;
+      color: white;
+    }
+
+    .secondary {
+      background: #374151;
+      color: white;
+    }
+
+    .upload {
+      background: #16a34a;
+      color: white;
+    }
+
+    .disabled {
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .profile img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+    }
+
+    .credits {
+      margin: 24px 0;
+      padding: 20px;
+      background: #111827;
+      border-radius: 10px;
+    }
+
+    #claimBox {
+      margin: 24px 0;
+      padding: 20px;
+      background: #111827;
+      border-radius: 10px;
+    }
+
+    #claimCode {
+      font: bold 1.6rem monospace;
+      color: #86efac;
+    }
+
+    #message {
+      margin-top: 16px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+
+<body>
+  <main id="app" hidden>
+    <div class="profile">
+      <img
+        id="avatar"
+        alt="Photo de profil Twitch"
+      >
+
+      <div>
+        <h1 id="displayName"></h1>
+        <p id="login"></p>
+      </div>
+    </div>
+
+    <section class="credits">
+      <h2>Mes crédits</h2>
+
+      <p>
+        Total donné :
+        <strong id="totalDonated">0,00 €</strong>
+      </p>
+
+      <p>
+        Crédits obtenus :
+        <strong id="creditsGranted">0</strong>
+      </p>
+
+      <p>
+        Crédits utilisés :
+        <strong id="creditsUsed">0</strong>
+      </p>
+
+      <p>
+        Crédits disponibles :
+        <strong id="creditsAvailable">0</strong>
+      </p>
+    </section>
+
+    <section id="claimBox">
+      <h2>Obtenir des crédits</h2>
+
+      <p>
+        Génère un code puis ajoute-le au message de ton
+        don Streamlabs Charity.
+      </p>
+
+      <button
+        id="createClaimButton"
+        class="primary"
+      >
+        Générer mon code
+      </button>
+
+      <div id="claimResult" hidden>
+        <p>Code à mettre dans le message du don :</p>
+
+        <p id="claimCode"></p>
+
+        <button
+          id="copyButton"
+          class="secondary"
+        >
+          Copier le code
+        </button>
+      </div>
+    </section>
+
+    <a
+      id="uploadButton"
+      class="button upload disabled"
+      href="/poster.html"
+    >
+      Poster une image
+    </a>
+
+    <p id="uploadExplanation">
+      Il faut au minimum un crédit disponible pour
+      accéder à l’envoi d’images.
+    </p>
+
+    <button
+      id="logoutButton"
+      class="secondary"
+    >
+      Se déconnecter
+    </button>
+
+    <p id="message"></p>
+  </main>
+
+  <script>
+    const API =
+      "https://ADRESSE-DE-TON-WORKER.workers.dev";
+
+    const app = document.querySelector("#app");
+    const avatar = document.querySelector("#avatar");
+
+    const displayName =
+      document.querySelector("#displayName");
+
+    const login =
+      document.querySelector("#login");
+
+    const totalDonated =
+      document.querySelector("#totalDonated");
+
+    const creditsGranted =
+      document.querySelector("#creditsGranted");
+
+    const creditsUsed =
+      document.querySelector("#creditsUsed");
+
+    const creditsAvailable =
+      document.querySelector("#creditsAvailable");
+
+    const createClaimButton =
+      document.querySelector("#createClaimButton");
+
+    const claimResult =
+      document.querySelector("#claimResult");
+
+    const claimCode =
+      document.querySelector("#claimCode");
+
+    const copyButton =
+      document.querySelector("#copyButton");
+
+    const uploadButton =
+      document.querySelector("#uploadButton");
+
+    const uploadExplanation =
+      document.querySelector("#uploadExplanation");
+
+    const logoutButton =
+      document.querySelector("#logoutButton");
+
+    const message =
+      document.querySelector("#message");
+
+    async function apiFetch(path, options = {}) {
+      const response = await fetch(
+        `${API}${path}`,
+        {
+          ...options,
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            ...(options.headers ?? {})
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          location.href = "/";
+          throw new Error(
+            "Connexion Twitch requise."
+          );
+        }
+
+        throw new Error(
+          data.error ?? "Une erreur est survenue."
+        );
+      }
+
+      return data;
+    }
+
+    async function loadAccount() {
+      try {
+        const data = await apiFetch("/api/account");
+
+        avatar.src =
+          data.user.profileImageUrl || "";
+
+        displayName.textContent =
+          data.user.displayName;
+
+        login.textContent =
+          `@${data.user.login}`;
+
+        totalDonated.textContent =
+          `${(data.totalDonatedCents / 100)
+            .toFixed(2)
+            .replace(".", ",")} €`;
+
+        creditsGranted.textContent =
+          data.creditsGranted;
+
+        creditsUsed.textContent =
+          data.creditsUsed;
+
+        creditsAvailable.textContent =
+          data.creditsAvailable;
+
+        const pendingClaim =
+          data.claims.find(
+            claim => claim.status === "pending"
+          );
+
+        if (pendingClaim) {
+          showClaim(pendingClaim.code);
+        }
+
+        if (data.canUpload) {
+          uploadButton.classList.remove("disabled");
+          uploadExplanation.textContent =
+            "Tu peux maintenant poster une image.";
+        } else {
+          uploadButton.classList.add("disabled");
+          uploadExplanation.textContent =
+            "Il faut au minimum un crédit disponible.";
+        }
+
+        app.hidden = false;
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    }
+
+    function showClaim(code) {
+      claimCode.textContent = code;
+      claimResult.hidden = false;
+      createClaimButton.hidden = true;
+    }
+
+    createClaimButton.addEventListener(
+      "click",
+      async () => {
+        createClaimButton.disabled = true;
+        message.textContent = "";
+
+        try {
+          const data = await apiFetch(
+            "/api/claims",
+            { method: "POST" }
+          );
+
+          showClaim(data.code);
+        } catch (error) {
+          message.textContent = error.message;
+        } finally {
+          createClaimButton.disabled = false;
+        }
+      }
+    );
+
+    copyButton.addEventListener(
+      "click",
+      async () => {
+        await navigator.clipboard.writeText(
+          claimCode.textContent
+        );
+
+        copyButton.textContent = "Code copié !";
+
+        setTimeout(() => {
+          copyButton.textContent =
+            "Copier le code";
+        }, 1500);
+      }
+    );
+
+    logoutButton.addEventListener(
+      "click",
+      async () => {
+        await apiFetch(
+          "/api/auth/logout",
+          { method: "POST" }
+        );
+
+        location.href = "/";
+      }
+    );
+
+    loadAccount();
+
+    /*
+     * Actualise les crédits toutes les cinq secondes.
+     */
+    setInterval(loadAccount, 5000);
+  </script>
+</body>
+</html>

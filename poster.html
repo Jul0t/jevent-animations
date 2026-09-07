@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Poster une image — JEvent</title>
+
+  <style>
+    :root {
+      font-family: system-ui, sans-serif;
+      color-scheme: dark;
+      background: #111827;
+      color: #f9fafb;
+    }
+
+    body {
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    main {
+      padding: 30px;
+      background: #1f2937;
+      border-radius: 16px;
+    }
+
+    .notice {
+      padding: 16px;
+      background: #111827;
+      border-radius: 8px;
+    }
+
+    a {
+      color: #c4b5fd;
+    }
+  </style>
+</head>
+
+<body>
+  <main id="app" hidden>
+    <h1>Poster une image</h1>
+
+    <p>
+      Connecté en tant que
+      <strong id="displayName"></strong>
+    </p>
+
+    <p class="notice">
+      Crédits disponibles :
+      <strong id="creditsAvailable"></strong>
+    </p>
+
+    <p>
+      Ton compte possède au moins un crédit. L’étape
+      suivante sera d’ajouter ici la sélection et l’envoi
+      du fichier image.
+    </p>
+
+    <p>
+      <a href="/compte.html">
+        Retourner à mon compte
+      </a>
+    </p>
+  </main>
+
+  <script>
+    const API =
+      "https://ADRESSE-DE-TON-WORKER.workers.dev";
+
+    async function checkAccess() {
+      const response = await fetch(
+        `${API}/api/account`,
+        {
+          credentials: "include"
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        location.href = "/";
+        return;
+      }
+
+      if (!response.ok) {
+        document.body.textContent =
+          data.error ?? "Erreur de chargement.";
+        return;
+      }
+
+      /*
+       * C'est une protection visuelle.
+       * Le futur endpoint d'upload vérifiera aussi
+       * impérativement les crédits côté Worker.
+       */
+      if (!data.canUpload) {
+        location.href = "/compte.html";
+        return;
+      }
+
+      document.querySelector(
+        "#displayName"
+      ).textContent = data.user.displayName;
+
+      document.querySelector(
+        "#creditsAvailable"
+      ).textContent = data.creditsAvailable;
+
+      document.querySelector("#app").hidden = false;
+    }
+
+    checkAccess();
+  </script>
+</body>
+</html>
