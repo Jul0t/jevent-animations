@@ -2,11 +2,13 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1"
   >
-  <title>Crédits d'images du live caritatif</title>
+
+  <title>JEvent — Images caritatives</title>
 
   <style>
     :root {
@@ -17,7 +19,7 @@
     }
 
     body {
-      max-width: 700px;
+      max-width: 750px;
       margin: 0 auto;
       padding: 40px 20px;
     }
@@ -28,220 +30,93 @@
       border-radius: 16px;
     }
 
-    button {
+    button,
+    .button {
+      display: inline-block;
       padding: 12px 18px;
       border: 0;
       border-radius: 8px;
+      background: #9147ff;
+      color: white;
       font-weight: bold;
+      text-decoration: none;
       cursor: pointer;
     }
 
-    #code {
-      font: bold 1.6rem monospace;
-      color: #86efac;
-    }
-
-    #status {
-      margin-top: 24px;
-      padding: 16px;
-      background: #111827;
-      border-radius: 8px;
-      white-space: pre-line;
-    }
-
-    .hidden {
+    #error {
       display: none;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      background: #7f1d1d;
     }
   </style>
 </head>
 
 <body>
   <main>
-    <h1>Crédits d’images</h1>
+    <h1>JEvent — Images caritatives</h1>
+
+    <div id="error"></div>
 
     <p>
-      Chaque tranche cumulée de 10 € donne un crédit d’image.
+      Connecte-toi avec Twitch afin d’obtenir ton code
+      de don et de gérer tes crédits d’image.
     </p>
 
-    <section id="newClaim">
-      <button id="createButton">
-        Générer mon code
-      </button>
-    </section>
-
-    <section id="claim" class="hidden">
-      <p>Ajoute exactement ce code au message de ton don :</p>
-
-      <p id="code"></p>
-
-      <button id="copyButton">
-        Copier le code
-      </button>
-
-      <p>
-        Le code peut se trouver n’importe où dans ton message.
-      </p>
-
-      <div id="status">En attente du don…</div>
-
-      <button id="forgetButton">
-        Effacer ce code
-      </button>
-    </section>
+    <a
+      id="loginButton"
+      class="button"
+      href="#"
+    >
+      Se connecter avec Twitch
+    </a>
   </main>
 
   <script>
     const API =
       "https://charity-images-api.jevent-charity.workers.dev";
 
-    const createButton =
-      document.querySelector("#createButton");
+    const loginButton =
+      document.querySelector("#loginButton");
 
-    const copyButton =
-      document.querySelector("#copyButton");
+    const errorElement =
+      document.querySelector("#error");
 
-    const forgetButton =
-      document.querySelector("#forgetButton");
+    loginButton.href =
+      `${API}/api/auth/twitch/start`;
 
-    const newClaimSection =
-      document.querySelector("#newClaim");
+    const parameters =
+      new URLSearchParams(location.search);
 
-    const claimSection =
-      document.querySelector("#claim");
+    const authError =
+      parameters.get("authError");
 
-    const codeElement =
-      document.querySelector("#code");
-
-    const statusElement =
-      document.querySelector("#status");
-
-    let pollTimer;
-
-    function getStoredClaim() {
-      try {
-        return JSON.parse(
-          localStorage.getItem("charityClaim")
-        );
-      } catch {
-        return null;
-      }
+    if (authError) {
+      errorElement.style.display = "block";
+      errorElement.textContent = authError;
     }
 
-    function showClaim(claim) {
-      newClaimSection.classList.add("hidden");
-      claimSection.classList.remove("hidden");
-      codeElement.textContent = claim.code;
-
-      clearInterval(pollTimer);
-      refreshClaim(claim);
-
-      pollTimer = setInterval(
-        () => refreshClaim(claim),
-        5000
-      );
-    }
-
-    async function refreshClaim(claim) {
+    async function checkSession() {
       try {
         const response = await fetch(
-          `${API}/api/claims/${encodeURIComponent(claim.code)}`,
+          `${API}/api/auth/me`,
           {
-            headers: {
-              "X-Claim-Token": claim.token
-            }
+            credentials: "include"
           }
         );
 
         const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error(data.error ?? "Erreur");
+        if (data.authenticated) {
+          location.href = "/compte.html";
         }
-
-        const total =
-          (data.totalDonatedCents / 100).toFixed(2);
-
-        if (data.status === "pending") {
-          statusElement.textContent =
-            "En attente d’un don contenant ce code…";
-          return;
-        }
-
-        statusElement.textContent =
-          `Don total associé : ${total} €\n` +
-          `Crédits obtenus : ${data.creditsGranted}\n` +
-          `Crédits utilisés : ${data.creditsUsed}\n` +
-          `Crédits disponibles : ${data.creditsAvailable}`;
-      } catch (error) {
-        statusElement.textContent =
-          `Connexion impossible : ${error.message}`;
+      } catch {
+        // Le bouton de connexion reste disponible.
       }
     }
 
-    createButton.addEventListener("click", async () => {
-      createButton.disabled = true;
-
-      try {
-        const response = await fetch(
-          `${API}/api/claims`,
-          { method: "POST" }
-        );
-
-        const claim = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            claim.error ?? "Création impossible"
-          );
-        }
-
-        localStorage.setItem(
-          "charityClaim",
-          JSON.stringify({
-            code: claim.code,
-            token: claim.token
-          })
-        );
-
-        showClaim(claim);
-      } catch (error) {
-        alert(error.message);
-      } finally {
-        createButton.disabled = false;
-      }
-    });
-
-    copyButton.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(
-        codeElement.textContent
-      );
-
-      copyButton.textContent = "Code copié !";
-
-      setTimeout(() => {
-        copyButton.textContent = "Copier le code";
-      }, 1500);
-    });
-
-    forgetButton.addEventListener("click", () => {
-      if (!confirm(
-        "Tu perdras l’accès aux crédits associés à ce code. Continuer ?"
-      )) {
-        return;
-      }
-
-      localStorage.removeItem("charityClaim");
-      location.reload();
-    });
-
-    const existingClaim = getStoredClaim();
-
-    if (
-      existingClaim?.code &&
-      existingClaim?.token
-    ) {
-      showClaim(existingClaim);
-    }
+    checkSession();
   </script>
 </body>
 </html>
