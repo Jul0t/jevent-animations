@@ -290,6 +290,29 @@
   </div>
 
   <script>
+    async function verifyModeratorAccess() {
+  const response = await fetch(
+    `${API}/api/auth/me`,
+    {
+      credentials: "include"
+    }
+  );
+
+  const data = await response.json();
+
+  if (!data.authenticated) {
+    location.replace("/");
+    return false;
+  }
+
+  if (!data.isModerator) {
+    location.replace("/compte.html");
+    return false;
+  }
+
+  return true;
+}
+
     const API = "https://api.jevent.julot.fr";
 
     const featureSettings =
@@ -679,12 +702,25 @@
       }
     });
 
-    Promise.all([
+async function startPage() {
+  const allowed = await verifyModeratorAccess();
+
+  if (!allowed) {
+    return;
+  }
+
+  try {
+    await Promise.all([
       loadFeatures(),
       loadUploads()
-    ]).catch(error => {
-      showMessage(error.message, "error");
-    });
+    ]);
+  } catch (error) {
+    showMessage(error.message, "error");
+  }
+}
+
+startPage();
+
   </script>
 </body>
 </html>

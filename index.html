@@ -169,7 +169,7 @@
         sessionText.textContent =
           `Connecté en tant que ${session.user.displayName}.`;
 
-        moderationLink.hidden = !session.isModerator;
+        moderationLink.hidden = !session.authenticated || !session.isModerator;
       }
 
       renderFeatures(featureData.features ?? [], session);
