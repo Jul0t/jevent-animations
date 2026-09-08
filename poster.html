@@ -1,17 +1,12 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta
-    name="description"
-    content="Envoyez une image pour les créatures communautaires du JEvent."
-  >
+  <meta name="description" content="Envoyez une image pour les créatures communautaires du JEvent.">
 
   <title>Envoyer une image — JEvent</title>
 
@@ -72,20 +67,16 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       background:
-        linear-gradient(
-          45deg,
+        linear-gradient(45deg,
           rgba(255, 255, 255, 0.025) 25%,
           transparent 25%,
           transparent 75%,
-          rgba(255, 255, 255, 0.025) 75%
-        ),
-        linear-gradient(
-          45deg,
+          rgba(255, 255, 255, 0.025) 75%),
+        linear-gradient(45deg,
           rgba(255, 255, 255, 0.025) 25%,
           transparent 25%,
           transparent 75%,
-          rgba(255, 255, 255, 0.025) 75%
-        ),
+          rgba(255, 255, 255, 0.025) 75%),
         rgba(0, 0, 0, 0.32);
       background-position: 0 0, 10px 10px;
       background-size: 20px 20px;
@@ -183,10 +174,7 @@
     <header class="site-header">
       <a class="brand" href="/">
         <span class="brand-logo">
-          <img
-            src="\assets\jevent_logo.png"
-            alt="Logo du JEvent"
-          >
+          <img src="\assets\jevent_logo.png" alt="Logo du JEvent">
         </span>
 
         <span class="brand-text">
@@ -244,19 +232,9 @@
           <strong id="credits">…</strong>
         </div>
 
-        <form
-          id="uploadForm"
-          class="upload-form"
-        >
-          <label
-            id="dropZone"
-            class="drop-zone"
-            for="image"
-          >
-            <span
-              class="drop-icon"
-              aria-hidden="true"
-            >
+        <form id="uploadForm" class="upload-form">
+          <label id="dropZone" class="drop-zone" for="image">
+            <span class="drop-icon" aria-hidden="true">
               🖼️
             </span>
 
@@ -268,76 +246,39 @@
               Clique ici pour parcourir tes fichiers
             </span>
 
-            <input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              required
-            >
+            <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp" required>
           </label>
 
           <!-- Informations sur le fichier -->
-          <div
-            id="selectedFile"
-            class="selected-file"
-            hidden
-          >
+          <div id="selectedFile" class="selected-file" hidden>
             <div class="selected-file-information">
-              <span
-                id="selectedFileName"
-                class="selected-file-name"
-              ></span>
+              <span id="selectedFileName" class="selected-file-name"></span>
 
-              <span
-                id="selectedFileSize"
-                class="selected-file-size"
-              ></span>
+              <span id="selectedFileSize" class="selected-file-size"></span>
             </div>
 
-            <button
-              id="removeFileButton"
-              class="remove-file-button"
-              type="button"
-            >
+            <button id="removeFileButton" class="remove-file-button" type="button">
               Retirer
             </button>
           </div>
 
           <!-- Aperçu complet -->
-          <div
-            id="previewSection"
-            class="preview-section"
-            hidden
-          >
+          <div id="previewSection" class="preview-section" hidden>
             <p class="preview-title">
               Aperçu complet avant envoi
             </p>
 
             <div class="preview-frame">
-              <img
-                id="preview"
-                class="preview-image"
-                alt="Aperçu complet de l’image sélectionnée"
-              >
+              <img id="preview" class="preview-image" alt="Aperçu complet de l’image sélectionnée">
             </div>
           </div>
 
-          <button
-            id="submitButton"
-            class="full-width"
-            type="submit"
-          >
+          <button id="submitButton" class="full-width" type="submit">
             Envoyer pour modération
           </button>
         </form>
 
-        <p
-          id="message"
-          class="message"
-          role="status"
-          aria-live="polite"
-        ></p>
+        <p id="message" class="message" role="status" aria-live="polite"></p>
       </section>
 
       <!-- Historique -->
@@ -352,19 +293,12 @@
             </p>
           </div>
 
-          <button
-            id="refreshButton"
-            class="secondary"
-            type="button"
-          >
+          <button id="refreshButton" class="secondary" type="button">
             Actualiser
           </button>
         </div>
 
-        <div
-          id="uploads"
-          class="uploads-grid"
-        >
+        <div id="uploads" class="uploads-grid">
           <p class="empty">
             Chargement de tes images…
           </p>
@@ -377,370 +311,571 @@
     </footer>
   </div>
 
-  <script>
-    const API = "https://api.jevent.julot.fr";
+<script>
+  const API = "https://api.jevent.julot.fr";
 
-    const form =
-      document.querySelector("#uploadForm");
+  const form =
+    document.querySelector("#uploadForm");
 
-    const input =
-      document.querySelector("#image");
+  const input =
+    document.querySelector("#image");
 
-    const dropZone =
-      document.querySelector("#dropZone");
+  const dropZone =
+    document.querySelector("#dropZone");
 
-    const credits =
-      document.querySelector("#credits");
+  const credits =
+    document.querySelector("#credits");
 
-    const submitButton =
-      document.querySelector("#submitButton");
+  const submitButton =
+    document.querySelector("#submitButton");
 
-    const refreshButton =
-      document.querySelector("#refreshButton");
+  const refreshButton =
+    document.querySelector("#refreshButton");
 
-    const message =
-      document.querySelector("#message");
+  const message =
+    document.querySelector("#message");
 
-    const uploads =
-      document.querySelector("#uploads");
+  const uploads =
+    document.querySelector("#uploads");
 
-    const selectedFile =
-      document.querySelector("#selectedFile");
+  const selectedFile =
+    document.querySelector("#selectedFile");
 
-    const selectedFileName =
-      document.querySelector("#selectedFileName");
+  const selectedFileName =
+    document.querySelector("#selectedFileName");
 
-    const selectedFileSize =
-      document.querySelector("#selectedFileSize");
+  const selectedFileSize =
+    document.querySelector("#selectedFileSize");
 
-    const removeFileButton =
-      document.querySelector("#removeFileButton");
+  const removeFileButton =
+    document.querySelector("#removeFileButton");
 
-    const previewSection =
-      document.querySelector("#previewSection");
+  const previewSection =
+    document.querySelector("#previewSection");
 
-    const preview =
-      document.querySelector("#preview");
+  const preview =
+    document.querySelector("#preview");
 
-    const allowedTypes = new Set([
-      "image/jpeg",
-      "image/png",
-      "image/webp"
-    ]);
+  const allowedTypes = new Set([
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ]);
 
-    const maximumFileSize =
-      10 * 1024 * 1024;
+  const maximumFileSize =
+    10 * 1024 * 1024;
 
-    let canUpload = false;
-    let uploadInProgress = false;
-    let previewUrl = null;
+  let canUpload = false;
+  let uploadInProgress = false;
+  let previewUrl = null;
+  let pageStarted = false;
 
-    function showMessage(text, type = "info") {
-      message.textContent = text;
-      message.className =
-        `message visible ${type}`;
+  /* ==========================================================
+   * MESSAGES
+   * ==========================================================
+   */
+
+  function showMessage(text, type = "info") {
+    message.textContent = text;
+    message.className =
+      `message visible ${type}`;
+  }
+
+  function hideMessage() {
+    message.textContent = "";
+    message.className = "message";
+  }
+
+  /* ==========================================================
+   * APPELS API
+   * ==========================================================
+   */
+
+  async function api(path, options = {}) {
+    const response = await fetch(
+      `${API}${path}`,
+      {
+        ...options,
+        credentials: "include"
+      }
+    );
+
+    const contentType =
+      response.headers.get("Content-Type") ?? "";
+
+    let data = {};
+
+    if (contentType.includes("application/json")) {
+      data = await response.json();
     }
 
-    function hideMessage() {
-      message.textContent = "";
-      message.className = "message";
+    if (!response.ok) {
+      if (response.status === 401) {
+        location.replace("/");
+        throw new Error(
+          "Connexion Twitch requise."
+        );
+      }
+
+      throw new Error(
+        data.error ??
+        `Erreur HTTP ${response.status}`
+      );
     }
 
-    async function api(path, options = {}) {
-      const response = await fetch(
-        `${API}${path}`,
-        {
-          ...options,
+    return data;
+  }
+
+  /* ==========================================================
+   * PROTECTION DE L’INTERACTION
+   * ==========================================================
+   */
+
+  async function verifyFeatureAccess() {
+    try {
+      const [
+        featuresResponse,
+        accountResponse
+      ] = await Promise.all([
+        fetch(`${API}/api/features`, {
           credentials: "include"
-        }
-      );
+        }),
 
-      const contentType =
-        response.headers.get("Content-Type") ?? "";
+        fetch(`${API}/api/account`, {
+          credentials: "include"
+        })
+      ]);
 
-      const data =
-        contentType.includes("application/json")
-          ? await response.json()
-          : {};
+      const featuresData =
+        await featuresResponse.json();
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          location.href = "/";
-          throw new Error(
-            "Connexion Twitch requise."
-          );
-        }
+      const accountData =
+        await accountResponse.json();
 
+      if (accountResponse.status === 401) {
+        location.replace("/");
+        return null;
+      }
+
+      if (!accountResponse.ok) {
         throw new Error(
-          data.error ??
-          `Erreur HTTP ${response.status}`
+          accountData.error ??
+          "Impossible de vérifier ton compte."
         );
       }
 
-      return data;
-    }
-
-    function formatFileSize(size) {
-      if (size < 1024) {
-        return `${size} octets`;
-      }
-
-      if (size < 1024 * 1024) {
-        return `${(size / 1024).toFixed(1)} Ko`;
-      }
-
-      return `${(
-        size /
-        1024 /
-        1024
-      ).toFixed(2)} Mo`;
-    }
-
-    function getStatusLabel(status) {
-      return {
-        pending: "En attente de modération",
-        approved: "Acceptée",
-        rejected: "Refusée"
-      }[status] ?? status;
-    }
-
-    function updateControls() {
-      const disabled =
-        !canUpload || uploadInProgress;
-
-      input.disabled = disabled;
-      submitButton.disabled = disabled;
-
-      dropZone.classList.toggle(
-        "disabled",
-        disabled
-      );
-
-      submitButton.textContent =
-        uploadInProgress
-          ? "Envoi en cours…"
-          : "Envoyer pour modération";
-    }
-
-    function clearSelectedFile() {
-      input.value = "";
-
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-        previewUrl = null;
-      }
-
-      preview.removeAttribute("src");
-      previewSection.hidden = true;
-      selectedFile.hidden = true;
-
-      selectedFileName.textContent = "";
-      selectedFileSize.textContent = "";
-    }
-
-    function validateFile(file) {
-      if (!allowedTypes.has(file.type)) {
+      if (!featuresResponse.ok) {
         throw new Error(
-          "Format interdit. Utilise une image JPEG, PNG ou WebP."
+          featuresData.error ??
+          "Impossible de vérifier l’interaction."
         );
       }
 
-      if (
-        file.size <= 0 ||
-        file.size > maximumFileSize
-      ) {
-        throw new Error(
-          "L’image doit faire au maximum 10 Mo."
+      const imagesFeature =
+        featuresData.features?.find(
+          feature => feature.key === "images"
         );
-      }
-    }
-
-    function displaySelectedFile(file) {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-
-      previewUrl = URL.createObjectURL(file);
-
-      selectedFileName.textContent = file.name;
-      selectedFileSize.textContent =
-        formatFileSize(file.size);
-
-      selectedFile.hidden = false;
 
       /*
-       * Le navigateur redimensionne seulement l'affichage.
-       * Le fichier original envoyé au serveur reste inchangé.
+       * En cas d'absence de la fonctionnalité en base,
+       * on refuse l'accès par sécurité.
        */
-      preview.onload = () => {
-        previewSection.hidden = false;
-      };
+      if (
+        !imagesFeature ||
+        (
+          !imagesFeature.enabled &&
+          !accountData.isModerator
+        )
+      ) {
+        location.replace("/");
+        return null;
+      }
 
-      preview.onerror = () => {
+      return accountData;
+    } catch (error) {
+      credits.textContent = "—";
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+      return null;
+    }
+  }
+
+  /* ==========================================================
+   * FICHIERS
+   * ==========================================================
+   */
+
+  function formatFileSize(size) {
+    const numericSize = Number(size);
+
+    if (!Number.isFinite(numericSize)) {
+      return "Taille inconnue";
+    }
+
+    if (numericSize < 1024) {
+      return `${numericSize} octets`;
+    }
+
+    if (numericSize < 1024 * 1024) {
+      return `${(
+        numericSize / 1024
+      ).toFixed(1)} Ko`;
+    }
+
+    return `${(
+      numericSize /
+      1024 /
+      1024
+    ).toFixed(2)} Mo`;
+  }
+
+  function getStatusLabel(status) {
+    return {
+      pending: "En attente de modération",
+      approved: "Acceptée",
+      rejected: "Refusée"
+    }[status] ?? status;
+  }
+
+  function validateFile(file) {
+    if (!allowedTypes.has(file.type)) {
+      throw new Error(
+        "Format interdit. Utilise une image JPEG, PNG ou WebP."
+      );
+    }
+
+    if (
+      file.size <= 0 ||
+      file.size > maximumFileSize
+    ) {
+      throw new Error(
+        "L’image doit faire au maximum 10 Mo."
+      );
+    }
+  }
+
+  /* ==========================================================
+   * CONTRÔLES DU FORMULAIRE
+   * ==========================================================
+   */
+
+  function updateControls() {
+    const disabled =
+      !canUpload ||
+      uploadInProgress;
+
+    input.disabled = disabled;
+    submitButton.disabled = disabled;
+
+    if (removeFileButton) {
+      removeFileButton.disabled =
+        uploadInProgress;
+    }
+
+    dropZone.classList.toggle(
+      "disabled",
+      disabled
+    );
+
+    submitButton.textContent =
+      uploadInProgress
+        ? "Envoi en cours…"
+        : "Envoyer pour modération";
+  }
+
+  function setAccountInformation(account) {
+    credits.textContent =
+      account.creditsAvailable;
+
+    canUpload =
+      Boolean(account.canUpload);
+
+    updateControls();
+
+    if (!canUpload && !uploadInProgress) {
+      showMessage(
+        "Tu dois avoir au moins un crédit disponible pour envoyer une image.",
+        "error"
+      );
+    }
+  }
+
+  /* ==========================================================
+   * APERÇU
+   * ==========================================================
+   */
+
+  function clearSelectedFile() {
+    input.value = "";
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      previewUrl = null;
+    }
+
+    preview.removeAttribute("src");
+    previewSection.hidden = true;
+
+    if (selectedFile) {
+      selectedFile.hidden = true;
+    }
+
+    if (selectedFileName) {
+      selectedFileName.textContent = "";
+    }
+
+    if (selectedFileSize) {
+      selectedFileSize.textContent = "";
+    }
+  }
+
+  function displaySelectedFile(file) {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    previewUrl =
+      URL.createObjectURL(file);
+
+    if (selectedFileName) {
+      selectedFileName.textContent =
+        file.name;
+    }
+
+    if (selectedFileSize) {
+      selectedFileSize.textContent =
+        formatFileSize(file.size);
+    }
+
+    if (selectedFile) {
+      selectedFile.hidden = false;
+    }
+
+    preview.onload = () => {
+      previewSection.hidden = false;
+    };
+
+    preview.onerror = () => {
+      clearSelectedFile();
+
+      showMessage(
+        "Impossible d’afficher cette image.",
+        "error"
+      );
+    };
+
+    preview.src = previewUrl;
+  }
+
+  /* ==========================================================
+   * LISTE DES IMAGES
+   * ==========================================================
+   */
+
+  function createUploadCard(upload) {
+    const article =
+      document.createElement("article");
+
+    article.className = "upload-card";
+
+    /*
+     * Une image refusée peut encore être disponible,
+     * selon la configuration actuelle du Worker.
+     */
+    if (upload.imageUrl) {
+      const image =
+        document.createElement("img");
+
+      image.src = upload.imageUrl;
+      image.alt =
+        upload.displayName ||
+        upload.originalName;
+
+      image.loading = "lazy";
+
+      image.addEventListener(
+        "error",
+        () => {
+          image.remove();
+        }
+      );
+
+      article.append(image);
+    }
+
+    const details =
+      document.createElement("div");
+
+    details.className =
+      "upload-details";
+
+    const name =
+      document.createElement("p");
+
+    name.className = "upload-name";
+
+    name.textContent =
+      upload.displayName ||
+      upload.originalName;
+
+    const status =
+      document.createElement("span");
+
+    status.className =
+      `status ${upload.status}`;
+
+    status.textContent =
+      getStatusLabel(upload.status);
+
+    const size =
+      document.createElement("p");
+
+    size.className =
+      "upload-metadata";
+
+    size.textContent =
+      formatFileSize(upload.fileSize);
+
+    details.append(
+      name,
+      status,
+      size
+    );
+
+    if (
+      upload.displayName &&
+      upload.displayName !==
+        upload.originalName
+    ) {
+      const originalName =
+        document.createElement("p");
+
+      originalName.className =
+        "upload-metadata";
+
+      originalName.textContent =
+        `Fichier original : ${upload.originalName}`;
+
+      details.append(originalName);
+    }
+
+    if (upload.moderationNote) {
+      const note =
+        document.createElement("p");
+
+      note.className =
+        "upload-note";
+
+      note.textContent =
+        `Note de modération : ${upload.moderationNote}`;
+
+      details.append(note);
+    }
+
+    article.append(details);
+
+    return article;
+  }
+
+  async function loadUploads() {
+    const result =
+      await api("/api/my-uploads");
+
+    uploads.replaceChildren();
+
+    if (!result.uploads?.length) {
+      const empty =
+        document.createElement("p");
+
+      empty.className = "empty";
+
+      empty.textContent =
+        "Tu n’as encore envoyé aucune image.";
+
+      uploads.append(empty);
+      return;
+    }
+
+    for (
+      const upload
+      of result.uploads
+    ) {
+      uploads.append(
+        createUploadCard(upload)
+      );
+    }
+  }
+
+  /* ==========================================================
+   * CHARGEMENT DU COMPTE
+   * ==========================================================
+   */
+
+  async function loadAccount() {
+    const account =
+      await api("/api/account");
+
+    setAccountInformation(account);
+
+    return account;
+  }
+
+  async function loadPage() {
+    refreshButton.disabled = true;
+
+    try {
+      await Promise.all([
+        loadAccount(),
+        loadUploads()
+      ]);
+    } catch (error) {
+      credits.textContent = "—";
+
+      showMessage(
+        error.message,
+        "error"
+      );
+    } finally {
+      refreshButton.disabled = false;
+    }
+  }
+
+  /* ==========================================================
+   * ÉVÉNEMENTS
+   * ==========================================================
+   */
+
+  input.addEventListener(
+    "change",
+    () => {
+      hideMessage();
+
+      const file = input.files[0];
+
+      if (!file) {
         clearSelectedFile();
-
-        showMessage(
-          "Impossible d’afficher cette image.",
-          "error"
-        );
-      };
-
-      preview.src = previewUrl;
-    }
-
-    function createUploadCard(upload) {
-      const article =
-        document.createElement("article");
-
-      article.className = "upload-card";
-
-      if (upload.status !== "rejected") {
-        const image =
-          document.createElement("img");
-
-        image.src = upload.imageUrl;
-        image.alt = upload.originalName;
-        image.loading = "lazy";
-
-        article.append(image);
-      }
-
-      const details =
-        document.createElement("div");
-
-      details.className = "upload-details";
-
-      const name =
-        document.createElement("p");
-
-      name.className = "upload-name";
-      name.textContent = upload.originalName;
-
-      const status =
-        document.createElement("span");
-
-      status.className =
-        `status ${upload.status}`;
-
-      status.textContent =
-        getStatusLabel(upload.status);
-
-      const size =
-        document.createElement("p");
-
-      size.className = "upload-metadata";
-      size.textContent =
-        formatFileSize(upload.fileSize);
-
-      details.append(name, status, size);
-
-      if (upload.moderationNote) {
-        const note =
-          document.createElement("p");
-
-        note.className = "upload-note";
-        note.textContent =
-          `Note de modération : ${upload.moderationNote}`;
-
-        details.append(note);
-      }
-
-      article.append(details);
-
-      return article;
-    }
-
-    async function loadAccount() {
-      const account =
-        await api("/api/account");
-
-      credits.textContent =
-        account.creditsAvailable;
-
-      canUpload = account.canUpload;
-      updateControls();
-
-      if (!canUpload) {
-        showMessage(
-          "Tu dois avoir au moins un crédit disponible pour envoyer une image.",
-          "error"
-        );
-      }
-
-      return account;
-    }
-
-    async function loadUploads() {
-      const result =
-        await api("/api/my-uploads");
-
-      uploads.replaceChildren();
-
-      if (!result.uploads?.length) {
-        const empty =
-          document.createElement("p");
-
-        empty.className = "empty";
-        empty.textContent =
-          "Tu n’as encore envoyé aucune image.";
-
-        uploads.append(empty);
         return;
       }
 
-      for (const upload of result.uploads) {
-        uploads.append(
-          createUploadCard(upload)
-        );
-      }
-    }
-
-    async function loadPage() {
-      refreshButton.disabled = true;
-
       try {
-        await Promise.all([
-          loadAccount(),
-          loadUploads()
-        ]);
+        validateFile(file);
+        displaySelectedFile(file);
       } catch (error) {
-        credits.textContent = "—";
+        clearSelectedFile();
 
         showMessage(
           error.message,
           "error"
         );
-      } finally {
-        refreshButton.disabled = false;
       }
     }
+  );
 
-    input.addEventListener(
-      "change",
-      () => {
-        hideMessage();
-
-        const file = input.files[0];
-
-        if (!file) {
-          clearSelectedFile();
-          return;
-        }
-
-        try {
-          validateFile(file);
-          displaySelectedFile(file);
-        } catch (error) {
-          clearSelectedFile();
-
-          showMessage(
-            error.message,
-            "error"
-          );
-        }
-      }
-    );
-
+  if (removeFileButton) {
     removeFileButton.addEventListener(
       "click",
       () => {
@@ -748,103 +883,164 @@
         hideMessage();
       }
     );
+  }
 
-    form.addEventListener(
-      "submit",
-      async event => {
-        event.preventDefault();
-        hideMessage();
+  form.addEventListener(
+    "submit",
+    async event => {
+      event.preventDefault();
+      hideMessage();
 
-        if (!canUpload) {
-          showMessage(
-            "Tu n’as aucun crédit disponible.",
-            "error"
-          );
-          return;
-        }
-
-        const file = input.files[0];
-
-        if (!file) {
-          showMessage(
-            "Sélectionne d’abord une image.",
-            "error"
-          );
-          return;
-        }
-
-        try {
-          validateFile(file);
-        } catch (error) {
-          showMessage(
-            error.message,
-            "error"
-          );
-          return;
-        }
-
-        const body = new FormData();
-        body.append("image", file);
-
-        uploadInProgress = true;
-        updateControls();
-
+      if (!canUpload) {
         showMessage(
-          "Envoi de l’image en cours…",
-          "info"
+          "Tu n’as aucun crédit disponible.",
+          "error"
         );
 
-        try {
-          await api("/api/uploads", {
-            method: "POST",
-            body
-          });
-
-          clearSelectedFile();
-
-          showMessage(
-            "Image envoyée ! Elle est maintenant en attente de modération.",
-            "success"
-          );
-
-          await Promise.all([
-            loadAccount(),
-            loadUploads()
-          ]);
-        } catch (error) {
-          showMessage(
-            error.message,
-            "error"
-          );
-        } finally {
-          uploadInProgress = false;
-          updateControls();
-        }
+        return;
       }
-    );
 
-    refreshButton.addEventListener(
-      "click",
-      loadPage
-    );
+      const file = input.files[0];
 
-    window.addEventListener(
-      "beforeunload",
-      () => {
-        if (previewUrl) {
-          URL.revokeObjectURL(previewUrl);
-        }
+      if (!file) {
+        showMessage(
+          "Sélectionne d’abord une image.",
+          "error"
+        );
+
+        return;
       }
-    );
 
-    loadPage();
+      try {
+        validateFile(file);
+      } catch (error) {
+        showMessage(
+          error.message,
+          "error"
+        );
 
-    setInterval(() => {
-      Promise.all([
-        loadAccount(),
-        loadUploads()
-      ]).catch(() => {});
-    }, 15000);
-  </script>
+        return;
+      }
+
+      const body = new FormData();
+      body.append("image", file);
+
+      uploadInProgress = true;
+      updateControls();
+
+      showMessage(
+        "Envoi de l’image en cours…",
+        "info"
+      );
+
+      try {
+        await api("/api/uploads", {
+          method: "POST",
+          body
+        });
+
+        clearSelectedFile();
+
+        showMessage(
+          "Image envoyée ! Elle est maintenant en attente de modération.",
+          "success"
+        );
+
+        await Promise.all([
+          loadAccount(),
+          loadUploads()
+        ]);
+      } catch (error) {
+        showMessage(
+          error.message,
+          "error"
+        );
+      } finally {
+        uploadInProgress = false;
+        updateControls();
+      }
+    }
+  );
+
+  refreshButton.addEventListener(
+    "click",
+    async () => {
+      hideMessage();
+      await loadPage();
+    }
+  );
+
+  /* ==========================================================
+   * DÉMARRAGE
+   * ==========================================================
+   */
+
+  async function startPage() {
+    /*
+     * Vérifie d'abord la connexion, le rôle modérateur
+     * et l'ouverture de l'interaction.
+     */
+    const account =
+      await verifyFeatureAccess();
+
+    if (!account) {
+      return;
+    }
+
+    setAccountInformation(account);
+
+    try {
+      await loadUploads();
+    } catch (error) {
+      showMessage(
+        error.message,
+        "error"
+      );
+    }
+
+    pageStarted = true;
+  }
+
+  startPage();
+
+  /*
+   * Actualisation automatique. L'accès à l'interaction est
+   * revérifié : si elle est fermée pendant que la page est
+   * ouverte, un non-modérateur est renvoyé vers l'accueil.
+   */
+  setInterval(
+    async () => {
+      if (!pageStarted) {
+        return;
+      }
+
+      const account =
+        await verifyFeatureAccess();
+
+      if (!account) {
+        return;
+      }
+
+      setAccountInformation(account);
+
+      try {
+        await loadUploads();
+      } catch {
+        // Conserve les informations déjà affichées.
+      }
+    },
+    15000
+  );
+
+  window.addEventListener(
+    "beforeunload",
+    () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    }
+  );
+</script>
 </body>
+
 </html>
