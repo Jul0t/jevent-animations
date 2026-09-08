@@ -1,2 +1,2 @@
-# jevent-animations
-Animation pour le JEvent. Événement caritatif organisé par Julot
+# JEvent Website
+Site internet pour le JEvent. Événement caritatif organisé par Julot
