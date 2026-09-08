@@ -2,14 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
-
-  <title>JEvent — Live caritatif</title>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>JEvent — Interactions</title>
   <link rel="stylesheet" href="/assets/styles.css">
 </head>
 
@@ -18,113 +12,170 @@
     <header class="site-header">
       <a class="brand" href="/">
         <span class="brand-logo">
-          <img
-            src="/assets/jevent_logo.png"
-            alt="Logo du JEvent"
-          >
+          <img src="/assets/jevent_logo.png" alt="Logo JEvent">
         </span>
 
-        <span class="brand-text">
+        <span>
           <span class="brand-name">JEvent</span>
-
-          <span class="brand-subtitle">
-            Live caritatif • Créatures communautaires
-          </span>
+          <span class="brand-subtitle">Live caritatif interactif</span>
         </span>
       </a>
+
+      <nav class="navigation">
+        <a class="nav-link" href="/compte.html">Mon compte</a>
+
+        <a
+          id="moderationLink"
+          class="nav-link"
+          href="/moderation.html"
+          hidden
+        >
+          Modération
+        </a>
+      </nav>
     </header>
 
     <main>
       <section class="hero">
-        <span class="hero-badge">
-          Événement caritatif
-        </span>
+        <span class="hero-badge">Live caritatif</span>
 
         <h1>
-          Ton don devient une
-          <em>créature Minecraft</em>
+          Interagis directement avec le <em>JEvent</em>
         </h1>
 
-        <p>
-          Chaque tranche de 10 € donne un crédit permettant
-          d’envoyer une image. Une fois modérée, elle pourra
-          apparaître sur la tête d’une créature pendant le live.
+        <p class="card-description">
+          Connecte-toi à Twitch et découvre les interactions
+          disponibles pendant l’événement.
         </p>
+      </section>
+
+      <section class="card">
+        <h2>Connexion Twitch</h2>
+
+        <p id="sessionText" class="card-description">
+          Connecte-toi pour participer.
+        </p>
+
+        <a id="loginButton" class="button" href="#">
+          Se connecter avec Twitch
+        </a>
       </section>
 
       <section class="card">
         <div class="card-header">
           <div>
-            <h2>Commencer l’expérience</h2>
-
+            <h2>Interactions</h2>
             <p class="card-description">
-              Connecte-toi avec Twitch pour recevoir ton code
-              personnel, consulter tes crédits et envoyer tes
-              images.
+              Les expériences grisées ne sont pas encore ouvertes.
             </p>
           </div>
         </div>
 
-        <a
-          id="loginButton"
-          class="button"
-          href="#"
-        >
-          Se connecter avec Twitch
-        </a>
-
-        <p id="error" class="message error"></p>
+        <div id="features" class="features-grid">
+          <p class="empty">Chargement…</p>
+        </div>
       </section>
-    </main>
 
-    <footer class="site-footer">
-      JEvent — Live caritatif
-    </footer>
+      <p id="error" class="message error"></p>
+    </main>
   </div>
 
   <script>
     const API = "https://api.jevent.julot.fr";
 
-    const loginButton =
-      document.querySelector("#loginButton");
+    const loginButton = document.querySelector("#loginButton");
+    const moderationLink =
+      document.querySelector("#moderationLink");
+    const sessionText = document.querySelector("#sessionText");
+    const features = document.querySelector("#features");
+    const error = document.querySelector("#error");
 
-    const errorElement =
-      document.querySelector("#error");
+    loginButton.href = `${API}/api/auth/twitch/start`;
 
-    loginButton.href =
-      `${API}/api/auth/twitch/start`;
-
-    const parameters =
-      new URLSearchParams(location.search);
-
-    const authError =
-      parameters.get("authError");
-
-    if (authError) {
-      errorElement.textContent = authError;
-      errorElement.classList.add("visible");
+    function showError(text) {
+      error.textContent = text;
+      error.classList.add("visible");
     }
 
-    async function checkSession() {
-      try {
-        const response = await fetch(
-          `${API}/api/auth/me`,
-          {
-            credentials: "include"
-          }
-        );
+    function renderFeatures(items, session) {
+      features.replaceChildren();
 
-        const data = await response.json();
+      for (const feature of items) {
+        const accessible =
+          feature.enabled || session.isModerator;
 
-        if (data.authenticated) {
-          location.href = "/compte.html";
-        }
-      } catch {
-        // Le bouton Twitch reste affiché.
+        const card = document.createElement("article");
+        card.className =
+          `feature-card${accessible ? "" : " disabled"}`;
+
+        card.innerHTML = `
+          <span style="font-size:2rem">${feature.icon ?? "✨"}</span>
+          <h3>${feature.title}</h3>
+          <p class="card-description">${feature.description ?? ""}</p>
+        `;
+
+        const action = document.createElement("a");
+        action.className =
+          `button${accessible ? "" : " disabled"}`;
+
+        action.textContent = accessible
+          ? (
+              session.authenticated
+                ? (
+                    feature.enabled
+                      ? "Accéder"
+                      : "Prévisualiser"
+                  )
+                : "Se connecter"
+            )
+          : "Bientôt disponible";
+
+        action.href =
+          accessible && feature.targetUrl
+            ? (
+                session.authenticated
+                  ? feature.targetUrl
+                  : `${API}/api/auth/twitch/start`
+              )
+            : "#";
+
+        card.append(action);
+        features.append(card);
       }
     }
 
-    checkSession();
+    async function load() {
+      const [featureResponse, sessionResponse] =
+        await Promise.all([
+          fetch(`${API}/api/features`, {
+            credentials: "include"
+          }),
+          fetch(`${API}/api/auth/me`, {
+            credentials: "include"
+          })
+        ]);
+
+      const featureData = await featureResponse.json();
+      const session = await sessionResponse.json();
+
+      if (!featureResponse.ok) {
+        throw new Error(featureData.error);
+      }
+
+      if (session.authenticated) {
+        loginButton.textContent = "Accéder à mon compte";
+        loginButton.href = "/compte.html";
+
+        sessionText.textContent =
+          `Connecté en tant que ${session.user.displayName}.`;
+
+        moderationLink.hidden = !session.isModerator;
+      }
+
+      renderFeatures(featureData.features ?? [], session);
+    }
+
+    load().catch(event => showError(event.message));
   </script>
 </body>
 </html>

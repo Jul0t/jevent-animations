@@ -2,14 +2,8 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
-
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Mon compte — JEvent</title>
-
   <link rel="stylesheet" href="/assets/styles.css">
 </head>
 
@@ -18,152 +12,96 @@
     <header class="site-header">
       <a class="brand" href="/">
         <span class="brand-logo">
-          <img
-            src="/assets/jevent_logo.png"
-            alt="Logo du JEvent"
-          >
+          <img src="/assets/jevent_logo.png" alt="Logo JEvent">
         </span>
-
-        <span class="brand-text">
-          <span class="brand-name">JEvent</span>
-
-          <span class="brand-subtitle">
-            Live caritatif • Créatures communautaires
-          </span>
-        </span>
+        <span class="brand-name">JEvent</span>
       </a>
 
       <nav class="navigation">
-        <a class="nav-link" href="/poster.html">
-          Mes images
+        <a class="nav-link" href="/">Interactions</a>
+        <a class="nav-link" href="/poster.html">Mes images</a>
+
+        <a
+          id="moderationLink"
+          class="nav-link"
+          href="/moderation.html"
+          hidden
+        >
+          Modération
         </a>
       </nav>
     </header>
 
-    <main id="app">
-      <section class="hero">
-        <span class="hero-badge">Espace participant</span>
-
-        <h1>
-          Bonjour,
-          <em id="heroDisplayName">...</em>
-        </h1>
-
-        <p>
-          Consulte tes crédits, génère ton code de don
-          personnel et envoie tes images.
-        </p>
-      </section>
-
+    <main>
       <section class="card">
         <div class="profile">
-          <img
-            id="avatar"
-            class="profile-avatar"
-            alt="Photo du compte Twitch"
-          >
+          <img id="avatar" class="profile-avatar" alt="Avatar Twitch">
 
           <div>
-            <h2 id="displayName" class="profile-name">
-              Chargement…
-            </h2>
+            <div class="profile-title-line">
+              <h2 id="displayName">Chargement…</h2>
 
-            <p id="login" class="profile-login"></p>
+              <span
+                id="moderatorBadge"
+                class="moderator-badge"
+              >
+                Modérateur
+              </span>
+            </div>
+
+            <p id="login" class="card-description"></p>
           </div>
         </div>
       </section>
 
       <section class="card">
-        <div class="card-header">
-          <div>
-            <h2>Mes crédits</h2>
-
-            <p class="card-description">
-              Un crédit permet de proposer une image.
-            </p>
-          </div>
-        </div>
+        <h2>Mes crédits</h2>
 
         <div class="stats-grid">
           <div class="stat">
             <span class="stat-label">Total donné</span>
-            <strong id="totalDonated" class="stat-value">
-              0,00 €
-            </strong>
+            <strong id="totalDonated" class="stat-value">0 €</strong>
           </div>
 
           <div class="stat">
-            <span class="stat-label">Crédits obtenus</span>
-            <strong id="creditsGranted" class="stat-value">
-              0
-            </strong>
+            <span class="stat-label">Obtenus</span>
+            <strong id="granted" class="stat-value">0</strong>
           </div>
 
           <div class="stat">
-            <span class="stat-label">Crédits utilisés</span>
-            <strong id="creditsUsed" class="stat-value">
-              0
-            </strong>
+            <span class="stat-label">Utilisés</span>
+            <strong id="used" class="stat-value">0</strong>
           </div>
 
           <div class="stat">
-            <span class="stat-label">
-              Crédits disponibles
-            </span>
-
-            <strong
-              id="creditsAvailable"
-              class="stat-value green"
-            >
-              0
-            </strong>
+            <span class="stat-label">Disponibles</span>
+            <strong id="available" class="stat-value green">0</strong>
           </div>
         </div>
       </section>
 
       <section class="card">
-        <div class="card-header">
-          <div>
-            <h2>Obtenir des crédits</h2>
+        <h2>Code de don</h2>
 
-            <p class="card-description">
-              Place ce code dans le message de ton prochain don.
-            </p>
-          </div>
-        </div>
+        <p class="card-description">
+          Place ce code dans le message de ton prochain don.
+        </p>
 
-        <button id="createClaimButton">
-          Générer mon code
-        </button>
+        <button id="createCode">Générer mon code</button>
 
-        <div id="claimResult" hidden>
-          <code id="claimCode" class="claim-code"></code>
-
-          <button
-            id="copyButton"
-            class="secondary full-width"
-          >
+        <div id="codeBox" hidden>
+          <code id="code" class="claim-code"></code>
+          <button id="copyCode" class="secondary full-width">
             Copier le code
           </button>
         </div>
       </section>
 
       <section class="card">
-        <div class="card-header">
-          <div>
-            <h2>Envoyer une image</h2>
-
-            <p
-              id="uploadExplanation"
-              class="card-description"
-            >
-              Il faut au moins un crédit disponible.
-            </p>
-          </div>
-        </div>
+        <h2>Envoyer une image</h2>
 
         <a
-          id="uploadButton"
+          id="uploadLink"
           class="button disabled"
           href="/poster.html"
         >
@@ -171,76 +109,42 @@
         </a>
       </section>
 
-      <button
-        id="logoutButton"
-        class="secondary"
-      >
-        Se déconnecter
-      </button>
-
+      <button id="logout" class="secondary">Se déconnecter</button>
       <p id="message" class="message"></p>
     </main>
-
-    <footer class="site-footer">
-      JEvent — Merci pour ton soutien
-    </footer>
   </div>
 
   <script>
     const API = "https://api.jevent.julot.fr";
 
-    const heroDisplayName =
-      document.querySelector("#heroDisplayName");
-
     const avatar = document.querySelector("#avatar");
-    const displayName =
-      document.querySelector("#displayName");
-
+    const displayName = document.querySelector("#displayName");
     const login = document.querySelector("#login");
+    const moderatorBadge =
+      document.querySelector("#moderatorBadge");
+    const moderationLink =
+      document.querySelector("#moderationLink");
 
-    const totalDonated =
-      document.querySelector("#totalDonated");
+    const totalDonated = document.querySelector("#totalDonated");
+    const granted = document.querySelector("#granted");
+    const used = document.querySelector("#used");
+    const available = document.querySelector("#available");
+    const createCode = document.querySelector("#createCode");
+    const codeBox = document.querySelector("#codeBox");
+    const code = document.querySelector("#code");
+    const copyCode = document.querySelector("#copyCode");
+    const uploadLink = document.querySelector("#uploadLink");
+    const logout = document.querySelector("#logout");
+    const message = document.querySelector("#message");
 
-    const creditsGranted =
-      document.querySelector("#creditsGranted");
-
-    const creditsUsed =
-      document.querySelector("#creditsUsed");
-
-    const creditsAvailable =
-      document.querySelector("#creditsAvailable");
-
-    const createClaimButton =
-      document.querySelector("#createClaimButton");
-
-    const claimResult =
-      document.querySelector("#claimResult");
-
-    const claimCode =
-      document.querySelector("#claimCode");
-
-    const copyButton =
-      document.querySelector("#copyButton");
-
-    const uploadButton =
-      document.querySelector("#uploadButton");
-
-    const uploadExplanation =
-      document.querySelector("#uploadExplanation");
-
-    const logoutButton =
-      document.querySelector("#logoutButton");
-
-    const message =
-      document.querySelector("#message");
-
-    async function apiFetch(path, options = {}) {
+    async function api(path, options = {}) {
       const response = await fetch(`${API}${path}`, {
         ...options,
         credentials: "include",
         headers: {
-          "Content-Type": "application/json",
-          ...(options.headers ?? {})
+          ...(options.body
+            ? { "Content-Type": "application/json" }
+            : {})
         }
       });
 
@@ -251,121 +155,84 @@
           location.href = "/";
         }
 
-        throw new Error(
-          data.error ?? "Une erreur est survenue."
-        );
+        throw new Error(data.error ?? "Erreur.");
       }
 
       return data;
     }
 
-    function showClaim(code) {
-      claimCode.textContent = code;
-      claimResult.hidden = false;
-      createClaimButton.hidden = true;
+    function showCode(value) {
+      code.textContent = value;
+      codeBox.hidden = false;
+      createCode.hidden = true;
     }
 
-    async function loadAccount() {
+    async function load() {
+      const data = await api("/api/account");
+
+      avatar.src = data.user.profileImageUrl || "";
+      displayName.textContent = data.user.displayName;
+      login.textContent = `@${data.user.login}`;
+
+      totalDonated.textContent =
+        `${(data.totalDonatedCents / 100)
+          .toFixed(2)
+          .replace(".", ",")} €`;
+
+      granted.textContent = data.creditsGranted;
+      used.textContent = data.creditsUsed;
+      available.textContent = data.creditsAvailable;
+
+      moderatorBadge.classList.toggle(
+        "visible",
+        data.isModerator
+      );
+
+      moderationLink.hidden = !data.isModerator;
+
+      uploadLink.classList.toggle(
+        "disabled",
+        !data.canUpload
+      );
+
+      const pending = data.claims.find(
+        item => item.status === "pending"
+      );
+
+      if (pending) {
+        showCode(pending.code);
+      }
+    }
+
+    createCode.onclick = async () => {
       try {
-        const data = await apiFetch("/api/account");
+        const data = await api("/api/claims", {
+          method: "POST"
+        });
 
-        heroDisplayName.textContent =
-          data.user.displayName;
-
-        avatar.src = data.user.profileImageUrl || "";
-        displayName.textContent = data.user.displayName;
-        login.textContent = `@${data.user.login}`;
-
-        totalDonated.textContent =
-          `${(data.totalDonatedCents / 100)
-            .toFixed(2)
-            .replace(".", ",")} €`;
-
-        creditsGranted.textContent =
-          data.creditsGranted;
-
-        creditsUsed.textContent =
-          data.creditsUsed;
-
-        creditsAvailable.textContent =
-          data.creditsAvailable;
-
-        const pendingClaim =
-          data.claims.find(
-            claim => claim.status === "pending"
-          );
-
-        if (pendingClaim) {
-          showClaim(pendingClaim.code);
-        }
-
-        if (data.canUpload) {
-          uploadButton.classList.remove("disabled");
-
-          uploadExplanation.textContent =
-            "Tu peux proposer une nouvelle image.";
-        } else {
-          uploadButton.classList.add("disabled");
-
-          uploadExplanation.textContent =
-            "Il faut au moins un crédit disponible.";
-        }
+        showCode(data.code);
       } catch (error) {
         message.textContent = error.message;
         message.className = "message visible error";
       }
-    }
+    };
 
-    createClaimButton.addEventListener(
-      "click",
-      async () => {
-        createClaimButton.disabled = true;
+    copyCode.onclick = async () => {
+      await navigator.clipboard.writeText(code.textContent);
+      copyCode.textContent = "Code copié !";
+    };
 
-        try {
-          const data = await apiFetch(
-            "/api/claims",
-            { method: "POST" }
-          );
+    logout.onclick = async () => {
+      await api("/api/auth/logout", { method: "POST" });
+      location.href = "/";
+    };
 
-          showClaim(data.code);
-        } catch (error) {
-          message.textContent = error.message;
-          message.className = "message visible error";
-        } finally {
-          createClaimButton.disabled = false;
-        }
-      }
-    );
+    load().catch(error => {
+      message.textContent = error.message;
+      message.className = "message visible error";
+    });
 
-    copyButton.addEventListener(
-      "click",
-      async () => {
-        await navigator.clipboard.writeText(
-          claimCode.textContent
-        );
-
-        copyButton.textContent = "Code copié !";
-
-        setTimeout(() => {
-          copyButton.textContent = "Copier le code";
-        }, 1500);
-      }
-    );
-
-    logoutButton.addEventListener(
-      "click",
-      async () => {
-        await apiFetch(
-          "/api/auth/logout",
-          { method: "POST" }
-        );
-
-        location.href = "/";
-      }
-    );
-
-    loadAccount();
-    setInterval(loadAccount, 5000);
+    setInterval(() => load().catch(() => {}), 5000);
   </script>
 </body>
 </html>
