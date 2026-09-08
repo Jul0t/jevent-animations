@@ -2,202 +2,427 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1"
   >
 
-  <title>Modération — JEvent</title>
+  <meta
+    name="description"
+    content="Panel de modération des images du JEvent."
+  >
+
+  <title>Modération des images — JEvent</title>
+
+  <link rel="stylesheet" href="\assets\styles.css">
 
   <style>
-    :root {
-      font-family: system-ui, sans-serif;
-      color-scheme: dark;
-      background: #111827;
-      color: #f9fafb;
+    /*
+     * Styles propres à la page de modération.
+     * Le reste du design vient de /assets/styles.css.
+     */
+
+    body.modal-open {
+      overflow: hidden;
     }
 
-    body {
-      max-width: 1100px;
-      margin: auto;
-      padding: 30px 20px;
+    .moderation-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
     }
 
-    article {
+    .moderation-counter {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .moderation-counter strong {
+      color: var(--green-light);
+    }
+
+    #refreshButton {
+      min-height: 42px;
+      padding: 9px 15px;
+    }
+
+    .moderation-list {
       display: grid;
-      grid-template-columns: minmax(200px, 400px) 1fr;
-      gap: 24px;
-      padding: 20px;
-      margin-bottom: 20px;
-      background: #1f2937;
-      border-radius: 14px;
+      gap: 22px;
     }
 
-    img {
+    .moderation-card {
+      display: grid;
+      grid-template-columns: minmax(260px, 430px) 1fr;
+      gap: 26px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(21, 36, 26, 0.94),
+          rgba(11, 21, 14, 0.94)
+        );
+      box-shadow:
+        0 22px 60px rgba(0, 0, 0, 0.25),
+        inset 0 1px rgba(255, 255, 255, 0.035);
+    }
+
+    .moderation-image-button {
+      position: relative;
+      display: block;
       width: 100%;
-      max-height: 400px;
+      min-height: 300px;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.35);
+      box-shadow: none;
+      cursor: zoom-in;
+    }
+
+    .moderation-image-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 178, 55, 0.65);
+      filter: none;
+      box-shadow: 0 15px 40px rgba(0, 178, 55, 0.15);
+    }
+
+    .moderation-image {
+      display: block;
+      width: 100%;
+      height: 360px;
       object-fit: contain;
-      background: #111827;
-      border-radius: 8px;
+      background:
+        linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.025) 25%,
+          transparent 25%,
+          transparent 75%,
+          rgba(255, 255, 255, 0.025) 75%
+        ),
+        linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.025) 25%,
+          transparent 25%,
+          transparent 75%,
+          rgba(255, 255, 255, 0.025) 75%
+        ),
+        rgba(0, 0, 0, 0.3);
+      background-position: 0 0, 10px 10px;
+      background-size: 20px 20px;
     }
 
-    input,
-    button {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 12px;
-      margin-top: 8px;
-      border-radius: 8px;
-    }
-
-    button {
-      border: 0;
+    .zoom-indicator {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
       color: white;
-      font-weight: bold;
+      background: rgba(0, 0, 0, 0.72);
+      font-size: 0.78rem;
+      font-weight: 800;
+      pointer-events: none;
+      backdrop-filter: blur(8px);
+    }
+
+    .moderation-information {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+    }
+
+    .moderation-information h2 {
+      margin: 0 0 5px;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+
+    .twitch-login {
+      margin: 0 0 22px;
+      color: var(--green-light);
+      font-weight: 750;
+    }
+
+    .file-information {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .file-information-item {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .file-information-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .file-information-value {
+      display: block;
+      overflow: hidden;
+      font-size: 0.9rem;
+      font-weight: 750;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .moderation-note-label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .moderation-note {
+      width: 100%;
+      min-height: 95px;
+      resize: vertical;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      color: var(--text);
+      background: rgba(0, 0, 0, 0.24);
+      font: inherit;
+      line-height: 1.5;
+    }
+
+    .moderation-note:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0, 178, 55, 0.13);
+    }
+
+    .moderation-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+      margin-top: auto;
+      padding-top: 20px;
+    }
+
+    .moderation-actions button {
+      width: 100%;
+    }
+
+    .reject-button {
+      background: linear-gradient(135deg, #e11d48, #9f1239);
+      box-shadow: 0 10px 30px rgba(225, 29, 72, 0.2);
+    }
+
+    .reject-button:hover:not(:disabled) {
+      box-shadow: 0 14px 34px rgba(225, 29, 72, 0.28);
+    }
+
+    .loading-placeholder {
+      padding: 40px;
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /*
+     * Fenêtre d'affichage en grand.
+     */
+
+    .image-modal {
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      background: rgba(0, 0, 0, 0.88);
+      opacity: 1;
+      visibility: visible;
+      transition:
+        opacity 160ms ease,
+        visibility 160ms ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .image-modal[hidden] {
+      display: none;
+    }
+
+    .image-modal-content {
+      position: relative;
+      display: flex;
+      width: min(1400px, 100%);
+      height: min(900px, calc(100vh - 60px));
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 20px;
+      background: rgba(8, 15, 10, 0.98);
+      box-shadow: 0 35px 100px rgba(0, 0, 0, 0.7);
+    }
+
+    .image-modal-picture {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
+    .image-modal-close {
+      position: absolute;
+      z-index: 2;
+      top: 12px;
+      right: 12px;
+      display: grid;
+      width: 38px;
+      min-height: 38px;
+      height: 38px;
+      margin: 0;
+      padding: 0;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 50%;
+      color: white;
+      background: rgba(0, 0, 0, 0.78);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+      font-size: 1.35rem;
+      font-weight: 500;
+      line-height: 1;
       cursor: pointer;
     }
 
-    .approve { background: #16a34a; }
-    .reject { background: #dc2626; }
+    .image-modal-close:hover {
+      transform: scale(1.06);
+      background: var(--green-dark);
+      box-shadow: 0 8px 25px rgba(0, 178, 55, 0.25);
+    }
 
-    @media (max-width: 700px) {
-      article {
+    .image-modal-caption {
+      position: absolute;
+      right: 22px;
+      bottom: 15px;
+      left: 22px;
+      overflow: hidden;
+      margin: 0;
+      padding: 9px 12px;
+      border-radius: 10px;
+      color: #e9f7ed;
+      background: rgba(0, 0, 0, 0.7);
+      font-size: 0.83rem;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    @media (max-width: 760px) {
+      .moderation-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      #refreshButton {
+        width: 100%;
+      }
+
+      .moderation-card {
         grid-template-columns: 1fr;
+        padding: 17px;
+      }
+
+      .moderation-image {
+        height: 280px;
+      }
+
+      .moderation-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .image-modal {
+        padding: 12px;
+      }
+
+      .image-modal-content {
+        height: calc(100vh - 24px);
+        padding: 12px;
+      }
+
+      .image-modal-caption {
+        right: 12px;
+        bottom: 10px;
+        left: 12px;
       }
     }
   </style>
 </head>
 
 <body>
-  <h1>Modération des images</h1>
+  <div class="container">
 
-  <p id="message">Chargement…</p>
-  <div id="list"></div>
+    <!-- En-tête -->
+    <header class="site-header">
+      <a class="brand" href="/">
+        <span class="brand-logo">
+          <img
+            src="\assets\logo.png"
+            alt="Logo du JEvent"
+          >
+        </span>
 
-  <script>
-    const API = "https://api.jevent.julot.fr";
+        <span class="brand-text">
+          <span class="brand-name">
+            JEvent
+          </span>
 
-    const list = document.querySelector("#list");
-    const message = document.querySelector("#message");
+          <span class="brand-subtitle">
+            Équipe de modération
+          </span>
+        </span>
+      </a>
 
-    async function api(path, options = {}) {
-      const response = await fetch(`${API}${path}`, {
-        ...options,
-        credentials: "include",
-        headers: options.body
-          ? { "Content-Type": "application/json" }
-          : {}
-      });
+      <nav class="navigation">
+        <a class="nav-link" href="/compte.html">
+          Mon compte
+        </a>
 
-      const data = await response.json();
+        <a class="nav-link" href="/poster.html">
+          Mes images
+        </a>
+      </nav>
+    </header>
 
-      if (!response.ok) {
-        throw new Error(
-          data.error ?? "Une erreur est survenue."
-        );
-      }
+    <main>
+      <!-- Présentation -->
+      <section class="hero">
+        <span class="hero-badge">
+          Panel de modération
+        </span>
 
-      return data;
-    }
-
-    async function moderate(id, decision, note) {
-      await api(
-        `/api/moderation/uploads/${id}/${decision}`,
-        {
-          method: "POST",
-          body: JSON.stringify({ note })
-        }
-      );
-
-      await load();
-    }
-
-    async function load() {
-      const result = await api(
-        "/api/moderation/uploads?status=pending"
-      );
-
-      list.replaceChildren();
-
-      if (result.uploads.length === 0) {
-        message.textContent =
-          "Aucune image en attente.";
-        return;
-      }
-
-      message.textContent =
-        `${result.uploads.length} image(s) en attente.`;
-
-      for (const upload of result.uploads) {
-        const article = document.createElement("article");
-        const image = document.createElement("img");
-
-        image.src = upload.imageUrl;
-        image.alt = upload.originalName;
-
-        const information = document.createElement("div");
-
-        const title = document.createElement("h2");
-        title.textContent =
-          upload.twitchDisplayName;
-
-        const login = document.createElement("p");
-        login.textContent =
-          `@${upload.twitchLogin}`;
-
-        const filename = document.createElement("p");
-        filename.textContent =
-          `${upload.originalName} — ` +
-          `${(upload.fileSize / 1024 / 1024)
-            .toFixed(2)} Mo`;
-
-        const note = document.createElement("input");
-        note.placeholder =
-          "Note de modération facultative";
-
-        const approve = document.createElement("button");
-        approve.className = "approve";
-        approve.textContent = "Accepter";
-
-        approve.onclick = () =>
-          moderate(
-            upload.id,
-            "approve",
-            note.value
-          );
-
-        const reject = document.createElement("button");
-        reject.className = "reject";
-        reject.textContent = "Refuser";
-
-        reject.onclick = () =>
-          moderate(
-            upload.id,
-            "reject",
-            note.value
-          );
-
-        information.append(
-          title,
-          login,
-          filename,
-          note,
-          approve,
-          reject
-        );
-
-        article.append(image, information);
-        list.append(article);
-      }
-    }
-
-    load().catch(error => {
-      message.textContent = error.message;
-    });
-
-    setInterval(() => {
-      load().catch(() => {});
-    }, 10000);
-  </script>
-</body>
-</html>
+        <h1>
+          Images en attente de
+          <em>validation</em>
+        </h

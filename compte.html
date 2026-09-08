@@ -10,197 +10,193 @@
 
   <title>Mon compte — JEvent</title>
 
-  <style>
-    :root {
-      font-family: system-ui, sans-serif;
-      color-scheme: dark;
-      background: #111827;
-      color: #f9fafb;
-    }
-
-    body {
-      max-width: 750px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-
-    main {
-      padding: 30px;
-      background: #1f2937;
-      border-radius: 16px;
-    }
-
-    button,
-    .button {
-      display: inline-block;
-      padding: 12px 18px;
-      border: 0;
-      border-radius: 8px;
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .primary {
-      background: #9147ff;
-      color: white;
-    }
-
-    .secondary {
-      background: #374151;
-      color: white;
-    }
-
-    .upload {
-      background: #16a34a;
-      color: white;
-    }
-
-    .disabled {
-      pointer-events: none;
-      opacity: 0.45;
-    }
-
-    .profile {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .profile img {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-    }
-
-    .credits {
-      margin: 24px 0;
-      padding: 20px;
-      background: #111827;
-      border-radius: 10px;
-    }
-
-    #claimBox {
-      margin: 24px 0;
-      padding: 20px;
-      background: #111827;
-      border-radius: 10px;
-    }
-
-    #claimCode {
-      font: bold 1.6rem monospace;
-      color: #86efac;
-    }
-
-    #message {
-      margin-top: 16px;
-      white-space: pre-line;
-    }
-  </style>
+  <link rel="stylesheet" href="/assets/styles.css">
 </head>
 
 <body>
-  <main id="app" hidden>
-    <div class="profile">
-      <img
-        id="avatar"
-        alt="Photo de profil Twitch"
-      >
+  <div class="container">
+    <header class="site-header">
+      <a class="brand" href="/">
+        <span class="brand-logo">
+          <img
+            src="/assets/logo.png"
+            alt="Logo du JEvent"
+          >
+        </span>
 
-      <div>
-        <h1 id="displayName"></h1>
-        <p id="login"></p>
-      </div>
-    </div>
+        <span class="brand-text">
+          <span class="brand-name">JEvent</span>
 
-    <section class="credits">
-      <h2>Mes crédits</h2>
+          <span class="brand-subtitle">
+            Live caritatif • Créatures communautaires
+          </span>
+        </span>
+      </a>
 
-      <p>
-        Total donné :
-        <strong id="totalDonated">0,00 €</strong>
-      </p>
+      <nav class="navigation">
+        <a class="nav-link" href="/poster.html">
+          Mes images
+        </a>
+      </nav>
+    </header>
 
-      <p>
-        Crédits obtenus :
-        <strong id="creditsGranted">0</strong>
-      </p>
+    <main id="app">
+      <section class="hero">
+        <span class="hero-badge">Espace participant</span>
 
-      <p>
-        Crédits utilisés :
-        <strong id="creditsUsed">0</strong>
-      </p>
+        <h1>
+          Bonjour,
+          <em id="heroDisplayName">...</em>
+        </h1>
 
-      <p>
-        Crédits disponibles :
-        <strong id="creditsAvailable">0</strong>
-      </p>
-    </section>
+        <p>
+          Consulte tes crédits, génère ton code de don
+          personnel et envoie tes images.
+        </p>
+      </section>
 
-    <section id="claimBox">
-      <h2>Obtenir des crédits</h2>
+      <section class="card">
+        <div class="profile">
+          <img
+            id="avatar"
+            class="profile-avatar"
+            alt="Photo du compte Twitch"
+          >
 
-      <p>
-        Génère un code puis ajoute-le au message de ton
-        don Streamlabs Charity.
-      </p>
+          <div>
+            <h2 id="displayName" class="profile-name">
+              Chargement…
+            </h2>
+
+            <p id="login" class="profile-login"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Mes crédits</h2>
+
+            <p class="card-description">
+              Un crédit permet de proposer une image.
+            </p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <span class="stat-label">Total donné</span>
+            <strong id="totalDonated" class="stat-value">
+              0,00 €
+            </strong>
+          </div>
+
+          <div class="stat">
+            <span class="stat-label">Crédits obtenus</span>
+            <strong id="creditsGranted" class="stat-value">
+              0
+            </strong>
+          </div>
+
+          <div class="stat">
+            <span class="stat-label">Crédits utilisés</span>
+            <strong id="creditsUsed" class="stat-value">
+              0
+            </strong>
+          </div>
+
+          <div class="stat">
+            <span class="stat-label">
+              Crédits disponibles
+            </span>
+
+            <strong
+              id="creditsAvailable"
+              class="stat-value green"
+            >
+              0
+            </strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Obtenir des crédits</h2>
+
+            <p class="card-description">
+              Place ce code dans le message de ton prochain don.
+            </p>
+          </div>
+        </div>
+
+        <button id="createClaimButton">
+          Générer mon code
+        </button>
+
+        <div id="claimResult" hidden>
+          <code id="claimCode" class="claim-code"></code>
+
+          <button
+            id="copyButton"
+            class="secondary full-width"
+          >
+            Copier le code
+          </button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Envoyer une image</h2>
+
+            <p
+              id="uploadExplanation"
+              class="card-description"
+            >
+              Il faut au moins un crédit disponible.
+            </p>
+          </div>
+        </div>
+
+        <a
+          id="uploadButton"
+          class="button disabled"
+          href="/poster.html"
+        >
+          Accéder à mes images
+        </a>
+      </section>
 
       <button
-        id="createClaimButton"
-        class="primary"
+        id="logoutButton"
+        class="secondary"
       >
-        Générer mon code
+        Se déconnecter
       </button>
 
-      <div id="claimResult" hidden>
-        <p>Code à mettre dans le message du don :</p>
+      <p id="message" class="message"></p>
+    </main>
 
-        <p id="claimCode"></p>
-
-        <button
-          id="copyButton"
-          class="secondary"
-        >
-          Copier le code
-        </button>
-      </div>
-    </section>
-
-    <a
-      id="uploadButton"
-      class="button upload disabled"
-      href="/poster.html"
-    >
-      Poster une image
-    </a>
-
-    <p id="uploadExplanation">
-      Il faut au minimum un crédit disponible pour
-      accéder à l’envoi d’images.
-    </p>
-
-    <button
-      id="logoutButton"
-      class="secondary"
-    >
-      Se déconnecter
-    </button>
-
-    <p id="message"></p>
-  </main>
+    <footer class="site-footer">
+      JEvent — Merci pour ton soutien
+    </footer>
+  </div>
 
   <script>
-    const API =
-      "https://api.jevent.julot.fr";
+    const API = "https://api.jevent.julot.fr";
 
-    const app = document.querySelector("#app");
+    const heroDisplayName =
+      document.querySelector("#heroDisplayName");
+
     const avatar = document.querySelector("#avatar");
-
     const displayName =
       document.querySelector("#displayName");
 
-    const login =
-      document.querySelector("#login");
+    const login = document.querySelector("#login");
 
     const totalDonated =
       document.querySelector("#totalDonated");
@@ -239,26 +235,20 @@
       document.querySelector("#message");
 
     async function apiFetch(path, options = {}) {
-      const response = await fetch(
-        `${API}${path}`,
-        {
-          ...options,
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-            ...(options.headers ?? {})
-          }
+      const response = await fetch(`${API}${path}`, {
+        ...options,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers ?? {})
         }
-      );
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
         if (response.status === 401) {
           location.href = "/";
-          throw new Error(
-            "Connexion Twitch requise."
-          );
         }
 
         throw new Error(
@@ -269,18 +259,22 @@
       return data;
     }
 
+    function showClaim(code) {
+      claimCode.textContent = code;
+      claimResult.hidden = false;
+      createClaimButton.hidden = true;
+    }
+
     async function loadAccount() {
       try {
         const data = await apiFetch("/api/account");
 
-        avatar.src =
-          data.user.profileImageUrl || "";
-
-        displayName.textContent =
+        heroDisplayName.textContent =
           data.user.displayName;
 
-        login.textContent =
-          `@${data.user.login}`;
+        avatar.src = data.user.profileImageUrl || "";
+        displayName.textContent = data.user.displayName;
+        login.textContent = `@${data.user.login}`;
 
         totalDonated.textContent =
           `${(data.totalDonatedCents / 100)
@@ -307,31 +301,25 @@
 
         if (data.canUpload) {
           uploadButton.classList.remove("disabled");
+
           uploadExplanation.textContent =
-            "Tu peux maintenant poster une image.";
+            "Tu peux proposer une nouvelle image.";
         } else {
           uploadButton.classList.add("disabled");
-          uploadExplanation.textContent =
-            "Il faut au minimum un crédit disponible.";
-        }
 
-        app.hidden = false;
+          uploadExplanation.textContent =
+            "Il faut au moins un crédit disponible.";
+        }
       } catch (error) {
         message.textContent = error.message;
+        message.className = "message visible error";
       }
-    }
-
-    function showClaim(code) {
-      claimCode.textContent = code;
-      claimResult.hidden = false;
-      createClaimButton.hidden = true;
     }
 
     createClaimButton.addEventListener(
       "click",
       async () => {
         createClaimButton.disabled = true;
-        message.textContent = "";
 
         try {
           const data = await apiFetch(
@@ -342,6 +330,7 @@
           showClaim(data.code);
         } catch (error) {
           message.textContent = error.message;
+          message.className = "message visible error";
         } finally {
           createClaimButton.disabled = false;
         }
@@ -358,8 +347,7 @@
         copyButton.textContent = "Code copié !";
 
         setTimeout(() => {
-          copyButton.textContent =
-            "Copier le code";
+          copyButton.textContent = "Copier le code";
         }, 1500);
       }
     );
@@ -377,10 +365,6 @@
     );
 
     loadAccount();
-
-    /*
-     * Actualise les crédits toutes les cinq secondes.
-     */
     setInterval(loadAccount, 5000);
   </script>
 </body>

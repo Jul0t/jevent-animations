@@ -8,74 +8,82 @@
     content="width=device-width, initial-scale=1"
   >
 
-  <title>JEvent — Images caritatives</title>
+  <title>JEvent — Live caritatif</title>
 
-  <style>
-    :root {
-      font-family: system-ui, sans-serif;
-      color-scheme: dark;
-      background: #111827;
-      color: #f9fafb;
-    }
-
-    body {
-      max-width: 750px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-
-    main {
-      padding: 30px;
-      background: #1f2937;
-      border-radius: 16px;
-    }
-
-    button,
-    .button {
-      display: inline-block;
-      padding: 12px 18px;
-      border: 0;
-      border-radius: 8px;
-      background: #9147ff;
-      color: white;
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    #error {
-      display: none;
-      margin-bottom: 20px;
-      padding: 15px;
-      border-radius: 8px;
-      background: #7f1d1d;
-    }
-  </style>
+  <link rel="stylesheet" href="/assets/styles.css">
 </head>
 
 <body>
-  <main>
-    <h1>JEvent — Images caritatives</h1>
+  <div class="container">
+    <header class="site-header">
+      <a class="brand" href="/">
+        <span class="brand-logo">
+          <img
+            src="/assets/logo.png"
+            alt="Logo du JEvent"
+          >
+        </span>
 
-    <div id="error"></div>
+        <span class="brand-text">
+          <span class="brand-name">JEvent</span>
 
-    <p>
-      Connecte-toi avec Twitch afin d’obtenir ton code
-      de don et de gérer tes crédits d’image.
-    </p>
+          <span class="brand-subtitle">
+            Live caritatif • Créatures communautaires
+          </span>
+        </span>
+      </a>
+    </header>
 
-    <a
-      id="loginButton"
-      class="button"
-      href="#"
-    >
-      Se connecter avec Twitch
-    </a>
-  </main>
+    <main>
+      <section class="hero">
+        <span class="hero-badge">
+          Événement caritatif
+        </span>
+
+        <h1>
+          Ton don devient une
+          <em>créature Minecraft</em>
+        </h1>
+
+        <p>
+          Chaque tranche de 10 € donne un crédit permettant
+          d’envoyer une image. Une fois modérée, elle pourra
+          apparaître sur la tête d’une créature pendant le live.
+        </p>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Commencer l’expérience</h2>
+
+            <p class="card-description">
+              Connecte-toi avec Twitch pour recevoir ton code
+              personnel, consulter tes crédits et envoyer tes
+              images.
+            </p>
+          </div>
+        </div>
+
+        <a
+          id="loginButton"
+          class="button"
+          href="#"
+        >
+          Se connecter avec Twitch
+        </a>
+
+        <p id="error" class="message error"></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      JEvent — Live caritatif
+    </footer>
+  </div>
 
   <script>
-    const API =
-      "https://api.jevent.julot.fr";
+    const API = "https://api.jevent.julot.fr";
 
     const loginButton =
       document.querySelector("#loginButton");
@@ -93,8 +101,8 @@
       parameters.get("authError");
 
     if (authError) {
-      errorElement.style.display = "block";
       errorElement.textContent = authError;
+      errorElement.classList.add("visible");
     }
 
     async function checkSession() {
@@ -112,7 +120,7 @@
           location.href = "/compte.html";
         }
       } catch {
-        // Le bouton de connexion reste disponible.
+        // Le bouton Twitch reste affiché.
       }
     }
 
