@@ -118,21 +118,15 @@
           </label>
 
           <!-- Prévisualisation locale -->
-<div
-  id="previewContainer"
-  class="preview-container"
-  hidden
->
-  <p class="preview-title">
-    Aperçu avant envoi
-  </p>
-
-  <img
-    id="preview"
-    class="preview-image"
-    alt="Aperçu de l’image sélectionnée"
-  >
-</div>
+            <div id="previewSection" hidden>
+              <p class="preview-title-outside">
+                Aperçu avant envoi
+              </p>
+            
+              <div class="preview-container">
+                <img id="preview" class="preview-image" alt="Aperçu de l’image sélectionnée">
+              </div>
+            </div>
 
           <button
             id="submitButton"
