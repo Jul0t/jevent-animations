@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Modération — JEvent</title>
+
+  <style>
+    :root {
+      font-family: system-ui, sans-serif;
+      color-scheme: dark;
+      background: #111827;
+      color: #f9fafb;
+    }
+
+    body {
+      max-width: 1100px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    article {
+      display: grid;
+      grid-template-columns: minmax(200px, 400px) 1fr;
+      gap: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: #1f2937;
+      border-radius: 14px;
+    }
+
+    img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      background: #111827;
+      border-radius: 8px;
+    }
+
+    input,
+    button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border-radius: 8px;
+    }
+
+    button {
+      border: 0;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .approve { background: #16a34a; }
+    .reject { background: #dc2626; }
+
+    @media (max-width: 700px) {
+      article {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Modération des images</h1>
+
+  <p id="message">Chargement…</p>
+  <div id="list"></div>
+
+  <script>
+    const API = "https://api.jevent.julot.fr";
+
+    const list = document.querySelector("#list");
+    const message = document.querySelector("#message");
+
+    async function api(path, options = {}) {
+      const response = await fetch(`${API}${path}`, {
+        ...options,
+        credentials: "include",
+        headers: options.body
+          ? { "Content-Type": "application/json" }
+          : {}
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ?? "Une erreur est survenue."
+        );
+      }
+
+      return data;
+    }
+
+    async function moderate(id, decision, note) {
+      await api(
+        `/api/moderation/uploads/${id}/${decision}`,
+        {
+          method: "POST",
+          body: JSON.stringify({ note })
+        }
+      );
+
+      await load();
+    }
+
+    async function load() {
+      const result = await api(
+        "/api/moderation/uploads?status=pending"
+      );
+
+      list.replaceChildren();
+
+      if (result.uploads.length === 0) {
+        message.textContent =
+          "Aucune image en attente.";
+        return;
+      }
+
+      message.textContent =
+        `${result.uploads.length} image(s) en attente.`;
+
+      for (const upload of result.uploads) {
+        const article = document.createElement("article");
+        const image = document.createElement("img");
+
+        image.src = upload.imageUrl;
+        image.alt = upload.originalName;
+
+        const information = document.createElement("div");
+
+        const title = document.createElement("h2");
+        title.textContent =
+          upload.twitchDisplayName;
+
+        const login = document.createElement("p");
+        login.textContent =
+          `@${upload.twitchLogin}`;
+
+        const filename = document.createElement("p");
+        filename.textContent =
+          `${upload.originalName} — ` +
+          `${(upload.fileSize / 1024 / 1024)
+            .toFixed(2)} Mo`;
+
+        const note = document.createElement("input");
+        note.placeholder =
+          "Note de modération facultative";
+
+        const approve = document.createElement("button");
+        approve.className = "approve";
+        approve.textContent = "Accepter";
+
+        approve.onclick = () =>
+          moderate(
+            upload.id,
+            "approve",
+            note.value
+          );
+
+        const reject = document.createElement("button");
+        reject.className = "reject";
+        reject.textContent = "Refuser";
+
+        reject.onclick = () =>
+          moderate(
+            upload.id,
+            "reject",
+            note.value
+          );
+
+        information.append(
+          title,
+          login,
+          filename,
+          note,
+          approve,
+          reject
+        );
+
+        article.append(image, information);
+        list.append(article);
+      }
+    }
+
+    load().catch(error => {
+      message.textContent = error.message;
+    });
+
+    setInterval(() => {
+      load().catch(() => {});
+    }, 10000);
+  </script>
+</body>
+</html>

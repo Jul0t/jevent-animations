@@ -2,7 +2,6 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1"
@@ -19,22 +18,49 @@
     }
 
     body {
-      max-width: 750px;
-      margin: 0 auto;
+      max-width: 800px;
+      margin: auto;
       padding: 40px 20px;
     }
 
-    main {
-      padding: 30px;
+    main,
+    article {
+      padding: 24px;
+      margin-bottom: 20px;
       background: #1f2937;
-      border-radius: 16px;
+      border-radius: 14px;
     }
 
-    .notice {
-      padding: 16px;
-      background: #111827;
+    input,
+    button {
+      padding: 12px;
       border-radius: 8px;
     }
+
+    button {
+      border: 0;
+      background: #16a34a;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+    }
+
+    img {
+      display: block;
+      max-width: 250px;
+      max-height: 250px;
+      margin-top: 12px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .pending { color: #facc15; }
+    .approved { color: #86efac; }
+    .rejected { color: #fca5a5; }
 
     a {
       color: #c4b5fd;
@@ -47,75 +73,163 @@
     <h1>Poster une image</h1>
 
     <p>
-      Connecté en tant que
-      <strong id="displayName"></strong>
-    </p>
-
-    <p class="notice">
       Crédits disponibles :
-      <strong id="creditsAvailable"></strong>
+      <strong id="credits">0</strong>
     </p>
 
-    <p>
-      Ton compte possède au moins un crédit. L’étape
-      suivante sera d’ajouter ici la sélection et l’envoi
-      du fichier image.
-    </p>
+    <form id="uploadForm">
+      <input
+        id="image"
+        name="image"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        required
+      >
+
+      <button id="submitButton" type="submit">
+        Envoyer pour modération
+      </button>
+    </form>
+
+    <p id="message"></p>
 
     <p>
-      <a href="/compte.html">
-        Retourner à mon compte
-      </a>
+      <a href="/compte.html">Retour au compte</a>
     </p>
   </main>
 
-  <script>
-    const API =
-      "https://api.jevent.julot.fr";
+  <section>
+    <h2>Mes images</h2>
+    <div id="uploads"></div>
+  </section>
 
-    async function checkAccess() {
-      const response = await fetch(
-        `${API}/api/account`,
-        {
-          credentials: "include"
-        }
-      );
+  <script>
+    const API = "https://api.jevent.julot.fr";
+
+    const app = document.querySelector("#app");
+    const form = document.querySelector("#uploadForm");
+    const input = document.querySelector("#image");
+    const credits = document.querySelector("#credits");
+    const message = document.querySelector("#message");
+    const uploads = document.querySelector("#uploads");
+
+    const submitButton =
+      document.querySelector("#submitButton");
+
+    async function api(path, options = {}) {
+      const response = await fetch(`${API}${path}`, {
+        ...options,
+        credentials: "include"
+      });
 
       const data = await response.json();
 
-      if (response.status === 401) {
-        location.href = "/";
-        return;
-      }
-
       if (!response.ok) {
-        document.body.textContent =
-          data.error ?? "Erreur de chargement.";
-        return;
+        if (response.status === 401) {
+          location.href = "/";
+        }
+
+        throw new Error(
+          data.error ?? "Une erreur est survenue."
+        );
       }
 
-      /*
-       * C'est une protection visuelle.
-       * Le futur endpoint d'upload vérifiera aussi
-       * impérativement les crédits côté Worker.
-       */
-      if (!data.canUpload) {
+      return data;
+    }
+
+    async function load() {
+      const account = await api("/api/account");
+
+      if (!account.canUpload) {
         location.href = "/compte.html";
         return;
       }
 
-      document.querySelector(
-        "#displayName"
-      ).textContent = data.user.displayName;
+      credits.textContent =
+        account.creditsAvailable;
 
-      document.querySelector(
-        "#creditsAvailable"
-      ).textContent = data.creditsAvailable;
+      const result = await api("/api/my-uploads");
 
-      document.querySelector("#app").hidden = false;
+      uploads.replaceChildren();
+
+      for (const upload of result.uploads) {
+        const article = document.createElement("article");
+
+        const title = document.createElement("strong");
+        title.textContent = upload.originalName;
+
+        const status = document.createElement("p");
+        status.className = upload.status;
+
+        status.textContent = {
+          pending: "En attente de modération",
+          approved: "Acceptée",
+          rejected: "Refusée"
+        }[upload.status];
+
+        article.append(title, status);
+
+        if (upload.status !== "rejected") {
+          const image = document.createElement("img");
+          image.src = upload.imageUrl;
+          image.alt = upload.originalName;
+          article.append(image);
+        }
+
+        if (upload.moderationNote) {
+          const note = document.createElement("p");
+          note.textContent =
+            `Note : ${upload.moderationNote}`;
+          article.append(note);
+        }
+
+        uploads.append(article);
+      }
+
+      app.hidden = false;
     }
 
-    checkAccess();
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const file = input.files[0];
+
+      if (!file) return;
+
+      if (file.size > 10 * 1024 * 1024) {
+        message.textContent =
+          "L’image dépasse 10 Mo.";
+        return;
+      }
+
+      const body = new FormData();
+      body.append("image", file);
+
+      submitButton.disabled = true;
+      message.textContent = "Envoi en cours…";
+
+      try {
+        await api("/api/uploads", {
+          method: "POST",
+          body
+        });
+
+        form.reset();
+
+        message.textContent =
+          "Image envoyée pour modération.";
+
+        await load();
+      } catch (error) {
+        message.textContent = error.message;
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    load().catch(error => {
+      message.textContent = error.message;
+    });
   </script>
 </body>
 </html>
