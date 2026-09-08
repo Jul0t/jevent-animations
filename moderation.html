@@ -2,379 +2,194 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+  <title>Panel modérateur — JEvent</title>
 
-  <meta
-    name="description"
-    content="Panel de modération des images du JEvent."
-  >
-
-  <title>Modération des images — JEvent</title>
-
-  <link rel="stylesheet" href="\assets\styles.css">
+  <link rel="stylesheet" href="/assets/styles.css">
 
   <style>
-    /*
-     * Styles propres à la page de modération.
-     * Le reste du design vient de /assets/styles.css.
-     */
-
     body.modal-open {
       overflow: hidden;
     }
 
-    .moderation-toolbar {
+    .moderation-tabs {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-bottom: 20px;
     }
 
-    .moderation-counter {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    .moderation-counter strong {
-      color: var(--green-light);
-    }
-
-    #refreshButton {
-      min-height: 42px;
-      padding: 9px 15px;
+    .tab-button.active {
+      outline: 2px solid var(--green-light);
     }
 
     .moderation-list {
       display: grid;
-      gap: 22px;
+      gap: 20px;
     }
 
     .moderation-card {
       display: grid;
-      grid-template-columns: minmax(260px, 430px) 1fr;
-      gap: 26px;
-      padding: 22px;
+      grid-template-columns: minmax(260px, 420px) 1fr;
+      gap: 24px;
+      padding: 21px;
       border: 1px solid var(--border);
-      border-radius: 22px;
-      background:
-        linear-gradient(
-          145deg,
-          rgba(21, 36, 26, 0.94),
-          rgba(11, 21, 14, 0.94)
-        );
-      box-shadow:
-        0 22px 60px rgba(0, 0, 0, 0.25),
-        inset 0 1px rgba(255, 255, 255, 0.035);
+      border-radius: 20px;
+      background: var(--surface);
     }
 
-    .moderation-image-button {
+    .image-button {
       position: relative;
-      display: block;
       width: 100%;
       min-height: 300px;
       margin: 0;
       padding: 0;
       overflow: hidden;
       border: 1px solid var(--border);
-      border-radius: 16px;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.3);
       box-shadow: none;
-      cursor: zoom-in;
     }
 
-    .moderation-image-button:hover {
-      transform: translateY(-2px);
-      border-color: rgba(0, 178, 55, 0.65);
-      filter: none;
-      box-shadow: 0 15px 40px rgba(0, 178, 55, 0.15);
-    }
-
-    .moderation-image {
+    .image-button img {
       display: block;
       width: 100%;
       height: 360px;
       object-fit: contain;
-      background:
-        linear-gradient(
-          45deg,
-          rgba(255, 255, 255, 0.025) 25%,
-          transparent 25%,
-          transparent 75%,
-          rgba(255, 255, 255, 0.025) 75%
-        ),
-        linear-gradient(
-          45deg,
-          rgba(255, 255, 255, 0.025) 25%,
-          transparent 25%,
-          transparent 75%,
-          rgba(255, 255, 255, 0.025) 75%
-        ),
-        rgba(0, 0, 0, 0.3);
-      background-position: 0 0, 10px 10px;
-      background-size: 20px 20px;
     }
 
-    .zoom-indicator {
-      position: absolute;
-      right: 12px;
-      bottom: 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 11px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 999px;
-      color: white;
-      background: rgba(0, 0, 0, 0.72);
-      font-size: 0.78rem;
-      font-weight: 800;
-      pointer-events: none;
-      backdrop-filter: blur(8px);
-    }
-
-    .moderation-information {
-      display: flex;
-      min-width: 0;
-      flex-direction: column;
-    }
-
-    .moderation-information h2 {
-      margin: 0 0 5px;
-      font-size: 1.5rem;
-      letter-spacing: -0.03em;
-    }
-
-    .twitch-login {
-      margin: 0 0 22px;
-      color: var(--green-light);
-      font-weight: 750;
-    }
-
-    .file-information {
+    .missing-image {
       display: grid;
-      grid-template-columns:
-        repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .file-information-item {
-      min-width: 0;
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    .file-information-label {
-      display: block;
-      margin-bottom: 5px;
-      color: var(--muted);
-      font-size: 0.74rem;
-      font-weight: 750;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .file-information-value {
-      display: block;
-      overflow: hidden;
-      font-size: 0.9rem;
-      font-weight: 750;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .moderation-note-label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 0.88rem;
-      font-weight: 800;
-    }
-
-    .moderation-note {
-      width: 100%;
-      min-height: 95px;
-      resize: vertical;
-      padding: 13px 14px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      outline: none;
-      color: var(--text);
-      background: rgba(0, 0, 0, 0.24);
-      font: inherit;
-      line-height: 1.5;
-    }
-
-    .moderation-note:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(0, 178, 55, 0.13);
-    }
-
-    .moderation-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 11px;
-      margin-top: auto;
-      padding-top: 20px;
-    }
-
-    .moderation-actions button {
-      width: 100%;
-    }
-
-    .reject-button {
-      background: linear-gradient(135deg, #e11d48, #9f1239);
-      box-shadow: 0 10px 30px rgba(225, 29, 72, 0.2);
-    }
-
-    .reject-button:hover:not(:disabled) {
-      box-shadow: 0 14px 34px rgba(225, 29, 72, 0.28);
-    }
-
-    .loading-placeholder {
-      padding: 40px;
+      min-height: 300px;
+      place-items: center;
+      padding: 25px;
       border: 1px dashed var(--border);
-      border-radius: 18px;
+      border-radius: 14px;
       color: var(--muted);
       text-align: center;
     }
 
-    /*
-     * Fenêtre d'affichage en grand.
-     */
+    .moderation-info {
+      min-width: 0;
+    }
+
+    .moderation-info h2 {
+      margin: 0 0 5px;
+    }
+
+    .metadata {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .field-label {
+      display: block;
+      margin: 14px 0 7px;
+      font-weight: 800;
+    }
+
+    .text-field,
+    .note-field {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      outline: none;
+      background: rgba(0, 0, 0, 0.24);
+      color: var(--text);
+    }
+
+    .note-field {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .text-field:focus,
+    .note-field:focus {
+      border-color: var(--green);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .delete-button {
+      grid-column: 1 / -1;
+    }
+
+    .feature-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feature-row:last-child {
+      border-bottom: 0;
+    }
+
+    .toggle {
+      min-width: 125px;
+    }
 
     .image-modal {
       position: fixed;
       z-index: 1000;
       inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-      background: rgba(0, 0, 0, 0.88);
-      opacity: 1;
-      visibility: visible;
-      transition:
-        opacity 160ms ease,
-        visibility 160ms ease;
-      backdrop-filter: blur(8px);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.9);
     }
 
     .image-modal[hidden] {
       display: none;
     }
 
-    .image-modal-content {
+    .modal-content {
       position: relative;
-      display: flex;
+      display: grid;
       width: min(1400px, 100%);
-      height: min(900px, calc(100vh - 60px));
-      align-items: center;
-      justify-content: center;
-      padding: 22px;
-      border: 1px solid rgba(255, 255, 255, 0.13);
-      border-radius: 20px;
-      background: rgba(8, 15, 10, 0.98);
-      box-shadow: 0 35px 100px rgba(0, 0, 0, 0.7);
+      height: min(900px, calc(100vh - 48px));
+      place-items: center;
+      padding: 18px;
+      border-radius: 18px;
+      background: #071009;
     }
 
-    .image-modal-picture {
-      display: block;
+    .modal-content img {
       max-width: 100%;
       max-height: 100%;
-      border-radius: 12px;
       object-fit: contain;
     }
 
-    .image-modal-close {
+    .modal-close {
       position: absolute;
       z-index: 2;
-      top: 12px;
-      right: 12px;
-      display: grid;
-      width: 38px;
-      min-height: 38px;
-      height: 38px;
-      margin: 0;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      min-height: 40px;
       padding: 0;
-      place-items: center;
-      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 50%;
-      color: white;
-      background: rgba(0, 0, 0, 0.78);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
-      font-size: 1.35rem;
-      font-weight: 500;
-      line-height: 1;
-      cursor: pointer;
-    }
-
-    .image-modal-close:hover {
-      transform: scale(1.06);
-      background: var(--green-dark);
-      box-shadow: 0 8px 25px rgba(0, 178, 55, 0.25);
-    }
-
-    .image-modal-caption {
-      position: absolute;
-      right: 22px;
-      bottom: 15px;
-      left: 22px;
-      overflow: hidden;
-      margin: 0;
-      padding: 9px 12px;
-      border-radius: 10px;
-      color: #e9f7ed;
-      background: rgba(0, 0, 0, 0.7);
-      font-size: 0.83rem;
-      text-align: center;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      pointer-events: none;
     }
 
     @media (max-width: 760px) {
-      .moderation-toolbar {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      #refreshButton {
-        width: 100%;
-      }
-
       .moderation-card {
         grid-template-columns: 1fr;
-        padding: 17px;
       }
 
-      .moderation-image {
-        height: 280px;
-      }
-
-      .moderation-actions {
+      .actions {
         grid-template-columns: 1fr;
       }
 
-      .image-modal {
-        padding: 12px;
-      }
-
-      .image-modal-content {
-        height: calc(100vh - 24px);
-        padding: 12px;
-      }
-
-      .image-modal-caption {
-        right: 12px;
-        bottom: 10px;
-        left: 12px;
+      .delete-button {
+        grid-column: auto;
       }
     }
   </style>
@@ -382,47 +197,494 @@
 
 <body>
   <div class="container">
-
-    <!-- En-tête -->
     <header class="site-header">
       <a class="brand" href="/">
         <span class="brand-logo">
           <img
-            src="\assets\jevent_logo.png"
+            src="/assets/jevent_logo.png"
             alt="Logo du JEvent"
           >
         </span>
 
-        <span class="brand-text">
-          <span class="brand-name">
-            JEvent
-          </span>
-
-          <span class="brand-subtitle">
-            Équipe de modération
-          </span>
+        <span>
+          <span class="brand-name">JEvent</span>
+          <span class="brand-subtitle">Panel modérateur</span>
         </span>
       </a>
 
       <nav class="navigation">
-        <a class="nav-link" href="/compte.html">
-          Mon compte
-        </a>
-
-        <a class="nav-link" href="/poster.html">
-          Mes images
-        </a>
+        <a class="nav-link" href="/">Interactions</a>
+        <a class="nav-link" href="/compte.html">Mon compte</a>
       </nav>
     </header>
 
     <main>
-      <!-- Présentation -->
       <section class="hero">
-        <span class="hero-badge">
-          Panel de modération
-        </span>
+        <span class="hero-badge">Administration</span>
+        <h1>Gestion du <em>JEvent</em></h1>
 
-        <h1>
-          Images en attente de
-          <em>validation</em>
-        </h
+        <p>
+          Modère les images et active progressivement les
+          interactions proposées aux participants.
+        </p>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Disponibilité des interactions</h2>
+
+            <p class="card-description">
+              Les modérateurs conservent l’accès aux interactions
+              fermées afin de les prévisualiser.
+            </p>
+          </div>
+        </div>
+
+        <div id="featureSettings">
+          <p class="empty">Chargement…</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2>Images soumises</h2>
+            <p id="counter" class="card-description">Chargement…</p>
+          </div>
+
+          <button id="refreshButton" class="secondary">
+            Actualiser
+          </button>
+        </div>
+
+        <div class="moderation-tabs">
+          <button class="tab-button active" data-status="all">
+            Toutes
+          </button>
+
+          <button class="tab-button secondary" data-status="pending">
+            En attente
+          </button>
+
+          <button class="tab-button secondary" data-status="approved">
+            Acceptées
+          </button>
+
+          <button class="tab-button secondary" data-status="rejected">
+            Refusées
+          </button>
+        </div>
+
+        <p id="message" class="message"></p>
+        <div id="list" class="moderation-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="imageModal" class="image-modal" hidden>
+    <div id="modalContent" class="modal-content">
+      <button id="modalClose" class="modal-close">×</button>
+      <img id="modalImage" alt="Image agrandie">
+    </div>
+  </div>
+
+  <script>
+    const API = "https://api.jevent.julot.fr";
+
+    const featureSettings =
+      document.querySelector("#featureSettings");
+    const list = document.querySelector("#list");
+    const counter = document.querySelector("#counter");
+    const message = document.querySelector("#message");
+    const refreshButton =
+      document.querySelector("#refreshButton");
+    const tabButtons =
+      document.querySelectorAll(".tab-button");
+
+    const imageModal =
+      document.querySelector("#imageModal");
+    const modalContent =
+      document.querySelector("#modalContent");
+    const modalClose =
+      document.querySelector("#modalClose");
+    const modalImage =
+      document.querySelector("#modalImage");
+
+    let selectedStatus = "all";
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = `message visible ${type}`;
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(`${API}${path}`, {
+        ...options,
+        credentials: "include",
+        headers: {
+          ...(options.body
+            ? { "Content-Type": "application/json" }
+            : {}),
+          ...(options.headers ?? {})
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ?? `Erreur HTTP ${response.status}`
+        );
+      }
+
+      return data;
+    }
+
+    function openModal(url) {
+      if (!url) return;
+
+      modalImage.src = url;
+      imageModal.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function closeModal() {
+      imageModal.hidden = true;
+      modalImage.removeAttribute("src");
+      document.body.classList.remove("modal-open");
+    }
+
+    async function loadFeatures() {
+      const result = await api(
+        "/api/moderation/features"
+      );
+
+      featureSettings.replaceChildren();
+
+      for (const feature of result.features) {
+        const row = document.createElement("div");
+        row.className = "feature-row";
+
+        const information = document.createElement("div");
+        const title = document.createElement("strong");
+        const description = document.createElement("p");
+
+        title.textContent =
+          `${feature.icon ?? "✨"} ${feature.title}`;
+
+        description.className = "card-description";
+        description.textContent = feature.description ?? "";
+
+        information.append(title, description);
+
+        const toggle = document.createElement("button");
+        toggle.className = feature.enabled
+          ? "toggle"
+          : "toggle secondary";
+
+        toggle.textContent = feature.enabled
+          ? "Ouverte"
+          : "Fermée";
+
+        toggle.onclick = async () => {
+          toggle.disabled = true;
+
+          try {
+            await api(
+              `/api/moderation/features/` +
+              `${encodeURIComponent(feature.key)}`,
+              {
+                method: "PUT",
+                body: JSON.stringify({
+                  enabled: !feature.enabled
+                })
+              }
+            );
+
+            await loadFeatures();
+          } catch (error) {
+            toggle.disabled = false;
+            showMessage(error.message, "error");
+          }
+        };
+
+        row.append(information, toggle);
+        featureSettings.append(row);
+      }
+    }
+
+    async function saveName(upload, input, button) {
+      const name = input.value.trim();
+
+      if (!name) {
+        showMessage(
+          "Le nom de l’image est obligatoire.",
+          "error"
+        );
+        return;
+      }
+
+      button.disabled = true;
+
+      try {
+        await api(
+          `/api/moderation/uploads/` +
+          `${encodeURIComponent(upload.id)}`,
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              displayName: name
+            })
+          }
+        );
+
+        showMessage("Nom enregistré.", "success");
+      } catch (error) {
+        showMessage(error.message, "error");
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function moderate(upload, decision, note) {
+      await api(
+        `/api/moderation/uploads/` +
+        `${encodeURIComponent(upload.id)}/${decision}`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            note: note.value.trim()
+          })
+        }
+      );
+
+      showMessage(
+        decision === "approve"
+          ? "Image acceptée."
+          : "Image refusée.",
+        "success"
+      );
+
+      await loadUploads();
+    }
+
+    async function deleteImage(upload) {
+      const text =
+        upload.status === "approved"
+          ? "Supprimer définitivement cette image et rendre un crédit ?"
+          : "Supprimer définitivement cette image ?";
+
+      if (!confirm(text)) return;
+
+      await api(
+        `/api/moderation/uploads/` +
+        `${encodeURIComponent(upload.id)}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      showMessage(
+        upload.status === "approved"
+          ? "Image supprimée et crédit rendu."
+          : "Image supprimée.",
+        "success"
+      );
+
+      await loadUploads();
+    }
+
+    function createCard(upload) {
+      const article = document.createElement("article");
+      article.className = "moderation-card";
+
+      if (upload.imageUrl) {
+        const imageButton = document.createElement("button");
+        imageButton.className = "image-button";
+
+        const image = document.createElement("img");
+        image.src = upload.imageUrl;
+        image.alt =
+          upload.displayName ||
+          upload.originalName;
+
+        imageButton.append(image);
+        imageButton.onclick = () =>
+          openModal(upload.imageUrl);
+
+        article.append(imageButton);
+      } else {
+        const missing = document.createElement("div");
+        missing.className = "missing-image";
+        missing.textContent =
+          "Le fichier de cette ancienne image refusée n’existe plus. " +
+          "Son enregistrement peut néanmoins être supprimé.";
+
+        article.append(missing);
+      }
+
+      const information = document.createElement("div");
+      information.className = "moderation-info";
+
+      const title = document.createElement("h2");
+      title.textContent =
+        upload.displayName ||
+        upload.originalName;
+
+      const status = document.createElement("span");
+      status.className = `status ${upload.status}`;
+      status.textContent = {
+        pending: "En attente",
+        approved: "Acceptée",
+        rejected: "Refusée"
+      }[upload.status];
+
+      const metadata = document.createElement("p");
+      metadata.className = "metadata";
+      metadata.textContent =
+        `Envoyée par ${upload.twitchDisplayName} ` +
+        `(@${upload.twitchLogin})\n` +
+        `Fichier original : ${upload.originalName}`;
+
+      const nameLabel = document.createElement("label");
+      nameLabel.className = "field-label";
+      nameLabel.textContent = "Nom public de l’image";
+
+      const nameInput = document.createElement("input");
+      nameInput.className = "text-field";
+      nameInput.maxLength = 100;
+      nameInput.value = upload.displayName ?? "";
+      nameInput.placeholder =
+        "Ex. Créature verte de Julot";
+
+      const saveNameButton = document.createElement("button");
+      saveNameButton.className = "secondary";
+      saveNameButton.textContent = "Enregistrer le nom";
+
+      saveNameButton.onclick = () =>
+        saveName(upload, nameInput, saveNameButton);
+
+      const noteLabel = document.createElement("label");
+      noteLabel.className = "field-label";
+      noteLabel.textContent = "Note de modération";
+
+      const note = document.createElement("textarea");
+      note.className = "note-field";
+      note.maxLength = 500;
+      note.value = upload.moderationNote ?? "";
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      if (upload.status === "pending") {
+        const approve = document.createElement("button");
+        approve.textContent = "Accepter";
+        approve.onclick = () =>
+          moderate(upload, "approve", note);
+
+        const reject = document.createElement("button");
+        reject.className = "danger";
+        reject.textContent = "Refuser";
+        reject.onclick = () =>
+          moderate(upload, "reject", note);
+
+        actions.append(approve, reject);
+      }
+
+      const remove = document.createElement("button");
+      remove.className = "danger delete-button";
+      remove.textContent = "Supprimer définitivement";
+      remove.onclick = () => deleteImage(upload);
+
+      actions.append(remove);
+
+      information.append(
+        title,
+        status,
+        metadata,
+        nameLabel,
+        nameInput,
+        saveNameButton,
+        noteLabel,
+        note,
+        actions
+      );
+
+      article.append(information);
+      return article;
+    }
+
+    async function loadUploads() {
+      const result = await api(
+        `/api/moderation/uploads?status=${selectedStatus}`
+      );
+
+      list.replaceChildren();
+
+      counter.textContent =
+        `${result.uploads.length} image(s) affichée(s).`;
+
+      if (!result.uploads.length) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent =
+          "Aucune image dans cette catégorie.";
+
+        list.append(empty);
+        return;
+      }
+
+      for (const upload of result.uploads) {
+        list.append(createCard(upload));
+      }
+    }
+
+    tabButtons.forEach(button => {
+      button.onclick = async () => {
+        selectedStatus = button.dataset.status;
+
+        tabButtons.forEach(item => {
+          item.classList.toggle(
+            "active",
+            item === button
+          );
+        });
+
+        await loadUploads();
+      };
+    });
+
+    refreshButton.onclick = async () => {
+      await Promise.all([
+        loadFeatures(),
+        loadUploads()
+      ]);
+    };
+
+    modalClose.onclick = closeModal;
+
+    imageModal.onclick = event => {
+      if (
+        event.target === imageModal ||
+        event.target === modalContent
+      ) {
+        closeModal();
+      }
+    };
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+
+    Promise.all([
+      loadFeatures(),
+      loadUploads()
+    ]).catch(error => {
+      showMessage(error.message, "error");
+    });
+  </script>
+</body>
+</html>
