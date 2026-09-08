@@ -275,6 +275,13 @@ a {
   line-height: 1.55;
 }
 
+.card,
+#uploadForm {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
 /* Boutons */
 
 .button,
@@ -686,5 +693,37 @@ button:disabled,
 
   .moderation-actions {
     grid-template-columns: 1fr;
+  }
+  .preview-container {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 18px;
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.preview-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 420px;
+  margin: 0 auto;
+  border-radius: 12px;
+  object-fit: contain;
+  object-position: center;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 600px) {
+  .preview-container {
+    padding: 10px;
+  }
+
+  .preview-image {
+    max-height: 60vh;
   }
 }
