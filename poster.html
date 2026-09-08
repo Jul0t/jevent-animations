@@ -15,7 +15,165 @@
 
   <title>Envoyer une image — JEvent</title>
 
-  <link rel="stylesheet" href="\assets\styles.css">
+  <link rel="stylesheet" href="/assets/styles.css">
+
+  <style>
+    /*
+     * Ces règles sont placées directement dans la page pour
+     * garantir que l’aperçu ne déborde jamais de sa carte.
+     */
+
+    .upload-card-main {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .upload-form {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .preview-section {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      margin-top: 20px;
+    }
+
+    .preview-section[hidden] {
+      display: none;
+    }
+
+    .preview-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /*
+     * Le cadre prend la largeur disponible, mais sa hauteur
+     * s’adapte à l’image au lieu de lui imposer une taille.
+     */
+    .preview-frame {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      padding: 14px;
+      overflow: hidden;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background:
+        linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.025) 25%,
+          transparent 25%,
+          transparent 75%,
+          rgba(255, 255, 255, 0.025) 75%
+        ),
+        linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.025) 25%,
+          transparent 25%,
+          transparent 75%,
+          rgba(255, 255, 255, 0.025) 75%
+        ),
+        rgba(0, 0, 0, 0.32);
+      background-position: 0 0, 10px 10px;
+      background-size: 20px 20px;
+    }
+
+    /*
+     * L’image conserve ses proportions.
+     * Elle ne peut dépasser ni la largeur de la carte,
+     * ni 70 % de la hauteur de l’écran.
+     */
+    .preview-frame .preview-image {
+      display: block !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      height: auto !important;
+      max-height: 70vh !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      border-radius: 10px;
+      object-fit: contain !important;
+      object-position: center !important;
+    }
+
+    .selected-file {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 14px;
+      padding: 13px 15px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .selected-file-information {
+      min-width: 0;
+    }
+
+    .selected-file-name {
+      display: block;
+      overflow: hidden;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .selected-file-size {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .remove-file-button {
+      width: auto;
+      min-height: 38px;
+      margin: 0;
+      padding: 8px 12px;
+      color: #fecdd3;
+      background: rgba(225, 29, 72, 0.13);
+      box-shadow: none;
+    }
+
+    .remove-file-button:hover:not(:disabled) {
+      background: rgba(225, 29, 72, 0.23);
+      box-shadow: none;
+    }
+
+    @media (max-width: 600px) {
+      .preview-frame {
+        padding: 8px;
+      }
+
+      .preview-frame .preview-image {
+        max-height: 60vh !important;
+      }
+
+      .selected-file {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .remove-file-button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -26,13 +184,15 @@
       <a class="brand" href="/">
         <span class="brand-logo">
           <img
-            src="\assets\jevent_logo.png"
+            src="/assets/logo.png"
             alt="Logo du JEvent"
           >
         </span>
 
         <span class="brand-text">
-          <span class="brand-name">JEvent</span>
+          <span class="brand-name">
+            JEvent
+          </span>
 
           <span class="brand-subtitle">
             Live caritatif • Créatures communautaires
@@ -48,7 +208,7 @@
     </header>
 
     <main>
-      <!-- Présentation -->
+      <!-- Introduction -->
       <section class="hero">
         <span class="hero-badge">
           Envoi d’image
@@ -66,15 +226,15 @@
         </p>
       </section>
 
-      <!-- Formulaire d'envoi -->
-      <section class="card">
+      <!-- Formulaire -->
+      <section class="card upload-card-main">
         <div class="card-header">
           <div>
             <h2>Proposer une image</h2>
 
             <p class="card-description">
-              Chaque image envoyée réserve un crédit jusqu’à
-              la décision de l’équipe de modération.
+              Formats acceptés : JPEG, PNG et WebP.
+              Taille maximale : 10 Mo.
             </p>
           </div>
         </div>
@@ -84,7 +244,10 @@
           <strong id="credits">…</strong>
         </div>
 
-        <form id="uploadForm">
+        <form
+          id="uploadForm"
+          class="upload-form"
+        >
           <label
             id="dropZone"
             class="drop-zone"
@@ -101,11 +264,8 @@
               Sélectionner une image
             </strong>
 
-            <span
-              id="fileName"
-              class="file-name"
-            >
-              JPEG, PNG ou WebP — 10 Mo maximum
+            <span class="file-name">
+              Clique ici pour parcourir tes fichiers
             </span>
 
             <input
@@ -117,16 +277,51 @@
             >
           </label>
 
-          <!-- Prévisualisation locale -->
-            <div id="previewSection" hidden>
-              <p class="preview-title-outside">
-                Aperçu avant envoi
-              </p>
-            
-              <div class="preview-container">
-                <img id="preview" class="preview-image" alt="Aperçu de l’image sélectionnée">
-              </div>
+          <!-- Informations sur le fichier -->
+          <div
+            id="selectedFile"
+            class="selected-file"
+            hidden
+          >
+            <div class="selected-file-information">
+              <span
+                id="selectedFileName"
+                class="selected-file-name"
+              ></span>
+
+              <span
+                id="selectedFileSize"
+                class="selected-file-size"
+              ></span>
             </div>
+
+            <button
+              id="removeFileButton"
+              class="remove-file-button"
+              type="button"
+            >
+              Retirer
+            </button>
+          </div>
+
+          <!-- Aperçu complet -->
+          <div
+            id="previewSection"
+            class="preview-section"
+            hidden
+          >
+            <p class="preview-title">
+              Aperçu complet avant envoi
+            </p>
+
+            <div class="preview-frame">
+              <img
+                id="preview"
+                class="preview-image"
+                alt="Aperçu complet de l’image sélectionnée"
+              >
+            </div>
+          </div>
 
           <button
             id="submitButton"
@@ -145,14 +340,15 @@
         ></p>
       </section>
 
-      <!-- Historique des images -->
+      <!-- Historique -->
       <section class="card">
         <div class="card-header">
           <div>
             <h2>Mes images</h2>
 
             <p class="card-description">
-              Consulte ici le statut de tes images.
+              Retrouve ici toutes les images que tu as
+              proposées et leur statut.
             </p>
           </div>
 
@@ -193,17 +389,14 @@
     const dropZone =
       document.querySelector("#dropZone");
 
-    const fileName =
-      document.querySelector("#fileName");
-    
-    const previewContainer =
-      document.querySelector("#previewSection");
-
-    const preview =
-      document.querySelector("#preview");
-
     const credits =
       document.querySelector("#credits");
+
+    const submitButton =
+      document.querySelector("#submitButton");
+
+    const refreshButton =
+      document.querySelector("#refreshButton");
 
     const message =
       document.querySelector("#message");
@@ -211,11 +404,23 @@
     const uploads =
       document.querySelector("#uploads");
 
-    const submitButton =
-      document.querySelector("#submitButton");
+    const selectedFile =
+      document.querySelector("#selectedFile");
 
-    const refreshButton =
-      document.querySelector("#refreshButton");
+    const selectedFileName =
+      document.querySelector("#selectedFileName");
+
+    const selectedFileSize =
+      document.querySelector("#selectedFileSize");
+
+    const removeFileButton =
+      document.querySelector("#removeFileButton");
+
+    const previewSection =
+      document.querySelector("#previewSection");
+
+    const preview =
+      document.querySelector("#preview");
 
     const allowedTypes = new Set([
       "image/jpeg",
@@ -227,6 +432,7 @@
       10 * 1024 * 1024;
 
     let canUpload = false;
+    let uploadInProgress = false;
     let previewUrl = null;
 
     function showMessage(text, type = "info") {
@@ -238,39 +444,6 @@
     function hideMessage() {
       message.textContent = "";
       message.className = "message";
-    }
-
-    function setLoading(loading) {
-      submitButton.disabled =
-        loading || !canUpload;
-
-      input.disabled =
-        loading || !canUpload;
-
-      refreshButton.disabled = loading;
-
-      submitButton.textContent = loading
-        ? "Envoi en cours…"
-        : "Envoyer pour modération";
-    }
-
-    function setUploadAccess(allowed) {
-      canUpload = allowed;
-
-      input.disabled = !allowed;
-      submitButton.disabled = !allowed;
-
-      dropZone.classList.toggle(
-        "disabled",
-        !allowed
-      );
-
-      if (!allowed) {
-        showMessage(
-          "Tu dois avoir au moins un crédit disponible pour envoyer une image.",
-          "error"
-        );
-      }
     }
 
     async function api(path, options = {}) {
@@ -285,11 +458,10 @@
       const contentType =
         response.headers.get("Content-Type") ?? "";
 
-      let data = {};
-
-      if (contentType.includes("application/json")) {
-        data = await response.json();
-      }
+      const data =
+        contentType.includes("application/json")
+          ? await response.json()
+          : {};
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -325,39 +497,45 @@
     }
 
     function getStatusLabel(status) {
-      const labels = {
+      return {
         pending: "En attente de modération",
         approved: "Acceptée",
         rejected: "Refusée"
-      };
-
-      return labels[status] ?? status;
+      }[status] ?? status;
     }
 
-    function removePreview() {
+    function updateControls() {
+      const disabled =
+        !canUpload || uploadInProgress;
+
+      input.disabled = disabled;
+      submitButton.disabled = disabled;
+
+      dropZone.classList.toggle(
+        "disabled",
+        disabled
+      );
+
+      submitButton.textContent =
+        uploadInProgress
+          ? "Envoi en cours…"
+          : "Envoyer pour modération";
+    }
+
+    function clearSelectedFile() {
+      input.value = "";
+
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
         previewUrl = null;
       }
 
       preview.removeAttribute("src");
-      previewContainer.hidden = true;
+      previewSection.hidden = true;
+      selectedFile.hidden = true;
 
-      fileName.textContent =
-        "JPEG, PNG ou WebP — 10 Mo maximum";
-    }
-
-    function displayPreview(file) {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-
-      previewUrl = URL.createObjectURL(file);
-      preview.src = previewUrl;
-      previewContainer.hidden = false;
-
-      fileName.textContent =
-        `${file.name} — ${formatFileSize(file.size)}`;
+      selectedFileName.textContent = "";
+      selectedFileSize.textContent = "";
     }
 
     function validateFile(file) {
@@ -377,16 +555,45 @@
       }
     }
 
+    function displaySelectedFile(file) {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      previewUrl = URL.createObjectURL(file);
+
+      selectedFileName.textContent = file.name;
+      selectedFileSize.textContent =
+        formatFileSize(file.size);
+
+      selectedFile.hidden = false;
+
+      /*
+       * Le navigateur redimensionne seulement l'affichage.
+       * Le fichier original envoyé au serveur reste inchangé.
+       */
+      preview.onload = () => {
+        previewSection.hidden = false;
+      };
+
+      preview.onerror = () => {
+        clearSelectedFile();
+
+        showMessage(
+          "Impossible d’afficher cette image.",
+          "error"
+        );
+      };
+
+      preview.src = previewUrl;
+    }
+
     function createUploadCard(upload) {
       const article =
         document.createElement("article");
 
       article.className = "upload-card";
 
-      /*
-       * Les images refusées sont supprimées du stockage.
-       * On ne tente donc pas de les afficher.
-       */
       if (upload.status !== "rejected") {
         const image =
           document.createElement("img");
@@ -418,18 +625,14 @@
       status.textContent =
         getStatusLabel(upload.status);
 
-      const information =
+      const size =
         document.createElement("p");
 
-      information.className = "upload-metadata";
-      information.textContent =
+      size.className = "upload-metadata";
+      size.textContent =
         formatFileSize(upload.fileSize);
 
-      details.append(
-        name,
-        status,
-        information
-      );
+      details.append(name, status, size);
 
       if (upload.moderationNote) {
         const note =
@@ -443,6 +646,7 @@
       }
 
       article.append(details);
+
       return article;
     }
 
@@ -453,12 +657,15 @@
       credits.textContent =
         account.creditsAvailable;
 
-      /*
-       * Le backend vérifie aussi les images en attente.
-       * L'interface affiche canUpload, puis le backend
-       * effectue la vérification définitive à l'envoi.
-       */
-      setUploadAccess(account.canUpload);
+      canUpload = account.canUpload;
+      updateControls();
+
+      if (!canUpload) {
+        showMessage(
+          "Tu dois avoir au moins un crédit disponible pour envoyer une image.",
+          "error"
+        );
+      }
 
       return account;
     }
@@ -469,7 +676,7 @@
 
       uploads.replaceChildren();
 
-      if (result.uploads.length === 0) {
+      if (!result.uploads?.length) {
         const empty =
           document.createElement("p");
 
@@ -503,17 +710,6 @@
           error.message,
           "error"
         );
-
-        uploads.replaceChildren();
-
-        const errorElement =
-          document.createElement("p");
-
-        errorElement.className = "empty";
-        errorElement.textContent =
-          "Impossible de charger tes images.";
-
-        uploads.append(errorElement);
       } finally {
         refreshButton.disabled = false;
       }
@@ -527,22 +723,29 @@
         const file = input.files[0];
 
         if (!file) {
-          removePreview();
+          clearSelectedFile();
           return;
         }
 
         try {
           validateFile(file);
-          displayPreview(file);
+          displaySelectedFile(file);
         } catch (error) {
-          input.value = "";
-          removePreview();
+          clearSelectedFile();
 
           showMessage(
             error.message,
             "error"
           );
         }
+      }
+    );
+
+    removeFileButton.addEventListener(
+      "click",
+      () => {
+        clearSelectedFile();
+        hideMessage();
       }
     );
 
@@ -554,7 +757,7 @@
 
         if (!canUpload) {
           showMessage(
-            "Tu n’as pas de crédit disponible.",
+            "Tu n’as aucun crédit disponible.",
             "error"
           );
           return;
@@ -583,7 +786,8 @@
         const body = new FormData();
         body.append("image", file);
 
-        setLoading(true);
+        uploadInProgress = true;
+        updateControls();
 
         showMessage(
           "Envoi de l’image en cours…",
@@ -596,8 +800,7 @@
             body
           });
 
-          form.reset();
-          removePreview();
+          clearSelectedFile();
 
           showMessage(
             "Image envoyée ! Elle est maintenant en attente de modération.",
@@ -614,7 +817,8 @@
             "error"
           );
         } finally {
-          setLoading(false);
+          uploadInProgress = false;
+          updateControls();
         }
       }
     );
@@ -624,21 +828,6 @@
       loadPage
     );
 
-    loadPage();
-
-    /*
-     * Actualisation automatique pour afficher
-     * rapidement la décision de modération.
-     */
-    setInterval(() => {
-      Promise.all([
-        loadAccount(),
-        loadUploads()
-      ]).catch(() => {
-        // On conserve les données déjà affichées.
-      });
-    }, 15000);
-
     window.addEventListener(
       "beforeunload",
       () => {
@@ -647,7 +836,15 @@
         }
       }
     );
+
+    loadPage();
+
+    setInterval(() => {
+      Promise.all([
+        loadAccount(),
+        loadUploads()
+      ]).catch(() => {});
+    }, 15000);
   </script>
 </body>
-  
 </html>
