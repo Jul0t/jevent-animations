@@ -15,7 +15,7 @@
 
   <title>Modération des images — JEvent</title>
 
-  <link rel="stylesheet" href="\assets\styles.css">
+  <link rel="stylesheet" href="/assets/styles.css">
 
   <style>
     /*
@@ -388,7 +388,7 @@
       <a class="brand" href="/">
         <span class="brand-logo">
           <img
-            src="\assets\logo.png"
+            src="/assets/jevent_logo.png"
             alt="Logo du JEvent"
           >
         </span>
@@ -425,4 +425,694 @@
         <h1>
           Images en attente de
           <em>validation</em>
-        </h
+        </h1>
+
+        <p>
+          Vérifie chaque proposition avant qu’elle puisse
+          être utilisée par le mod Minecraft. Clique sur une
+          image pour l’afficher en grand.
+        </p>
+      </section>
+
+      <!-- Liste -->
+      <section class="card">
+        <div class="moderation-toolbar">
+          <p
+            id="counter"
+            class="moderation-counter"
+          >
+            Chargement des images…
+          </p>
+
+          <button
+            id="refreshButton"
+            class="secondary"
+            type="button"
+          >
+            Actualiser
+          </button>
+        </div>
+
+        <p
+          id="message"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+        <div
+          id="list"
+          class="moderation-list"
+        >
+          <p class="loading-placeholder">
+            Chargement des images en attente…
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      JEvent — Panel réservé à l’équipe de modération
+    </footer>
+  </div>
+
+  <!-- Fenêtre d'agrandissement -->
+  <div
+    id="imageModal"
+    class="image-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Aperçu de l’image"
+    hidden
+  >
+    <div
+      id="imageModalContent"
+      class="image-modal-content"
+    >
+      <button
+        id="imageModalClose"
+        class="image-modal-close"
+        type="button"
+        aria-label="Réduire et fermer l’image"
+        title="Réduire"
+      >
+        ×
+      </button>
+
+      <img
+        id="imageModalPicture"
+        class="image-modal-picture"
+        alt="Image affichée en grand"
+      >
+
+      <p
+        id="imageModalCaption"
+        class="image-modal-caption"
+      ></p>
+    </div>
+  </div>
+
+  <script>
+    const API = "https://api.jevent.julot.fr";
+
+    const list =
+      document.querySelector("#list");
+
+    const counter =
+      document.querySelector("#counter");
+
+    const message =
+      document.querySelector("#message");
+
+    const refreshButton =
+      document.querySelector("#refreshButton");
+
+    const imageModal =
+      document.querySelector("#imageModal");
+
+    const imageModalContent =
+      document.querySelector("#imageModalContent");
+
+    const imageModalPicture =
+      document.querySelector("#imageModalPicture");
+
+    const imageModalCaption =
+      document.querySelector("#imageModalCaption");
+
+    const imageModalClose =
+      document.querySelector("#imageModalClose");
+
+    let loading = false;
+    let automaticRefreshTimer = null;
+
+    function showMessage(text, type = "info") {
+      message.textContent = text;
+      message.className =
+        `message visible ${type}`;
+    }
+
+    function hideMessage() {
+      message.textContent = "";
+      message.className = "message";
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(
+        `${API}${path}`,
+        {
+          ...options,
+          credentials: "include",
+          headers: {
+            ...(options.body
+              ? {
+                  "Content-Type":
+                    "application/json"
+                }
+              : {}),
+            ...(options.headers ?? {})
+          }
+        }
+      );
+
+      const contentType =
+        response.headers.get("Content-Type") ?? "";
+
+      const data =
+        contentType.includes("application/json")
+          ? await response.json()
+          : {};
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          location.href = "/";
+          throw new Error(
+            "Connexion Twitch requise."
+          );
+        }
+
+        if (response.status === 403) {
+          throw new Error(
+            "Tu ne possèdes pas les droits de modération."
+          );
+        }
+
+        throw new Error(
+          data.error ??
+          `Erreur HTTP ${response.status}`
+        );
+      }
+
+      return data;
+    }
+
+    function formatFileSize(size) {
+      const numericSize = Number(size);
+
+      if (!Number.isFinite(numericSize)) {
+        return "Taille inconnue";
+      }
+
+      if (numericSize < 1024) {
+        return `${numericSize} octets`;
+      }
+
+      if (numericSize < 1024 * 1024) {
+        return `${(
+          numericSize / 1024
+        ).toFixed(1)} Ko`;
+      }
+
+      return `${(
+        numericSize /
+        1024 /
+        1024
+      ).toFixed(2)} Mo`;
+    }
+
+    function formatDate(value) {
+      if (!value) {
+        return "Date inconnue";
+      }
+
+      /*
+       * Les dates SQLite peuvent être sans indication UTC.
+       */
+      const normalizedValue =
+        value.includes("T")
+          ? value
+          : `${value.replace(" ", "T")}Z`;
+
+      const date = new Date(normalizedValue);
+
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+
+      return new Intl.DateTimeFormat(
+        "fr-FR",
+        {
+          dateStyle: "short",
+          timeStyle: "short"
+        }
+      ).format(date);
+    }
+
+    function openImageModal(
+      imageUrl,
+      alternativeText,
+      caption
+    ) {
+      imageModalPicture.src = imageUrl;
+      imageModalPicture.alt = alternativeText;
+      imageModalCaption.textContent = caption;
+
+      imageModal.hidden = false;
+      document.body.classList.add("modal-open");
+
+      imageModalClose.focus();
+    }
+
+    function closeImageModal() {
+      if (imageModal.hidden) {
+        return;
+      }
+
+      imageModal.hidden = true;
+      imageModalPicture.removeAttribute("src");
+      imageModalCaption.textContent = "";
+
+      document.body.classList.remove("modal-open");
+    }
+
+    async function moderate(
+      upload,
+      decision,
+      note,
+      approveButton,
+      rejectButton
+    ) {
+      const label =
+        decision === "approve"
+          ? "accepter"
+          : "refuser";
+
+      const confirmed = confirm(
+        `Voulez-vous vraiment ${label} cette image ?`
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      approveButton.disabled = true;
+      rejectButton.disabled = true;
+
+      hideMessage();
+
+      try {
+        await api(
+          `/api/moderation/uploads/` +
+          `${encodeURIComponent(upload.id)}/` +
+          decision,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              note: note.trim()
+            })
+          }
+        );
+
+        showMessage(
+          decision === "approve"
+            ? "L’image a été acceptée."
+            : "L’image a été refusée.",
+          "success"
+        );
+
+        await loadUploads();
+      } catch (error) {
+        approveButton.disabled = false;
+        rejectButton.disabled = false;
+
+        showMessage(
+          error.message,
+          "error"
+        );
+      }
+    }
+
+    function createInformationItem(
+      label,
+      value,
+      title = value
+    ) {
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "file-information-item";
+
+      const labelElement =
+        document.createElement("span");
+
+      labelElement.className =
+        "file-information-label";
+
+      labelElement.textContent = label;
+
+      const valueElement =
+        document.createElement("span");
+
+      valueElement.className =
+        "file-information-value";
+
+      valueElement.textContent = value;
+      valueElement.title = title;
+
+      item.append(
+        labelElement,
+        valueElement
+      );
+
+      return item;
+    }
+
+    function createModerationCard(upload) {
+      const article =
+        document.createElement("article");
+
+      article.className =
+        "moderation-card";
+
+      /*
+       * Partie gauche : image cliquable.
+       */
+      const imageButton =
+        document.createElement("button");
+
+      imageButton.type = "button";
+      imageButton.className =
+        "moderation-image-button";
+
+      imageButton.title =
+        "Cliquer pour afficher l’image en grand";
+
+      imageButton.setAttribute(
+        "aria-label",
+        `Afficher en grand l’image ${upload.originalName}`
+      );
+
+      const image =
+        document.createElement("img");
+
+      image.className = "moderation-image";
+      image.src = upload.imageUrl;
+      image.alt = upload.originalName;
+      image.loading = "lazy";
+
+      const zoomIndicator =
+        document.createElement("span");
+
+      zoomIndicator.className =
+        "zoom-indicator";
+
+      zoomIndicator.textContent =
+        "🔍 Agrandir";
+
+      imageButton.append(
+        image,
+        zoomIndicator
+      );
+
+      imageButton.addEventListener(
+        "click",
+        () => {
+          openImageModal(
+            upload.imageUrl,
+            upload.originalName,
+            `${upload.originalName} — ` +
+            `envoyée par ${upload.twitchDisplayName}`
+          );
+        }
+      );
+
+      /*
+       * Partie droite : informations et actions.
+       */
+      const information =
+        document.createElement("div");
+
+      information.className =
+        "moderation-information";
+
+      const title =
+        document.createElement("h2");
+
+      title.textContent =
+        upload.twitchDisplayName ||
+        upload.twitchLogin ||
+        "Utilisateur Twitch";
+
+      const twitchLogin =
+        document.createElement("p");
+
+      twitchLogin.className =
+        "twitch-login";
+
+      twitchLogin.textContent =
+        upload.twitchLogin
+          ? `@${upload.twitchLogin}`
+          : "Compte Twitch inconnu";
+
+      const fileInformation =
+        document.createElement("div");
+
+      fileInformation.className =
+        "file-information";
+
+      fileInformation.append(
+        createInformationItem(
+          "Fichier",
+          upload.originalName
+        ),
+
+        createInformationItem(
+          "Taille",
+          formatFileSize(upload.fileSize)
+        ),
+
+        createInformationItem(
+          "Envoyée le",
+          formatDate(upload.createdAt)
+        )
+      );
+
+      const noteLabel =
+        document.createElement("label");
+
+      noteLabel.className =
+        "moderation-note-label";
+
+      noteLabel.textContent =
+        "Note pour le participant";
+
+      const note =
+        document.createElement("textarea");
+
+      note.className =
+        "moderation-note";
+
+      note.maxLength = 500;
+
+      note.placeholder =
+        "Facultatif — explique la raison d’un refus ou laisse un commentaire.";
+
+      const actions =
+        document.createElement("div");
+
+      actions.className =
+        "moderation-actions";
+
+      const approveButton =
+        document.createElement("button");
+
+      approveButton.type = "button";
+      approveButton.textContent =
+        "✓ Accepter";
+
+      const rejectButton =
+        document.createElement("button");
+
+      rejectButton.type = "button";
+      rejectButton.className =
+        "reject-button";
+
+      rejectButton.textContent =
+        "× Refuser";
+
+      approveButton.addEventListener(
+        "click",
+        () => {
+          moderate(
+            upload,
+            "approve",
+            note.value,
+            approveButton,
+            rejectButton
+          );
+        }
+      );
+
+      rejectButton.addEventListener(
+        "click",
+        () => {
+          moderate(
+            upload,
+            "reject",
+            note.value,
+            approveButton,
+            rejectButton
+          );
+        }
+      );
+
+      actions.append(
+        approveButton,
+        rejectButton
+      );
+
+      information.append(
+        title,
+        twitchLogin,
+        fileInformation,
+        noteLabel,
+        note,
+        actions
+      );
+
+      article.append(
+        imageButton,
+        information
+      );
+
+      return article;
+    }
+
+    async function loadUploads() {
+      if (loading) {
+        return;
+      }
+
+      loading = true;
+      refreshButton.disabled = true;
+      refreshButton.textContent =
+        "Actualisation…";
+
+      try {
+        const result = await api(
+          "/api/moderation/uploads?status=pending"
+        );
+
+        const pendingUploads =
+          result.uploads ?? [];
+
+        list.replaceChildren();
+
+        if (pendingUploads.length === 0) {
+          counter.textContent =
+            "Aucune image en attente.";
+
+          const empty =
+            document.createElement("p");
+
+          empty.className = "empty";
+          empty.textContent =
+            "Toutes les images ont été modérées.";
+
+          list.append(empty);
+          return;
+        }
+
+        const counterText =
+          document.createDocumentFragment();
+
+        counterText.append(
+          `${pendingUploads.length} image`
+        );
+
+        if (pendingUploads.length > 1) {
+          counterText.append("s");
+        }
+
+        counterText.append(
+          " en attente de validation."
+        );
+
+        counter.replaceChildren(counterText);
+
+        for (const upload of pendingUploads) {
+          list.append(
+            createModerationCard(upload)
+          );
+        }
+      } catch (error) {
+        counter.textContent =
+          "Impossible de charger la modération.";
+
+        list.replaceChildren();
+
+        const errorElement =
+          document.createElement("p");
+
+        errorElement.className = "empty";
+        errorElement.textContent =
+          error.message;
+
+        list.append(errorElement);
+
+        showMessage(
+          error.message,
+          "error"
+        );
+      } finally {
+        loading = false;
+        refreshButton.disabled = false;
+        refreshButton.textContent =
+          "Actualiser";
+      }
+    }
+
+    refreshButton.addEventListener(
+      "click",
+      () => {
+        hideMessage();
+        loadUploads();
+      }
+    );
+
+    imageModalClose.addEventListener(
+      "click",
+      closeImageModal
+    );
+
+    /*
+     * Ferme l'aperçu si le modérateur clique
+     * sur le fond sombre, mais pas sur l'image.
+     */
+    imageModal.addEventListener(
+      "click",
+      event => {
+        if (
+          event.target === imageModal ||
+          event.target === imageModalContent
+        ) {
+          closeImageModal();
+        }
+      }
+    );
+
+    document.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key === "Escape" &&
+          !imageModal.hidden
+        ) {
+          closeImageModal();
+        }
+      }
+    );
+
+    loadUploads();
+
+    /*
+     * Recherche automatiquement les nouvelles
+     * propositions toutes les dix secondes.
+     */
+    automaticRefreshTimer = setInterval(
+      loadUploads,
+      10000
+    );
+  </script>
+</body>
+</html>
