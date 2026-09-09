@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Statistiques globales — JEvent</title>
+
+  <link rel="stylesheet" href="/assets/styles.css">
+
+  <style>
+    [hidden] {
+      display: none !important;
+    }
+
+    .global-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+    }
+
+    .global-stat {
+      padding: 19px;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .global-stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .global-stat strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--green-light);
+      font-size: 1.6rem;
+    }
+
+    .ranking {
+      display: grid;
+      gap: 12px;
+    }
+
+    .ranking-row {
+      display: grid;
+      grid-template-columns: 54px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .ranking-position {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--green-soft);
+      color: var(--green-light);
+      font-weight: 900;
+    }
+
+    .ranking-user {
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ranking-user img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .ranking-value {
+      color: var(--green-light);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .emote-picture {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="site-header">
+      <a class="brand" href="/">
+        <span class="brand-logo">
+          <img
+            src="/assets/jevent_logo.png"
+            alt="Logo JEvent"
+          >
+        </span>
+
+        <span>
+          <span class="brand-subtitle">
+            Statistiques globales
+          </span>
+        </span>
+      </a>
+
+      <nav class="navigation">
+        <a class="nav-link" href="/">
+          Interactions
+        </a>
+
+        <a
+          class="nav-link"
+          href="/compte.html"
+        >
+          Mon compte
+        </a>
+
+        <a
+          class="nav-link"
+          href="/moderation.html"
+        >
+          Modération
+        </a>
+      </nav>
+    </header>
+
+    <main id="app" hidden>
+      <section class="hero">
+        <span class="hero-badge">
+          Panel modérateur
+        </span>
+
+        <h1>
+          Statistiques de
+          <em>l’événement</em>
+        </h1>
+
+        <p class="card-description">
+          Vue d’ensemble des dons et de l’activité du chat.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Dons</h2>
+
+        <div class="global-grid">
+          <div class="global-stat">
+            <span>Nombre total de dons</span>
+            <strong id="donationCount">0</strong>
+          </div>
+
+          <div class="global-stat">
+            <span>Montant total</span>
+            <strong id="donationAmount">0 €</strong>
+          </div>
+
+          <div class="global-stat">
+            <span>Donateurs identifiés</span>
+            <strong id="donorCount">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Top 3 des donateurs</h2>
+        <div id="topDonors" class="ranking"></div>
+      </section>
+
+      <section class="card">
+        <h2>Activité du chat</h2>
+
+        <div class="global-grid">
+          <div class="global-stat">
+            <span>Messages</span>
+            <strong id="totalMessages">0</strong>
+          </div>
+
+          <div class="global-stat">
+            <span>Emotes</span>
+            <strong id="totalEmotes">0</strong>
+          </div>
+
+          <div class="global-stat">
+            <span>Mots écrits</span>
+            <strong id="totalWords">0</strong>
+          </div>
+
+          <div class="global-stat">
+            <span>Participants uniques</span>
+            <strong id="totalChatters">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Top 3 des emotes</h2>
+        <div id="topEmotes" class="ranking"></div>
+      </section>
+
+      <section class="card">
+        <h2>Top 3 du chat</h2>
+        <div id="topChatters" class="ranking"></div>
+      </section>
+    </main>
+
+    <p id="message" class="message"></p>
+  </div>
+
+  <script>
+    const API = "https://api.jevent.julot.fr";
+
+    const app =
+      document.querySelector("#app");
+
+    const message =
+      document.querySelector("#message");
+
+    async function api(path) {
+      const response = await fetch(
+        `${API}${path}`,
+        {
+          credentials: "include"
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (
+          response.status === 401 ||
+          response.status === 403
+        ) {
+          location.replace("/compte.html");
+        }
+
+        throw new Error(
+          data.error ?? "Erreur."
+        );
+      }
+
+      return data;
+    }
+
+    function number(value) {
+      return Number(value ?? 0)
+        .toLocaleString("fr-FR");
+    }
+
+    function renderRanking(
+      container,
+      items,
+      options
+    ) {
+      container.replaceChildren();
+
+      if (!items.length) {
+        const empty =
+          document.createElement("p");
+
+        empty.className = "empty";
+        empty.textContent =
+          "Aucune donnée pour le moment.";
+
+        container.append(empty);
+        return;
+      }
+
+      items.forEach((item, index) => {
+        const row =
+          document.createElement("article");
+
+        row.className = "ranking-row";
+
+        const position =
+          document.createElement("span");
+
+        position.className =
+          "ranking-position";
+
+        position.textContent =
+          ["🥇", "🥈", "🥉"][index] ??
+          String(index + 1);
+
+        const user =
+          document.createElement("div");
+
+        user.className = "ranking-user";
+
+        if (options.image(item)) {
+          const image =
+            document.createElement("img");
+
+          image.src = options.image(item);
+          image.alt = options.label(item);
+
+          if (options.emote) {
+            image.className = "emote-picture";
+          }
+
+          user.append(image);
+        }
+
+        const label =
+          document.createElement("strong");
+
+        label.textContent =
+          options.label(item);
+
+        user.append(label);
+
+        const value =
+          document.createElement("span");
+
+        value.className =
+          "ranking-value";
+
+        value.textContent =
+          options.value(item);
+
+        row.append(
+          position,
+          user,
+          value
+        );
+
+        container.append(row);
+      });
+    }
+
+    async function start() {
+      const account =
+        await api("/api/account");
+
+      if (!account.isModerator) {
+        location.replace("/compte.html");
+        return;
+      }
+
+      const data =
+        await api(
+          "/api/moderation/statistics"
+        );
+
+      document.querySelector(
+        "#donationCount"
+      ).textContent =
+        number(data.donations.count);
+
+      document.querySelector(
+        "#donationAmount"
+      ).textContent =
+        `${(
+          data.donations.totalAmountCents / 100
+        ).toFixed(2).replace(".", ",")} €`;
+
+      document.querySelector(
+        "#donorCount"
+      ).textContent =
+        number(data.donations.donorCount);
+
+      document.querySelector(
+        "#totalMessages"
+      ).textContent =
+        number(data.chat.messageCount);
+
+      document.querySelector(
+        "#totalEmotes"
+      ).textContent =
+        number(data.chat.emoteCount);
+
+      document.querySelector(
+        "#totalWords"
+      ).textContent =
+        number(data.chat.wordCount);
+
+      document.querySelector(
+        "#totalChatters"
+      ).textContent =
+        number(data.chat.chatterCount);
+
+      renderRanking(
+        document.querySelector("#topDonors"),
+        data.donations.topDonors,
+        {
+          label: item =>
+            item.displayName || item.login,
+
+          image: item =>
+            item.profileImageUrl,
+
+          value: item =>
+            `${(
+              item.amountCents / 100
+            ).toFixed(2)} €`
+        }
+      );
+
+      renderRanking(
+        document.querySelector("#topEmotes"),
+        data.chat.topEmotes,
+        {
+          label: item => item.name,
+          image: item => item.imageUrl,
+          value: item =>
+            `${number(item.useCount)}×`,
+          emote: true
+        }
+      );
+
+      renderRanking(
+        document.querySelector("#topChatters"),
+        data.chat.topChatters,
+        {
+          label: item =>
+            item.displayName || item.login,
+
+          image: () => null,
+
+          value: item =>
+            `${number(item.messageCount)} messages`
+        }
+      );
+
+      app.hidden = false;
+    }
+
+    start().catch(error => {
+      message.textContent = error.message;
+      message.className =
+        "message visible error";
+    });
+  </script>
+</body>
+</html>

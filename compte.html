@@ -2,9 +2,107 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
   <title>Mon compte — JEvent</title>
+
   <link rel="stylesheet" href="/assets/styles.css">
+
+  <style>
+    .account-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+    }
+
+    .statistics-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+    }
+
+    .statistic-card {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .statistic-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .statistic-value {
+      display: block;
+      margin-top: 8px;
+      color: var(--green-light);
+      font-size: 1.55rem;
+      font-weight: 900;
+    }
+
+    .favorite-emote {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 14px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: rgba(0, 178, 55, 0.07);
+    }
+
+    .favorite-emote img,
+    .emote-row img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .emote-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .emote-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .emote-row strong {
+      flex: 1;
+    }
+
+    .download-preview {
+      display: block;
+      width: 100%;
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #071109;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 800px) {
+      .account-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -12,14 +110,24 @@
     <header class="site-header">
       <a class="brand" href="/">
         <span class="brand-logo">
-          <img src="/assets/jevent_logo.png" alt="Logo JEvent">
+          <img
+            src="/assets/jevent_logo.png"
+            alt="Logo JEvent"
+          >
         </span>
-        <span class="brand-subtitle">Mon compte</span>
+
+        <span>
+          <span class="brand-subtitle">
+            Espace participant
+          </span>
+        </span>
       </a>
 
       <nav class="navigation">
-        <a class="nav-link" href="/">Interactions</a>
-        
+        <a class="nav-link" href="/">
+          Interactions
+        </a>
+
         <a
           id="moderationLink"
           class="nav-link"
@@ -28,17 +136,32 @@
         >
           Modération
         </a>
+
+        <a
+          id="eventStatisticsLink"
+          class="nav-link"
+          href="/statistiques.html"
+          hidden
+        >
+          Statistiques globales
+        </a>
       </nav>
     </header>
 
     <main>
       <section class="card">
         <div class="profile">
-          <img id="avatar" class="profile-avatar" alt="Avatar Twitch">
+          <img
+            id="avatar"
+            class="profile-avatar"
+            alt="Avatar Twitch"
+          >
 
           <div>
             <div class="profile-title-line">
-              <h2 id="displayName">Chargement…</h2>
+              <h2 id="displayName">
+                Chargement…
+              </h2>
 
               <span
                 id="moderatorBadge"
@@ -48,55 +171,219 @@
               </span>
             </div>
 
-            <p id="login" class="card-description"></p>
+            <p
+              id="login"
+              class="card-description"
+            ></p>
           </div>
         </div>
       </section>
 
+      <div class="account-grid">
+        <section class="card">
+          <h2>Mes crédits</h2>
+
+          <div class="stats-grid">
+            <div class="stat">
+              <span class="stat-label">
+                Total donné
+              </span>
+
+              <strong
+                id="totalDonated"
+                class="stat-value"
+              >
+                0 €
+              </strong>
+            </div>
+
+            <div class="stat">
+              <span class="stat-label">
+                Crédits obtenus
+              </span>
+
+              <strong
+                id="creditsGranted"
+                class="stat-value"
+              >
+                0
+              </strong>
+            </div>
+
+            <div class="stat">
+              <span class="stat-label">
+                Crédits utilisés
+              </span>
+
+              <strong
+                id="creditsUsed"
+                class="stat-value"
+              >
+                0
+              </strong>
+            </div>
+
+            <div class="stat">
+              <span class="stat-label">
+                Crédits disponibles
+              </span>
+
+              <strong
+                id="creditsAvailable"
+                class="stat-value green"
+              >
+                0
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Code de don</h2>
+
+          <p class="card-description">
+            Ajoute ce code au message de ton prochain don.
+          </p>
+
+          <button id="createCode">
+            Générer mon code
+          </button>
+
+          <div id="codeBox" hidden>
+            <code
+              id="claimCode"
+              class="claim-code"
+            ></code>
+
+            <button
+              id="copyCode"
+              class="secondary full-width"
+            >
+              Copier le code
+            </button>
+          </div>
+        </section>
+      </div>
+
       <section class="card">
-        <h2>Mes crédits</h2>
+        <div class="card-header">
+          <div>
+            <h2>Mes statistiques du live</h2>
 
-        <div class="stats-grid">
-          <div class="stat">
-            <span class="stat-label">Total donné</span>
-            <strong id="totalDonated" class="stat-value">0 €</strong>
+            <p class="card-description">
+              Les données commencent à être comptées lorsque
+              Streamer.bot est connecté.
+            </p>
           </div>
 
-          <div class="stat">
-            <span class="stat-label">Obtenus</span>
-            <strong id="granted" class="stat-value">0</strong>
-          </div>
-
-          <div class="stat">
-            <span class="stat-label">Utilisés</span>
-            <strong id="used" class="stat-value">0</strong>
-          </div>
-
-          <div class="stat">
-            <span class="stat-label">Disponibles</span>
-            <strong id="available" class="stat-value green">0</strong>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Code de don</h2>
-
-        <p class="card-description">
-          Place ce code dans le message de ton prochain don.
-        </p>
-
-        <button id="createCode">Générer mon code</button>
-
-        <div id="codeBox" hidden>
-          <code id="code" class="claim-code"></code>
-          <button id="copyCode" class="secondary full-width">
-            Copier le code
+          <button
+            id="downloadStatistics"
+            class="secondary"
+          >
+            Télécharger ma carte
           </button>
         </div>
+
+        <div class="statistics-grid">
+          <div class="statistic-card">
+            <span class="statistic-label">
+              Messages envoyés
+            </span>
+
+            <strong
+              id="messageCount"
+              class="statistic-value"
+            >
+              0
+            </strong>
+          </div>
+
+          <div class="statistic-card">
+            <span class="statistic-label">
+              Emotes envoyées
+            </span>
+
+            <strong
+              id="emoteCount"
+              class="statistic-value"
+            >
+              0
+            </strong>
+          </div>
+
+          <div class="statistic-card">
+            <span class="statistic-label">
+              Mots écrits
+            </span>
+
+            <strong
+              id="wordCount"
+              class="statistic-value"
+            >
+              0
+            </strong>
+          </div>
+
+          <div class="statistic-card">
+            <span class="statistic-label">
+              Jours actifs
+            </span>
+
+            <strong
+              id="activeDays"
+              class="statistic-value"
+            >
+              0
+            </strong>
+          </div>
+
+          <div class="statistic-card">
+            <span class="statistic-label">
+              Taille moyenne d’un message
+            </span>
+
+            <strong
+              id="averageMessageLength"
+              class="statistic-value"
+            >
+              0
+            </strong>
+          </div>
+
+          <div class="statistic-card">
+            <span class="statistic-label">
+              Heure favorite
+            </span>
+
+            <strong
+              id="favoriteHour"
+              class="statistic-value"
+            >
+              —
+            </strong>
+          </div>
+        </div>
+
+        <div id="favoriteEmote"></div>
+
+        <h3>Top 5 de mes emotes</h3>
+        <div id="topEmotes" class="emote-list"></div>
+
+        <canvas
+          id="statisticsCanvas"
+          class="download-preview"
+          width="1200"
+          height="630"
+        ></canvas>
       </section>
 
-      <button id="logout" class="secondary">Se déconnecter</button>
+      <button
+        id="logout"
+        class="secondary"
+      >
+        Se déconnecter
+      </button>
+
       <p id="message" class="message"></p>
     </main>
   </div>
@@ -104,116 +391,628 @@
   <script>
     const API = "https://api.jevent.julot.fr";
 
-    const avatar = document.querySelector("#avatar");
-    const displayName = document.querySelector("#displayName");
-    const login = document.querySelector("#login");
+    const state = {
+      account: null,
+      statistics: null
+    };
+
+    const avatar =
+      document.querySelector("#avatar");
+
+    const displayName =
+      document.querySelector("#displayName");
+
+    const login =
+      document.querySelector("#login");
+
     const moderatorBadge =
       document.querySelector("#moderatorBadge");
+
     const moderationLink =
       document.querySelector("#moderationLink");
 
-    const totalDonated = document.querySelector("#totalDonated");
-    const granted = document.querySelector("#granted");
-    const used = document.querySelector("#used");
-    const available = document.querySelector("#available");
-    const createCode = document.querySelector("#createCode");
-    const codeBox = document.querySelector("#codeBox");
-    const code = document.querySelector("#code");
-    const copyCode = document.querySelector("#copyCode");
-    const logout = document.querySelector("#logout");
-    const message = document.querySelector("#message");
+    const eventStatisticsLink =
+      document.querySelector("#eventStatisticsLink");
+
+    const totalDonated =
+      document.querySelector("#totalDonated");
+
+    const creditsGranted =
+      document.querySelector("#creditsGranted");
+
+    const creditsUsed =
+      document.querySelector("#creditsUsed");
+
+    const creditsAvailable =
+      document.querySelector("#creditsAvailable");
+
+    const createCode =
+      document.querySelector("#createCode");
+
+    const codeBox =
+      document.querySelector("#codeBox");
+
+    const claimCode =
+      document.querySelector("#claimCode");
+
+    const copyCode =
+      document.querySelector("#copyCode");
+
+    const messageCount =
+      document.querySelector("#messageCount");
+
+    const emoteCount =
+      document.querySelector("#emoteCount");
+
+    const wordCount =
+      document.querySelector("#wordCount");
+
+    const activeDays =
+      document.querySelector("#activeDays");
+
+    const averageMessageLength =
+      document.querySelector(
+        "#averageMessageLength"
+      );
+
+    const favoriteHour =
+      document.querySelector("#favoriteHour");
+
+    const favoriteEmote =
+      document.querySelector("#favoriteEmote");
+
+    const topEmotes =
+      document.querySelector("#topEmotes");
+
+    const canvas =
+      document.querySelector("#statisticsCanvas");
+
+    const downloadStatistics =
+      document.querySelector(
+        "#downloadStatistics"
+      );
+
+    const logout =
+      document.querySelector("#logout");
+
+    const message =
+      document.querySelector("#message");
 
     async function api(path, options = {}) {
-      const response = await fetch(`${API}${path}`, {
-        ...options,
-        credentials: "include",
-        headers: {
-          ...(options.body
-            ? { "Content-Type": "application/json" }
-            : {})
+      const response = await fetch(
+        `${API}${path}`,
+        {
+          ...options,
+          credentials: "include",
+          headers: {
+            ...(options.body
+              ? {
+                  "Content-Type":
+                    "application/json"
+                }
+              : {})
+          }
         }
-      });
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
         if (response.status === 401) {
-          location.href = "/";
+          location.replace("/");
         }
 
-        throw new Error(data.error ?? "Erreur.");
+        throw new Error(
+          data.error ?? "Une erreur est survenue."
+        );
       }
 
       return data;
     }
 
-    function showCode(value) {
-      code.textContent = value;
+    function showCode(code) {
+      claimCode.textContent = code;
       codeBox.hidden = false;
       createCode.hidden = true;
     }
 
-    async function load() {
-      const data = await api("/api/account");
+    function renderAccount(account) {
+      avatar.src =
+        account.user.profileImageUrl || "";
 
-      avatar.src = data.user.profileImageUrl || "";
-      displayName.textContent = data.user.displayName;
-      login.textContent = `@${data.user.login}`;
+      displayName.textContent =
+        account.user.displayName;
+
+      login.textContent =
+        `@${account.user.login}`;
 
       totalDonated.textContent =
-        `${(data.totalDonatedCents / 100)
-          .toFixed(2)
-          .replace(".", ",")} €`;
+        `${(
+          account.totalDonatedCents / 100
+        ).toFixed(2).replace(".", ",")} €`;
 
-      granted.textContent = data.creditsGranted;
-      used.textContent = data.creditsUsed;
-      available.textContent = data.creditsAvailable;
+      creditsGranted.textContent =
+        account.creditsGranted;
+
+      creditsUsed.textContent =
+        account.creditsUsed;
+
+      creditsAvailable.textContent =
+        account.creditsAvailable;
 
       moderatorBadge.classList.toggle(
         "visible",
-        data.isModerator
+        account.isModerator
       );
 
-      moderationLink.hidden = !data.isModerator;
+      moderationLink.hidden =
+        !account.isModerator;
 
-      const pending = data.claims.find(
-        item => item.status === "pending"
-      );
+      eventStatisticsLink.hidden =
+        !account.isModerator;
 
-      if (pending) {
-        showCode(pending.code);
+      const pendingClaim =
+        account.claims.find(
+          claim => claim.status === "pending"
+        );
+
+      if (pendingClaim) {
+        showCode(pendingClaim.code);
       }
     }
 
-    createCode.onclick = async () => {
-      try {
-        const data = await api("/api/claims", {
-          method: "POST"
-        });
+    function renderStatistics(data) {
+      const statistics = data.statistics;
 
-        showCode(data.code);
-      } catch (error) {
-        message.textContent = error.message;
-        message.className = "message visible error";
+      messageCount.textContent =
+        statistics.messageCount.toLocaleString("fr-FR");
+
+      emoteCount.textContent =
+        statistics.emoteCount.toLocaleString("fr-FR");
+
+      wordCount.textContent =
+        statistics.wordCount.toLocaleString("fr-FR");
+
+      activeDays.textContent =
+        statistics.activeDays.toLocaleString("fr-FR");
+
+      averageMessageLength.textContent =
+        `${statistics.averageMessageLength} caractères`;
+
+      favoriteHour.textContent =
+        statistics.favoriteHour === null
+          ? "—"
+          : `${String(
+              statistics.favoriteHour
+            ).padStart(2, "0")} h`;
+
+      favoriteEmote.replaceChildren();
+
+      if (statistics.favoriteEmote) {
+        const wrapper =
+          document.createElement("div");
+
+        wrapper.className = "favorite-emote";
+
+        if (
+          statistics.favoriteEmote.imageUrl
+        ) {
+          const image =
+            document.createElement("img");
+
+          image.src =
+            statistics.favoriteEmote.imageUrl;
+
+          image.alt =
+            statistics.favoriteEmote.name;
+
+          wrapper.append(image);
+        }
+
+        const information =
+          document.createElement("div");
+
+        const title =
+          document.createElement("strong");
+
+        title.textContent =
+          `Emote favorite : ` +
+          statistics.favoriteEmote.name;
+
+        const count =
+          document.createElement("p");
+
+        count.className =
+          "card-description";
+
+        count.textContent =
+          `${statistics.favoriteEmote.useCount} utilisation(s)`;
+
+        information.append(title, count);
+        wrapper.append(information);
+        favoriteEmote.append(wrapper);
       }
+
+      topEmotes.replaceChildren();
+
+      if (!statistics.topEmotes.length) {
+        const empty =
+          document.createElement("p");
+
+        empty.className = "empty";
+        empty.textContent =
+          "Aucune emote enregistrée pour le moment.";
+
+        topEmotes.append(empty);
+      }
+
+      for (
+        const emote
+        of statistics.topEmotes
+      ) {
+        const row =
+          document.createElement("div");
+
+        row.className = "emote-row";
+
+        if (emote.imageUrl) {
+          const image =
+            document.createElement("img");
+
+          image.src = emote.imageUrl;
+          image.alt = emote.name;
+          row.append(image);
+        }
+
+        const name =
+          document.createElement("strong");
+
+        name.textContent = emote.name;
+
+        const count =
+          document.createElement("span");
+
+        count.textContent =
+          `${emote.useCount}×`;
+
+        row.append(name, count);
+        topEmotes.append(row);
+      }
+    }
+
+    function roundRectangle(
+      context,
+      x,
+      y,
+      width,
+      height,
+      radius
+    ) {
+      const r = Math.min(
+        radius,
+        width / 2,
+        height / 2
+      );
+
+      context.beginPath();
+      context.roundRect(
+        x,
+        y,
+        width,
+        height,
+        r
+      );
+
+      context.fill();
+    }
+
+    function drawStatisticCard(
+      context,
+      x,
+      y,
+      width,
+      label,
+      value
+    ) {
+      context.fillStyle =
+        "rgba(255,255,255,0.07)";
+
+      roundRectangle(
+        context,
+        x,
+        y,
+        width,
+        120,
+        24
+      );
+
+      context.fillStyle = "#a8bbad";
+      context.font =
+        "600 22px Arial";
+
+      context.fillText(
+        label,
+        x + 24,
+        y + 36
+      );
+
+      context.fillStyle = "#27df62";
+      context.font =
+        "900 42px Arial";
+
+      context.fillText(
+        value,
+        x + 24,
+        y + 91
+      );
+    }
+
+    async function loadImage(url) {
+      if (!url) {
+        return null;
+      }
+
+      return new Promise(resolve => {
+        const image = new Image();
+
+        /*
+         * Certaines URLs d’emotes pourraient ne pas
+         * autoriser leur utilisation dans un Canvas.
+         */
+        image.crossOrigin = "anonymous";
+
+        image.onload = () => resolve(image);
+        image.onerror = () => resolve(null);
+        image.src = url;
+      });
+    }
+
+    async function drawStatisticsCard() {
+      if (
+        !state.account ||
+        !state.statistics
+      ) {
+        return;
+      }
+
+      const context =
+        canvas.getContext("2d");
+
+      const account = state.account;
+      const statistics =
+        state.statistics.statistics;
+
+      const background =
+        context.createLinearGradient(
+          0,
+          0,
+          1200,
+          630
+        );
+
+      background.addColorStop(
+        0,
+        "#031408"
+      );
+
+      background.addColorStop(
+        0.55,
+        "#082912"
+      );
+
+      background.addColorStop(
+        1,
+        "#00B237"
+      );
+
+      context.fillStyle = background;
+      context.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      context.fillStyle =
+        "rgba(255,255,255,0.04)";
+
+      context.beginPath();
+      context.arc(
+        1050,
+        80,
+        280,
+        0,
+        Math.PI * 2
+      );
+      context.fill();
+
+      context.fillStyle = "#ffffff";
+      context.font = "900 48px Arial";
+      context.fillText(
+        "MES STATS JEVENT",
+        60,
+        75
+      );
+
+      context.fillStyle = "#95f4b3";
+      context.font = "700 25px Arial";
+      context.fillText(
+        account.user.displayName,
+        60,
+        117
+      );
+
+      drawStatisticCard(
+        context,
+        60,
+        165,
+        315,
+        "MESSAGES",
+        statistics.messageCount.toLocaleString("fr-FR")
+      );
+
+      drawStatisticCard(
+        context,
+        400,
+        165,
+        315,
+        "EMOTES",
+        statistics.emoteCount.toLocaleString("fr-FR")
+      );
+
+      drawStatisticCard(
+        context,
+        740,
+        165,
+        315,
+        "MOTS ÉCRITS",
+        statistics.wordCount.toLocaleString("fr-FR")
+      );
+
+      drawStatisticCard(
+        context,
+        60,
+        315,
+        315,
+        "JOURS ACTIFS",
+        statistics.activeDays.toLocaleString("fr-FR")
+      );
+
+      drawStatisticCard(
+        context,
+        400,
+        315,
+        315,
+        "MESSAGE MOYEN",
+        `${statistics.averageMessageLength} car.`
+      );
+
+      drawStatisticCard(
+        context,
+        740,
+        315,
+        315,
+        "TOTAL DONNÉ",
+        `${(
+          account.totalDonatedCents / 100
+        ).toFixed(2)} €`
+      );
+
+      context.fillStyle =
+        "rgba(0,0,0,0.25)";
+
+      roundRectangle(
+        context,
+        60,
+        475,
+        995,
+        90,
+        24
+      );
+
+      context.fillStyle = "#ffffff";
+      context.font = "700 25px Arial";
+
+      const favorite =
+        statistics.favoriteEmote;
+
+      context.fillText(
+        favorite
+          ? `Emote favorite : ${favorite.name} — ${favorite.useCount}×`
+          : "Emote favorite : aucune pour le moment",
+        90,
+        530
+      );
+
+      context.fillStyle =
+        "rgba(255,255,255,0.72)";
+
+      context.font = "600 19px Arial";
+
+      context.fillText(
+        "jevent.julot.fr",
+        60,
+        602
+      );
+    }
+
+    createCode.onclick = async () => {
+      const data = await api(
+        "/api/claims",
+        { method: "POST" }
+      );
+
+      showCode(data.code);
     };
 
     copyCode.onclick = async () => {
-      await navigator.clipboard.writeText(code.textContent);
-      copyCode.textContent = "Code copié !";
+      await navigator.clipboard.writeText(
+        claimCode.textContent
+      );
+
+      copyCode.textContent =
+        "Code copié !";
     };
+
+    downloadStatistics.onclick =
+      async () => {
+        await drawStatisticsCard();
+
+        canvas.toBlob(blob => {
+          if (!blob) {
+            return;
+          }
+
+          const url =
+            URL.createObjectURL(blob);
+
+          const link =
+            document.createElement("a");
+
+          link.href = url;
+          link.download =
+            `stats-jevent-${state.account.user.login}.png`;
+
+          link.click();
+
+          setTimeout(
+            () => URL.revokeObjectURL(url),
+            1000
+          );
+        }, "image/png");
+      };
 
     logout.onclick = async () => {
-      await api("/api/auth/logout", { method: "POST" });
-      location.href = "/";
+      await api(
+        "/api/auth/logout",
+        { method: "POST" }
+      );
+
+      location.replace("/");
     };
 
-    load().catch(error => {
-      message.textContent = error.message;
-      message.className = "message visible error";
-    });
+    async function start() {
+      const [
+        account,
+        statistics
+      ] = await Promise.all([
+        api("/api/account"),
+        api("/api/account/statistics")
+      ]);
 
-    setInterval(() => load().catch(() => {}), 5000);
+      state.account = account;
+      state.statistics = statistics;
+
+      renderAccount(account);
+      renderStatistics(statistics);
+      await drawStatisticsCard();
+    }
+
+    start().catch(error => {
+      message.textContent = error.message;
+      message.className =
+        "message visible error";
+    });
   </script>
 </body>
 </html>
