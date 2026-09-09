@@ -41,6 +41,101 @@
                 sans-serif;
         }
 
+        .participant-search-results {
+            display: grid;
+            gap: 7px;
+
+            max-height: 250px;
+            margin-top: 10px;
+            padding: 8px;
+
+            overflow-y: auto;
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            background: #09130c;
+        }
+
+        .participant-search-result {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            width: 100%;
+            padding: 10px;
+
+            border: 1px solid transparent;
+            border-radius: 10px;
+
+            background: rgba(255, 255, 255, 0.035);
+            color: var(--text);
+
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .participant-search-result:hover {
+            border-color: var(--green);
+            background: rgba(0, 178, 55, 0.1);
+        }
+
+        .participant-search-result:disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
+
+        .selected-participants {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 13px;
+        }
+
+        .selected-participant {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 9px;
+
+            border: 1px solid rgba(0, 178, 55, 0.4);
+
+            border-radius: 999px;
+
+            background: rgba(0, 178, 55, 0.11);
+        }
+
+        .selected-participant img,
+        .participant-search-result img {
+            width: 34px;
+            height: 34px;
+
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .selected-participant button {
+            display: grid;
+            width: 24px;
+            height: 24px;
+            place-items: center;
+
+            padding: 0;
+            border-radius: 50%;
+
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+
+            cursor: pointer;
+        }
+
+        .selected-participant button:hover {
+            background: rgba(255, 104, 125, 0.22);
+            color: #ffc5ce;
+        }
+
+
         * {
             box-sizing: border-box;
         }
@@ -928,72 +1023,92 @@
                                     </div>
 
                                     <div class="field full">
-                                        <span class="field-label">
-                                            Créateurs participants
-                                        </span>
+                                        <label for="primaryCreatorInput">
+                                            Programme du créateur
+                                        </label>
 
-                                        <div id="participantList" class="participant-list"></div>
+                                        <select id="primaryCreatorInput" class="select" required>
+                                            <option value="">
+                                                Sélectionner un créateur
+                                            </option>
+                                        </select>
+
+                                        <span class="field-help">
+                                            L’activité apparaîtra dans le programme de ce créateur.
+                                            Ce champ est automatiquement verrouillé pour un créateur
+                                            qui gère uniquement sa propre chaîne.
+                                        </span>
                                     </div>
 
                                     <div class="field full">
-                                        <span class="field-label">
-                                            Chaîne principale
-                                        </span>
-
-                                        <div id="primaryOptions" class="primary-options"></div>
-
-                                        <span class="field-help">
-                                            La chaîne principale doit faire partie des
-                                            participants.
-                                        </span>
-                                    </div>
-
-                                    <div id="cancelReasonField" class="field full" hidden>
-                                        <label for="cancelReasonInput">
-                                            Motif de l’annulation
+                                        <label for="participantSearchInput">
+                                            Créateurs participants
                                         </label>
 
-                                        <textarea id="cancelReasonInput" class="textarea" maxlength="1000"></textarea>
+                                        <input id="participantSearchInput" class="input" type="search"
+                                            autocomplete="off"
+                                            placeholder="Rechercher un invité par nom ou login Twitch…">
+
+                                        <span class="field-help">
+                                            Facultatif : ajoute uniquement les autres créateurs présents
+                                            dans cette activité. Le propriétaire du programme est ajouté
+                                            automatiquement.
+                                        </span>
+
+                                        <div id="participantSearchResults" class="participant-search-results" hidden>
+                                        </div>
+
+                                        <div id="selectedParticipants" class="selected-participants"></div>
                                     </div>
+
                                 </div>
 
-                                <div id="conflictNotice" class="notice warning" hidden>
-                                    <strong>
-                                        Conflits d’horaires détectés
-                                    </strong>
-
-                                    <div id="conflictList" class="conflict-list"></div>
-
-                                    <label>
-                                        <input id="overrideConflictsInput" type="checkbox">
-
-                                        Ignorer ces conflits
+                                <div id="cancelReasonField" class="field full" hidden>
+                                    <label for="cancelReasonInput">
+                                        Motif de l’annulation
                                     </label>
+
+                                    <textarea id="cancelReasonInput" class="textarea" maxlength="1000"></textarea>
                                 </div>
-
-                                <div class="action-row">
-                                    <button id="saveButton" class="button" type="submit">
-                                        Enregistrer
-                                    </button>
-
-                                    <button id="resetButton" class="button secondary" type="button">
-                                        Réinitialiser
-                                    </button>
-
-                                    <button id="cancelEntryButton" class="button warning" type="button" hidden>
-                                        Annuler l’activité
-                                    </button>
-
-                                    <button id="deleteEntryButton" class="button danger" type="button" hidden>
-                                        Supprimer définitivement
-                                    </button>
-                                </div>
-                            </form>
                         </div>
-                    </section>
+
+                        <div id="conflictNotice" class="notice warning" hidden>
+                            <strong>
+                                Conflits d’horaires détectés
+                            </strong>
+
+                            <div id="conflictList" class="conflict-list"></div>
+
+                            <label>
+                                <input id="overrideConflictsInput" type="checkbox">
+
+                                Ignorer ces conflits
+                            </label>
+                        </div>
+
+                        <div class="action-row">
+                            <button id="saveButton" class="button" type="submit">
+                                Enregistrer
+                            </button>
+
+                            <button id="resetButton" class="button secondary" type="button">
+                                Réinitialiser
+                            </button>
+
+                            <button id="cancelEntryButton" class="button warning" type="button" hidden>
+                                Annuler l’activité
+                            </button>
+
+                            <button id="deleteEntryButton" class="button danger" type="button" hidden>
+                                Supprimer définitivement
+                            </button>
+                        </div>
+                        </form>
                 </div>
+                </section>
             </div>
-        </main>
+    </div>
+    </main>
     </div>
 
     <div id="pageMessage" class="page-message" role="status" aria-live="polite" hidden></div>
@@ -1053,11 +1168,17 @@
         const externalUrlInput =
             document.querySelector("#externalUrlInput");
 
-        const participantList =
-            document.querySelector("#participantList");
+        const primaryCreatorInput =
+            document.querySelector("#primaryCreatorInput");
 
-        const primaryOptions =
-            document.querySelector("#primaryOptions");
+        const participantSearchInput =
+            document.querySelector("#participantSearchInput");
+
+        const participantSearchResults =
+            document.querySelector("#participantSearchResults");
+
+        const selectedParticipants =
+            document.querySelector("#selectedParticipants");
 
         const cancelReasonField =
             document.querySelector("#cancelReasonField");
@@ -1072,9 +1193,7 @@
             document.querySelector("#conflictList");
 
         const overrideConflictsInput =
-            document.querySelector(
-                "#overrideConflictsInput"
-            );
+            document.querySelector("#overrideConflictsInput");
 
         const saveButton =
             document.querySelector("#saveButton");
@@ -1096,6 +1215,13 @@
         let entries = Array.of();
         let selectedEntry = null;
         let messageTimeout = null;
+        let selectedGuestIds = Array.of();
+
+        renderPrimaryCreators();
+        renderSelectedGuests();
+
+        participantSearchInput.value = "";
+        participantSearchResults.hidden = true;
 
         const STATUS_LABELS = {
             draft: "Brouillon",
@@ -1255,112 +1381,253 @@
                 status !== "cancelled";
         }
 
-        function selectedParticipantIds() {
-            return Array.from(
-                participantList.querySelectorAll(
-                    'input[type="checkbox"]:checked'
-                )
-            ).map(input => Number(input.value));
+        function getPrimaryCreatorId() {
+            const creatorId = Number(
+                primaryCreatorInput.value
+            );
+
+            return creatorId || null;
         }
 
-        function selectedPrimaryCreatorId() {
-            const selected =
-                primaryOptions.querySelector(
-                    'input[type="radio"]:checked'
-                );
-
-            return selected
-                ? Number(selected.value)
-                : null;
+        function getSelectedGuestIds() {
+            return Array.from(selectedGuestIds);
         }
 
-        function updatePrimaryOptions() {
-            const selectedIds =
-                selectedParticipantIds();
+        function getCreatorById(creatorId) {
+            return creators.find(
+                creator =>
+                    Number(creator.id) ===
+                    Number(creatorId)
+            ) ?? null;
+        }
 
-            const previousPrimary =
-                selectedPrimaryCreatorId();
+        function getManageablePrimaryCreators() {
+            if (
+                currentUser.permissions.isSuperAdmin ||
+                currentUser.permissions
+                    .isGlobalModerator
+            ) {
+                return creators;
+            }
 
-            primaryOptions.replaceChildren();
+            const manageableIds =
+                currentUser.creatorMemberships
+                    .filter(
+                        membership =>
+                            Array.of(
+                                "owner",
+                                "delegate"
+                            ).includes(
+                                membership.memberRole
+                            )
+                    )
+                    .map(
+                        membership =>
+                            Number(membership.creatorId)
+                    );
 
-            for (const creator of creators) {
-                if (!selectedIds.includes(creator.id)) {
+            return creators.filter(
+                creator =>
+                    manageableIds.includes(
+                        Number(creator.id)
+                    )
+            );
+        }
+
+        function renderPrimaryCreators(
+            selectedCreatorId = null
+        ) {
+            const manageableCreators =
+                getManageablePrimaryCreators();
+
+            primaryCreatorInput.replaceChildren();
+
+            const placeholder =
+                document.createElement("option");
+
+            placeholder.value = "";
+            placeholder.textContent =
+                "Sélectionner un créateur";
+
+            primaryCreatorInput.append(placeholder);
+
+            for (const creator of manageableCreators) {
+                const option =
+                    document.createElement("option");
+
+                option.value = String(creator.id);
+                option.textContent =
+                    creator.twitchDisplayName;
+
+                primaryCreatorInput.append(option);
+            }
+
+            if (selectedCreatorId) {
+                primaryCreatorInput.value =
+                    String(selectedCreatorId);
+            } else if (
+                manageableCreators.length === 1
+            ) {
+                primaryCreatorInput.value =
+                    String(manageableCreators[0].id);
+            }
+
+            primaryCreatorInput.disabled =
+                manageableCreators.length === 1;
+        }
+
+        function renderSelectedGuests() {
+            selectedParticipants.replaceChildren();
+
+            if (selectedGuestIds.length === 0) {
+                const empty =
+                    document.createElement("span");
+
+                empty.className = "field-help";
+                empty.textContent =
+                    "Aucun participant supplémentaire.";
+
+                selectedParticipants.append(empty);
+                return;
+            }
+
+            for (const creatorId of selectedGuestIds) {
+                const creator =
+                    getCreatorById(creatorId);
+
+                if (!creator) {
                     continue;
                 }
 
-                const label =
-                    document.createElement("label");
-
-                label.className = "primary-option";
-
-                const input =
-                    document.createElement("input");
-
-                input.type = "radio";
-                input.name = "primaryCreator";
-                input.value = String(creator.id);
-
-                if (
-                    previousPrimary === creator.id ||
-                    (
-                        !previousPrimary &&
-                        selectedIds[0] === creator.id
-                    )
-                ) {
-                    input.checked = true;
-                }
-
-                const text =
+                const chip =
                     document.createElement("span");
 
-                text.textContent =
-                    creator.twitchDisplayName;
-
-                label.append(input, text);
-                primaryOptions.append(label);
-            }
-        }
-
-        function renderParticipants(
-            selectedIds = Array.of(),
-            primaryId = null
-        ) {
-            participantList.replaceChildren();
-
-            for (const creator of creators) {
-                const label =
-                    document.createElement("label");
-
-                label.className =
-                    selectedIds.includes(creator.id)
-                        ? "participant-option selected"
-                        : "participant-option";
-
-                const checkbox =
-                    document.createElement("input");
-
-                checkbox.type = "checkbox";
-                checkbox.value = String(creator.id);
-                checkbox.checked =
-                    selectedIds.includes(creator.id);
-
-                checkbox.addEventListener(
-                    "change",
-                    () => {
-                        label.classList.toggle(
-                            "selected",
-                            checkbox.checked
-                        );
-
-                        updatePrimaryOptions();
-                    }
-                );
+                chip.className =
+                    "selected-participant";
 
                 const avatar =
                     document.createElement("img");
 
-                avatar.className =
-                    "participant-avatar";
+                avatar.src =
+                    creator.twitchProfileImageUrl ||
+                    "/assets/jevent_logo.png";
+
+                avatar.alt = "";
+
+                const name =
+                    document.createElement("span");
+
+                name.textContent =
+                    creator.twitchDisplayName;
+
+                const removeButton =
+                    document.createElement("button");
+
+                removeButton.type = "button";
+                removeButton.textContent = "×";
+                removeButton.title =
+                    `Retirer ${creator.twitchDisplayName}`;
+
+                removeButton.addEventListener(
+                    "click",
+                    () => {
+                        selectedGuestIds =
+                            selectedGuestIds.filter(
+                                value =>
+                                    Number(value) !==
+                                    Number(creatorId)
+                            );
+
+                        renderSelectedGuests();
+                        renderParticipantSearch();
+                    }
+                );
+
+                chip.append(
+                    avatar,
+                    name,
+                    removeButton
+                );
+
+                selectedParticipants.append(chip);
+            }
+        }
+
+        function renderParticipantSearch() {
+            const search =
+                participantSearchInput.value
+                    .trim()
+                    .toLowerCase();
+
+            participantSearchResults
+                .replaceChildren();
+
+            if (!search) {
+                participantSearchResults.hidden =
+                    true;
+
+                return;
+            }
+
+            const primaryCreatorId =
+                getPrimaryCreatorId();
+
+            const matches = creators
+                .filter(
+                    creator =>
+                        Number(creator.id) !==
+                        Number(primaryCreatorId)
+                )
+                .filter(
+                    creator => {
+                        const searchable =
+                            Array.of(
+                                creator.twitchDisplayName,
+                                creator.twitchLogin
+                            )
+                                .join(" ")
+                                .toLowerCase();
+
+                        return searchable.includes(search);
+                    }
+                )
+                .slice(0, 8);
+
+            participantSearchResults.hidden =
+                false;
+
+            if (matches.length === 0) {
+                const empty =
+                    document.createElement("div");
+
+                empty.className = "field-help";
+                empty.textContent =
+                    "Aucun créateur trouvé.";
+
+                participantSearchResults.append(
+                    empty
+                );
+
+                return;
+            }
+
+            for (const creator of matches) {
+                const button =
+                    document.createElement("button");
+
+                button.type = "button";
+                button.className =
+                    "participant-search-result";
+
+                const alreadySelected =
+                    selectedGuestIds.includes(
+                        Number(creator.id)
+                    );
+
+                button.disabled = alreadySelected;
+
+                const avatar =
+                    document.createElement("img");
 
                 avatar.src =
                     creator.twitchProfileImageUrl ||
@@ -1371,50 +1638,35 @@
                 const identity =
                     document.createElement("span");
 
-                identity.style.minWidth = "0";
+                identity.textContent =
+                    `${creator.twitchDisplayName} ` +
+                    `(@${creator.twitchLogin})`;
 
-                const name =
-                    document.createElement("span");
+                button.append(avatar, identity);
 
-                name.className =
-                    "participant-name";
+                button.addEventListener(
+                    "click",
+                    () => {
+                        if (!alreadySelected) {
+                            selectedGuestIds.push(
+                                Number(creator.id)
+                            );
+                        }
 
-                name.textContent =
-                    creator.twitchDisplayName;
+                        participantSearchInput.value = "";
+                        participantSearchResults.hidden =
+                            true;
 
-                const login =
-                    document.createElement("span");
-
-                login.className =
-                    "participant-login";
-
-                login.textContent =
-                    `@${creator.twitchLogin}`;
-
-                identity.append(name, login);
-
-                label.append(
-                    checkbox,
-                    avatar,
-                    identity
+                        renderSelectedGuests();
+                    }
                 );
 
-                participantList.append(label);
-            }
-
-            updatePrimaryOptions();
-
-            if (primaryId) {
-                const primaryInput =
-                    primaryOptions.querySelector(
-                        `input[value="${primaryId}"]`
-                    );
-
-                if (primaryInput) {
-                    primaryInput.checked = true;
-                }
+                participantSearchResults.append(
+                    button
+                );
             }
         }
+
 
         function createEntryButton(entry) {
             const button =
@@ -1611,15 +1863,28 @@
             cancelReasonInput.value =
                 entry.cancelledReason ?? "";
 
-            const selectedIds =
-                entry.participants.map(
-                    participant => participant.id
-                );
+            const primaryCreatorId =
+                entry.primaryCreator?.id ?? null;
 
-            renderParticipants(
-                selectedIds,
-                entry.primaryCreator?.id
+            selectedGuestIds =
+                entry.participants
+                    .filter(
+                        participant =>
+                            !participant.primary
+                    )
+                    .map(
+                        participant =>
+                            Number(participant.id)
+                    );
+
+            renderPrimaryCreators(
+                primaryCreatorId
             );
+
+            renderSelectedGuests();
+
+            participantSearchInput.value = "";
+            participantSearchResults.hidden = true;
 
             updateFormStatus();
             resetConflicts();
@@ -1662,10 +1927,11 @@
                     null,
 
                 participantIds:
-                    selectedParticipantIds(),
+                    getSelectedGuestIds(),
 
                 primaryCreatorId:
-                    selectedPrimaryCreatorId(),
+                    getPrimaryCreatorId(),
+
 
                 cancelledReason:
                     cancelReasonInput.value.trim() ||
@@ -1774,11 +2040,9 @@
 
             const payload = buildPayload();
 
-            if (
-                payload.participantIds.length === 0
-            ) {
+            if (!payload.primaryCreatorId) {
                 showMessage(
-                    "Sélectionne au moins un créateur.",
+                    "Sélectionne le programme d’un créateur.",
                     "error"
                 );
 
@@ -1933,6 +2197,29 @@
                 );
             }
         }
+
+        participantSearchInput.addEventListener(
+            "input",
+            renderParticipantSearch
+        );
+
+        primaryCreatorInput.addEventListener(
+            "change",
+            () => {
+                const primaryCreatorId =
+                    getPrimaryCreatorId();
+
+                selectedGuestIds =
+                    selectedGuestIds.filter(
+                        creatorId =>
+                            Number(creatorId) !==
+                            Number(primaryCreatorId)
+                    );
+
+                renderSelectedGuests();
+                renderParticipantSearch();
+            }
+        );
 
         async function startApplication() {
             try {
