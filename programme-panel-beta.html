@@ -1,0 +1,2012 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="Gestion du programme du JEvent 26.">
+
+    <title>Gestion du programme — JEvent 26</title>
+
+    <style>
+        :root {
+            color-scheme: dark;
+
+            --background: #050b07;
+            --background-soft: #08110b;
+            --surface: rgba(15, 29, 19, 0.96);
+            --surface-light: rgba(24, 43, 29, 0.97);
+            --surface-hover: rgba(31, 56, 38, 0.98);
+            --border: rgba(255, 255, 255, 0.1);
+            --border-strong: rgba(255, 255, 255, 0.17);
+            --text: #f4fff7;
+            --muted: #a8b8ad;
+            --green: #00b237;
+            --green-light: #38dc69;
+            --yellow: #f7c948;
+            --red: #ff687d;
+            --blue: #67a9ff;
+            --shadow:
+                0 24px 70px rgba(0, 0, 0, 0.36);
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+
+            background:
+                radial-gradient(circle at 8% 0%,
+                    rgba(0, 178, 55, 0.21),
+                    transparent 34%),
+                linear-gradient(180deg,
+                    var(--background),
+                    var(--background-soft));
+
+            color: var(--text);
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible,
+        a:focus-visible {
+            outline: 3px solid rgba(56, 220, 105, 0.65);
+            outline-offset: 3px;
+        }
+
+        .container {
+            width: min(1450px,
+                    calc(100% - 32px));
+
+            margin: 0 auto;
+            padding: 24px 0 80px;
+        }
+
+        .site-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+
+            margin-bottom: 32px;
+            padding: 14px 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            display: block;
+            width: 68px;
+            height: 68px;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        .brand-subtitle {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        .navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .navigation a {
+            padding: 10px 14px;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 750;
+        }
+
+        .navigation a:hover {
+            border-color: var(--green);
+            background: rgba(0, 178, 55, 0.1);
+        }
+
+        .hero {
+            margin-bottom: 27px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            margin-bottom: 14px;
+            padding: 7px 11px;
+
+            border: 1px solid rgba(0, 178, 55, 0.45);
+
+            border-radius: 999px;
+
+            background: rgba(0, 178, 55, 0.1);
+            color: #92ffb2;
+
+            font-size: 0.8rem;
+            font-weight: 850;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow-dot {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 50%;
+            background: var(--green);
+
+            box-shadow:
+                0 0 16px rgba(0, 178, 55, 0.85);
+        }
+
+        .hero h1 {
+            margin: 0;
+
+            font-size: clamp(2.4rem,
+                    7vw,
+                    5rem);
+
+            line-height: 0.97;
+            letter-spacing: -0.06em;
+        }
+
+        .hero p {
+            max-width: 820px;
+            margin: 18px 0 0;
+
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+
+            margin-bottom: 22px;
+            padding: 15px;
+
+            border: 1px solid var(--border);
+            border-radius: 16px;
+
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .toolbar-information {
+            color: var(--muted);
+        }
+
+        .toolbar-information strong {
+            color: var(--text);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns:
+                minmax(280px, 390px) minmax(0, 1fr);
+
+            gap: 22px;
+            align-items: start;
+        }
+
+        .card {
+            overflow: hidden;
+
+            border: 1px solid var(--border);
+            border-radius: 21px;
+
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+
+            padding: 20px 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 {
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+
+        .card-header p {
+            margin: 7px 0 0;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .card-content {
+            padding: 22px;
+        }
+
+        .entry-list-card {
+            position: sticky;
+            top: 18px;
+        }
+
+        .entry-list {
+            display: grid;
+            gap: 10px;
+
+            max-height: 72vh;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .entry-button {
+            width: 100%;
+            padding: 14px;
+
+            border: 1px solid transparent;
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.035);
+            color: var(--text);
+
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .entry-button:hover {
+            border-color: rgba(0, 178, 55, 0.45);
+            background: rgba(0, 178, 55, 0.08);
+        }
+
+        .entry-button.active {
+            border-color: var(--green);
+            background: rgba(0, 178, 55, 0.14);
+        }
+
+        .entry-title {
+            display: block;
+            font-weight: 850;
+            line-height: 1.35;
+        }
+
+        .entry-time {
+            display: block;
+            margin-top: 6px;
+
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .entry-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+
+            margin-top: 11px;
+        }
+
+        .entry-participants {
+            overflow: hidden;
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .status {
+            display: inline-flex;
+            padding: 6px 10px;
+            border-radius: 999px;
+
+            font-size: 0.76rem;
+            font-weight: 850;
+        }
+
+        .status.draft {
+            background: rgba(103, 169, 255, 0.14);
+            color: #bdd8ff;
+        }
+
+        .status.published {
+            background: rgba(0, 178, 55, 0.14);
+            color: #95ffb4;
+        }
+
+        .status.cancelled {
+            background: rgba(255, 104, 125, 0.14);
+            color: #ffc3cd;
+        }
+
+        .count-badge {
+            display: grid;
+            min-width: 35px;
+            height: 35px;
+            place-items: center;
+
+            border-radius: 999px;
+
+            background: rgba(0, 178, 55, 0.15);
+            color: #98ffb6;
+
+            font-size: 0.86rem;
+            font-weight: 900;
+        }
+
+        .empty-state {
+            padding: 38px 20px;
+
+            color: var(--muted);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 17px;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label,
+        .field-label {
+            display: block;
+            margin-bottom: 8px;
+
+            font-weight: 800;
+        }
+
+        .field-help {
+            display: block;
+            margin-top: 7px;
+
+            color: var(--muted);
+            font-size: 0.82rem;
+            line-height: 1.45;
+        }
+
+        .input,
+        .select,
+        .textarea {
+            display: block;
+            width: 100%;
+
+            padding: 12px 14px;
+
+            border: 1px solid var(--border-strong);
+            border-radius: 11px;
+
+            background: var(--surface-light);
+            color: var(--text);
+        }
+
+        .textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .participant-list {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fill,
+                    minmax(210px, 1fr));
+
+            gap: 10px;
+        }
+
+        .participant-option {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            padding: 11px;
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+        }
+
+        .participant-option:hover {
+            border-color: var(--green);
+            background: rgba(0, 178, 55, 0.08);
+        }
+
+        .participant-option.selected {
+            border-color: var(--green);
+            background: rgba(0, 178, 55, 0.13);
+        }
+
+        .participant-option input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--green);
+        }
+
+        .participant-avatar {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 auto;
+
+            border-radius: 50%;
+            object-fit: cover;
+
+            background: var(--surface-light);
+        }
+
+        .participant-name {
+            overflow: hidden;
+            font-weight: 800;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .participant-login {
+            overflow: hidden;
+            margin-top: 3px;
+
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .primary-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .primary-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 12px;
+
+            border: 1px solid var(--border);
+            border-radius: 10px;
+
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+        }
+
+        .primary-option input {
+            accent-color: var(--green);
+        }
+
+        .notice {
+            margin-top: 18px;
+            padding: 14px 16px;
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            line-height: 1.55;
+        }
+
+        .notice.warning {
+            border-color: rgba(247, 201, 72, 0.35);
+            background: rgba(247, 201, 72, 0.09);
+            color: #ffe7a5;
+        }
+
+        .notice.error {
+            border-color: rgba(255, 104, 125, 0.35);
+            background: rgba(255, 104, 125, 0.09);
+            color: #ffc5ce;
+        }
+
+        .notice.success {
+            border-color: rgba(0, 178, 55, 0.35);
+            background: rgba(0, 178, 55, 0.1);
+            color: #9dffba;
+        }
+
+        .conflict-list {
+            display: grid;
+            gap: 9px;
+            margin-top: 12px;
+        }
+
+        .conflict-item {
+            padding: 11px;
+
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 11px;
+            margin-top: 22px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 44px;
+            padding: 11px 17px;
+
+            border: 0;
+            border-radius: 11px;
+
+            background: var(--green);
+            color: #001c08;
+
+            font-weight: 900;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .button:hover:not(:disabled) {
+            background: var(--green-light);
+        }
+
+        .button.secondary {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+        }
+
+        .button.secondary:hover:not(:disabled) {
+            border-color: var(--green);
+            background: rgba(0, 178, 55, 0.1);
+        }
+
+        .button.warning {
+            border: 1px solid rgba(247, 201, 72, 0.4);
+
+            background: rgba(247, 201, 72, 0.12);
+            color: #ffe7a5;
+        }
+
+        .button.danger {
+            border: 1px solid rgba(255, 104, 125, 0.4);
+
+            background: rgba(255, 104, 125, 0.12);
+            color: #ffc5ce;
+        }
+
+        .button:disabled {
+            cursor: not-allowed;
+            opacity: 0.48;
+        }
+
+        .loading {
+            display: grid;
+            min-height: 65vh;
+            place-items: center;
+
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 17px;
+
+            border: 4px solid rgba(255, 255, 255, 0.1);
+
+            border-top-color: var(--green);
+            border-radius: 50%;
+
+            animation: spin 800ms linear infinite;
+        }
+
+        .page-message {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 100;
+
+            width: min(430px,
+                    calc(100% - 40px));
+
+            padding: 15px 17px;
+
+            border: 1px solid var(--border);
+            border-radius: 13px;
+
+            background: #122017;
+            box-shadow: var(--shadow);
+
+            line-height: 1.5;
+        }
+
+        .page-message.success {
+            border-color: rgba(0, 178, 55, 0.5);
+            color: #a5ffbf;
+        }
+
+        .page-message.error {
+            border-color: rgba(255, 104, 125, 0.5);
+            color: #ffc3cd;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .entry-list-card {
+                position: static;
+            }
+
+            .entry-list {
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .container {
+                width: min(100% - 22px,
+                        1450px);
+            }
+
+            .site-header,
+            .toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .brand-logo {
+                width: 56px;
+                height: 56px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="site-header">
+            <a class="brand" href="/">
+                <img class="brand-logo" src="/assets/jevent_logo.png" alt="Logo du JEvent 26">
+
+                <span>
+                    <span class="brand-title">
+                        JEvent 26
+                    </span>
+
+                    <span class="brand-subtitle">
+                        Association Petits Princes
+                    </span>
+                </span>
+            </a>
+
+            <nav class="navigation" aria-label="Navigation principale">
+                <a href="/">Accueil</a>
+                <a href="/programme.html">Programme public</a>
+                <a href="/createur-panel-beta.html">
+                    Panel créateur
+                </a>
+            </nav>
+        </header>
+
+        <main>
+            <section id="loading" class="loading">
+                <div>
+                    <div class="spinner" aria-hidden="true"></div>
+
+                    <p>Chargement du programme…</p>
+                </div>
+            </section>
+
+            <div id="application" hidden>
+                <section class="hero">
+                    <div class="eyebrow">
+                        <span class="eyebrow-dot" aria-hidden="true"></span>
+
+                        Programme multi-créateurs
+                    </div>
+
+                    <h1>Gérer le programme</h1>
+
+                    <p>
+                        Crée et organise les activités du JEvent 26,
+                        du 25 octobre 2026 à 16 h au 28 octobre 2026
+                        à 4 h. Une même activité peut concerner
+                        plusieurs créateurs.
+                    </p>
+                </section>
+
+                <section class="toolbar">
+                    <div class="toolbar-information">
+                        <strong id="entryCount">0</strong>
+                        activité enregistrée
+                    </div>
+
+                    <button id="newEntryButton" class="button" type="button">
+                        Nouvelle activité
+                    </button>
+                </section>
+
+                <div class="layout">
+                    <aside class="card entry-list-card">
+                        <div class="card-header">
+                            <div>
+                                <h2>Activités</h2>
+
+                                <p>
+                                    Brouillons, publications et annulations.
+                                </p>
+                            </div>
+
+                            <span id="entryCountBadge" class="count-badge">
+                                0
+                            </span>
+                        </div>
+
+                        <div id="entryList" class="entry-list"></div>
+                    </aside>
+
+                    <section class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2 id="formTitle">
+                                    Nouvelle activité
+                                </h2>
+
+                                <p id="formSubtitle">
+                                    Renseigne les informations du programme.
+                                </p>
+                            </div>
+
+                            <span id="formStatus" class="status draft">
+                                Brouillon
+                            </span>
+                        </div>
+
+                        <div class="card-content">
+                            <form id="programForm">
+                                <div class="form-grid">
+                                    <div class="field full">
+                                        <label for="titleInput">
+                                            Titre
+                                        </label>
+
+                                        <input id="titleInput" class="input" type="text" maxlength="150" required>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="startInput">
+                                            Début
+                                        </label>
+
+                                        <input id="startInput" class="input" type="datetime-local" required>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="endInput">
+                                            Fin
+                                        </label>
+
+                                        <input id="endInput" class="input" type="datetime-local" required>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="categoryInput">
+                                            Catégorie
+                                        </label>
+
+                                        <select id="categoryInput" class="select">
+                                            <option value="gaming">Gaming</option>
+                                            <option value="talk">Discussion</option>
+                                            <option value="challenge">Défi</option>
+                                            <option value="creative">Créatif</option>
+                                            <option value="charity">Caritatif</option>
+                                            <option value="community">Communauté</option>
+                                            <option value="special">Spécial</option>
+                                            <option value="other">Autre</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="statusInput">
+                                            Statut
+                                        </label>
+
+                                        <select id="statusInput" class="select">
+                                            <option value="draft">
+                                                Brouillon
+                                            </option>
+
+                                            <option value="published">
+                                                Publiée
+                                            </option>
+
+                                            <option value="cancelled">
+                                                Annulée
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="field full">
+                                        <label for="descriptionInput">
+                                            Description Markdown
+                                        </label>
+
+                                        <textarea id="descriptionInput" class="textarea" maxlength="10000"
+                                            placeholder="Description facultative de l’activité."></textarea>
+                                    </div>
+
+                                    <div class="field full">
+                                        <label for="externalUrlInput">
+                                            Lien externe facultatif
+                                        </label>
+
+                                        <input id="externalUrlInput" class="input" type="url" placeholder="https://...">
+
+                                        <span class="field-help">
+                                            Le lien doit obligatoirement utiliser HTTPS.
+                                        </span>
+                                    </div>
+
+                                    <div class="field full">
+                                        <span class="field-label">
+                                            Créateurs participants
+                                        </span>
+
+                                        <div id="participantList" class="participant-list"></div>
+                                    </div>
+
+                                    <div class="field full">
+                                        <span class="field-label">
+                                            Chaîne principale
+                                        </span>
+
+                                        <div id="primaryOptions" class="primary-options"></div>
+
+                                        <span class="field-help">
+                                            La chaîne principale doit faire partie des
+                                            participants.
+                                        </span>
+                                    </div>
+
+                                    <div id="cancelReasonField" class="field full" hidden>
+                                        <label for="cancelReasonInput">
+                                            Motif de l’annulation
+                                        </label>
+
+                                        <textarea id="cancelReasonInput" class="textarea" maxlength="1000"></textarea>
+                                    </div>
+                                </div>
+
+                                <div id="conflictNotice" class="notice warning" hidden>
+                                    <strong>
+                                        Conflits d’horaires détectés
+                                    </strong>
+
+                                    <div id="conflictList" class="conflict-list"></div>
+
+                                    <label>
+                                        <input id="overrideConflictsInput" type="checkbox">
+
+                                        Ignorer ces conflits
+                                    </label>
+                                </div>
+
+                                <div class="action-row">
+                                    <button id="saveButton" class="button" type="submit">
+                                        Enregistrer
+                                    </button>
+
+                                    <button id="resetButton" class="button secondary" type="button">
+                                        Réinitialiser
+                                    </button>
+
+                                    <button id="cancelEntryButton" class="button warning" type="button" hidden>
+                                        Annuler l’activité
+                                    </button>
+
+                                    <button id="deleteEntryButton" class="button danger" type="button" hidden>
+                                        Supprimer définitivement
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="pageMessage" class="page-message" role="status" aria-live="polite" hidden></div>
+
+    <script>
+        const API_URL =
+            "https://api-beta.jevent.julot.fr";
+
+        const loading =
+            document.querySelector("#loading");
+
+        const application =
+            document.querySelector("#application");
+
+        const entryCount =
+            document.querySelector("#entryCount");
+
+        const entryCountBadge =
+            document.querySelector("#entryCountBadge");
+
+        const newEntryButton =
+            document.querySelector("#newEntryButton");
+
+        const entryList =
+            document.querySelector("#entryList");
+
+        const programForm =
+            document.querySelector("#programForm");
+
+        const formTitle =
+            document.querySelector("#formTitle");
+
+        const formSubtitle =
+            document.querySelector("#formSubtitle");
+
+        const formStatus =
+            document.querySelector("#formStatus");
+
+        const titleInput =
+            document.querySelector("#titleInput");
+
+        const startInput =
+            document.querySelector("#startInput");
+
+        const endInput =
+            document.querySelector("#endInput");
+
+        const categoryInput =
+            document.querySelector("#categoryInput");
+
+        const statusInput =
+            document.querySelector("#statusInput");
+
+        const descriptionInput =
+            document.querySelector("#descriptionInput");
+
+        const externalUrlInput =
+            document.querySelector("#externalUrlInput");
+
+        const participantList =
+            document.querySelector("#participantList");
+
+        const primaryOptions =
+            document.querySelector("#primaryOptions");
+
+        const cancelReasonField =
+            document.querySelector("#cancelReasonField");
+
+        const cancelReasonInput =
+            document.querySelector("#cancelReasonInput");
+
+        const conflictNotice =
+            document.querySelector("#conflictNotice");
+
+        const conflictList =
+            document.querySelector("#conflictList");
+
+        const overrideConflictsInput =
+            document.querySelector(
+                "#overrideConflictsInput"
+            );
+
+        const saveButton =
+            document.querySelector("#saveButton");
+
+        const resetButton =
+            document.querySelector("#resetButton");
+
+        const cancelEntryButton =
+            document.querySelector("#cancelEntryButton");
+
+        const deleteEntryButton =
+            document.querySelector("#deleteEntryButton");
+
+        const pageMessage =
+            document.querySelector("#pageMessage");
+
+        let currentUser = null;
+        let creators = Array.of();
+        let entries = Array.of();
+        let selectedEntry = null;
+        let messageTimeout = null;
+
+        const STATUS_LABELS = {
+            draft: "Brouillon",
+            published: "Publiée",
+            cancelled: "Annulée"
+        };
+
+        function showMessage(
+            text,
+            type = "success"
+        ) {
+            window.clearTimeout(messageTimeout);
+
+            pageMessage.textContent = text;
+            pageMessage.className =
+                `page-message ${type}`;
+
+            pageMessage.hidden = false;
+
+            messageTimeout = window.setTimeout(
+                () => {
+                    pageMessage.hidden = true;
+                },
+                6000
+            );
+        }
+
+        async function apiFetch(
+            pathname,
+            options = {}
+        ) {
+            const response = await fetch(
+                API_URL + pathname,
+                {
+                    ...options,
+                    credentials: "include",
+                    headers: {
+                        ...(options.body
+                            ? {
+                                "Content-Type":
+                                    "application/json"
+                            }
+                            : {}),
+                        ...(options.headers ?? {})
+                    }
+                }
+            );
+
+            const text = await response.text();
+
+            let data;
+
+            try {
+                data = text ? JSON.parse(text) : {};
+            } catch {
+                data = {
+                    error:
+                        "Réponse invalide de l’API."
+                };
+            }
+
+            if (!response.ok) {
+                const error = new Error(
+                    data.error ??
+                    `Erreur HTTP ${response.status}`
+                );
+
+                error.status = response.status;
+                error.data = data;
+
+                throw error;
+            }
+
+            return data;
+        }
+
+        function toLocalInputValue(value) {
+            if (!value) {
+                return "";
+            }
+
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return "";
+            }
+
+            const formatter =
+                new Intl.DateTimeFormat(
+                    "sv-SE",
+                    {
+                        timeZone: "Europe/Paris",
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false
+                    }
+                );
+
+            return formatter
+                .format(date)
+                .replace(" ", "T");
+        }
+
+        function localInputToIso(value) {
+            if (!value) {
+                return null;
+            }
+
+            /*
+             * Pendant les dates du JEvent 26, la France est
+             * en heure standard UTC+1.
+             */
+            const date = new Date(
+                `${value}:00+01:00`
+            );
+
+            return Number.isNaN(date.getTime())
+                ? null
+                : date.toISOString();
+        }
+
+        function formatDateRange(entry) {
+            const formatter =
+                new Intl.DateTimeFormat(
+                    "fr-FR",
+                    {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                        timeZone: "Europe/Paris"
+                    }
+                );
+
+            return (
+                formatter.format(
+                    new Date(entry.startsAt)
+                ) +
+                " → " +
+                formatter.format(
+                    new Date(entry.endsAt)
+                )
+            );
+        }
+
+        function updateFormStatus() {
+            const status = statusInput.value;
+
+            formStatus.textContent =
+                STATUS_LABELS[status] ?? status;
+
+            formStatus.className =
+                `status ${status}`;
+
+            cancelReasonField.hidden =
+                status !== "cancelled";
+        }
+
+        function selectedParticipantIds() {
+            return Array.from(
+                participantList.querySelectorAll(
+                    'input[type="checkbox"]:checked'
+                )
+            ).map(input => Number(input.value));
+        }
+
+        function selectedPrimaryCreatorId() {
+            const selected =
+                primaryOptions.querySelector(
+                    'input[type="radio"]:checked'
+                );
+
+            return selected
+                ? Number(selected.value)
+                : null;
+        }
+
+        function updatePrimaryOptions() {
+            const selectedIds =
+                selectedParticipantIds();
+
+            const previousPrimary =
+                selectedPrimaryCreatorId();
+
+            primaryOptions.replaceChildren();
+
+            for (const creator of creators) {
+                if (!selectedIds.includes(creator.id)) {
+                    continue;
+                }
+
+                const label =
+                    document.createElement("label");
+
+                label.className = "primary-option";
+
+                const input =
+                    document.createElement("input");
+
+                input.type = "radio";
+                input.name = "primaryCreator";
+                input.value = String(creator.id);
+
+                if (
+                    previousPrimary === creator.id ||
+                    (
+                        !previousPrimary &&
+                        selectedIds[0] === creator.id
+                    )
+                ) {
+                    input.checked = true;
+                }
+
+                const text =
+                    document.createElement("span");
+
+                text.textContent =
+                    creator.twitchDisplayName;
+
+                label.append(input, text);
+                primaryOptions.append(label);
+            }
+        }
+
+        function renderParticipants(
+            selectedIds = Array.of(),
+            primaryId = null
+        ) {
+            participantList.replaceChildren();
+
+            for (const creator of creators) {
+                const label =
+                    document.createElement("label");
+
+                label.className =
+                    selectedIds.includes(creator.id)
+                        ? "participant-option selected"
+                        : "participant-option";
+
+                const checkbox =
+                    document.createElement("input");
+
+                checkbox.type = "checkbox";
+                checkbox.value = String(creator.id);
+                checkbox.checked =
+                    selectedIds.includes(creator.id);
+
+                checkbox.addEventListener(
+                    "change",
+                    () => {
+                        label.classList.toggle(
+                            "selected",
+                            checkbox.checked
+                        );
+
+                        updatePrimaryOptions();
+                    }
+                );
+
+                const avatar =
+                    document.createElement("img");
+
+                avatar.className =
+                    "participant-avatar";
+
+                avatar.src =
+                    creator.twitchProfileImageUrl ||
+                    "/assets/jevent_logo.png";
+
+                avatar.alt = "";
+
+                const identity =
+                    document.createElement("span");
+
+                identity.style.minWidth = "0";
+
+                const name =
+                    document.createElement("span");
+
+                name.className =
+                    "participant-name";
+
+                name.textContent =
+                    creator.twitchDisplayName;
+
+                const login =
+                    document.createElement("span");
+
+                login.className =
+                    "participant-login";
+
+                login.textContent =
+                    `@${creator.twitchLogin}`;
+
+                identity.append(name, login);
+
+                label.append(
+                    checkbox,
+                    avatar,
+                    identity
+                );
+
+                participantList.append(label);
+            }
+
+            updatePrimaryOptions();
+
+            if (primaryId) {
+                const primaryInput =
+                    primaryOptions.querySelector(
+                        `input[value="${primaryId}"]`
+                    );
+
+                if (primaryInput) {
+                    primaryInput.checked = true;
+                }
+            }
+        }
+
+        function createEntryButton(entry) {
+            const button =
+                document.createElement("button");
+
+            button.type = "button";
+            button.className = "entry-button";
+
+            if (
+                selectedEntry?.publicId ===
+                entry.publicId
+            ) {
+                button.classList.add("active");
+            }
+
+            const title =
+                document.createElement("span");
+
+            title.className = "entry-title";
+            title.textContent = entry.title;
+
+            const time =
+                document.createElement("span");
+
+            time.className = "entry-time";
+            time.textContent =
+                formatDateRange(entry);
+
+            const footer =
+                document.createElement("span");
+
+            footer.className = "entry-footer";
+
+            const participants =
+                document.createElement("span");
+
+            participants.className =
+                "entry-participants";
+
+            participants.textContent =
+                entry.participants
+                    .map(
+                        participant =>
+                            participant.twitchDisplayName
+                    )
+                    .join(", ");
+
+            const status =
+                document.createElement("span");
+
+            status.className =
+                `status ${entry.status}`;
+
+            status.textContent =
+                STATUS_LABELS[entry.status] ??
+                entry.status;
+
+            footer.append(participants, status);
+
+            button.append(title, time, footer);
+
+            button.addEventListener(
+                "click",
+                () => selectEntry(entry)
+            );
+
+            return button;
+        }
+
+        function renderEntries() {
+            entryList.replaceChildren();
+
+            entryCount.textContent =
+                String(entries.length);
+
+            entryCountBadge.textContent =
+                String(entries.length);
+
+            if (entries.length === 0) {
+                const empty =
+                    document.createElement("div");
+
+                empty.className = "empty-state";
+                empty.textContent =
+                    "Aucune activité enregistrée.";
+
+                entryList.append(empty);
+                return;
+            }
+
+            for (const entry of entries) {
+                entryList.append(
+                    createEntryButton(entry)
+                );
+            }
+        }
+
+        function resetConflicts() {
+            conflictNotice.hidden = true;
+            conflictList.replaceChildren();
+            overrideConflictsInput.checked = false;
+        }
+
+        function displayConflicts(conflicts) {
+            conflictList.replaceChildren();
+
+            for (const conflict of conflicts) {
+                const item =
+                    document.createElement("div");
+
+                item.className = "conflict-item";
+
+                item.textContent =
+                    `${conflict.creatorName} : ` +
+                    `${conflict.title} — ` +
+                    `${formatDateRange(conflict)}`;
+
+                conflictList.append(item);
+            }
+
+            conflictNotice.hidden = false;
+        }
+
+        function resetForm() {
+            selectedEntry = null;
+            programForm.reset();
+
+            formTitle.textContent =
+                "Nouvelle activité";
+
+            formSubtitle.textContent =
+                "Renseigne les informations du programme.";
+
+            titleInput.value = "";
+            categoryInput.value = "other";
+            statusInput.value = "draft";
+
+            startInput.value =
+                "2026-10-25T16:00";
+
+            endInput.value =
+                "2026-10-25T17:00";
+
+            descriptionInput.value = "";
+            externalUrlInput.value = "";
+            cancelReasonInput.value = "";
+
+            renderParticipants();
+            updateFormStatus();
+            resetConflicts();
+
+            cancelEntryButton.hidden = true;
+            deleteEntryButton.hidden =
+                !currentUser?.permissions
+                    .isSuperAdmin;
+
+            renderEntries();
+        }
+
+        function selectEntry(entry) {
+            selectedEntry = entry;
+
+            formTitle.textContent =
+                "Modifier l’activité";
+
+            formSubtitle.textContent =
+                entry.publicId;
+
+            titleInput.value =
+                entry.title ?? "";
+
+            startInput.value =
+                toLocalInputValue(
+                    entry.startsAt
+                );
+
+            endInput.value =
+                toLocalInputValue(
+                    entry.endsAt
+                );
+
+            categoryInput.value =
+                entry.category ?? "other";
+
+            statusInput.value =
+                entry.status ?? "draft";
+
+            descriptionInput.value =
+                entry.descriptionMarkdown ?? "";
+
+            externalUrlInput.value =
+                entry.externalUrl ?? "";
+
+            cancelReasonInput.value =
+                entry.cancelledReason ?? "";
+
+            const selectedIds =
+                entry.participants.map(
+                    participant => participant.id
+                );
+
+            renderParticipants(
+                selectedIds,
+                entry.primaryCreator?.id
+            );
+
+            updateFormStatus();
+            resetConflicts();
+
+            cancelEntryButton.hidden =
+                entry.status === "cancelled";
+
+            deleteEntryButton.hidden =
+                !currentUser.permissions
+                    .isSuperAdmin;
+
+            renderEntries();
+        }
+
+        function buildPayload() {
+            return {
+                title: titleInput.value.trim(),
+
+                startsAt:
+                    localInputToIso(
+                        startInput.value
+                    ),
+
+                endsAt:
+                    localInputToIso(
+                        endInput.value
+                    ),
+
+                category:
+                    categoryInput.value,
+
+                status:
+                    statusInput.value,
+
+                descriptionMarkdown:
+                    descriptionInput.value.trim(),
+
+                externalUrl:
+                    externalUrlInput.value.trim() ||
+                    null,
+
+                participantIds:
+                    selectedParticipantIds(),
+
+                primaryCreatorId:
+                    selectedPrimaryCreatorId(),
+
+                cancelledReason:
+                    cancelReasonInput.value.trim() ||
+                    null,
+
+                overrideConflicts:
+                    overrideConflictsInput.checked
+            };
+        }
+
+        async function loadAuthentication() {
+            const data = await apiFetch(
+                "/api/auth/me"
+            );
+
+            if (!data.authenticated) {
+                window.location.href =
+                    API_URL +
+                    "/api/auth/twitch/start?returnTo=" +
+                    encodeURIComponent(
+                        "/programme-panel-beta.html"
+                    );
+
+                return false;
+            }
+
+            const canManage =
+                data.user.permissions
+                    .isSuperAdmin ||
+                data.user.permissions
+                    .isGlobalModerator ||
+                data.user.creatorMemberships.some(
+                    membership =>
+                        Array.of(
+                            "owner",
+                            "delegate"
+                        ).includes(
+                            membership.memberRole
+                        )
+                );
+
+            if (!canManage) {
+                throw new Error(
+                    "Tu n’as pas accès à la gestion du programme."
+                );
+            }
+
+            currentUser = data.user;
+            return true;
+        }
+
+        async function loadCreators() {
+            const data = await apiFetch(
+                "/api/creators"
+            );
+
+            creators =
+                (data.creators ?? Array.of())
+                    .map(creator => ({
+                        id: Number(creator.id),
+                        twitchLogin:
+                            creator.twitchLogin,
+                        twitchDisplayName:
+                            creator.twitchDisplayName,
+                        twitchProfileImageUrl:
+                            creator.twitchProfileImageUrl
+                    }));
+        }
+
+        async function loadEntries(
+            preserveSelection = false
+        ) {
+            const selectedPublicId =
+                preserveSelection
+                    ? selectedEntry?.publicId
+                    : null;
+
+            const data = await apiFetch(
+                "/api/program/manage"
+            );
+
+            entries =
+                data.entries ?? Array.of();
+
+            const restored =
+                selectedPublicId
+                    ? entries.find(
+                        entry =>
+                            entry.publicId ===
+                            selectedPublicId
+                    )
+                    : null;
+
+            if (restored) {
+                selectEntry(restored);
+            } else {
+                resetForm();
+            }
+
+            renderEntries();
+        }
+
+        async function saveEntry(event) {
+            event.preventDefault();
+            resetConflicts();
+
+            const payload = buildPayload();
+
+            if (
+                payload.participantIds.length === 0
+            ) {
+                showMessage(
+                    "Sélectionne au moins un créateur.",
+                    "error"
+                );
+
+                return;
+            }
+
+            saveButton.disabled = true;
+
+            try {
+                const pathname = selectedEntry
+                    ? (
+                        "/api/program/manage/" +
+                        encodeURIComponent(
+                            selectedEntry.publicId
+                        )
+                    )
+                    : "/api/program/manage";
+
+                const method =
+                    selectedEntry ? "PUT" : "POST";
+
+                const result = await apiFetch(
+                    pathname,
+                    {
+                        method,
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                showMessage(
+                    selectedEntry
+                        ? "Activité mise à jour."
+                        : "Activité créée.",
+                    "success"
+                );
+
+                const publicId =
+                    result.entry.publicId;
+
+                await loadEntries();
+
+                const createdOrUpdated =
+                    entries.find(
+                        entry =>
+                            entry.publicId === publicId
+                    );
+
+                if (createdOrUpdated) {
+                    selectEntry(createdOrUpdated);
+                }
+            } catch (error) {
+                if (
+                    error.status === 409 &&
+                    Array.isArray(
+                        error.data?.conflicts
+                    )
+                ) {
+                    displayConflicts(
+                        error.data.conflicts
+                    );
+                }
+
+                showMessage(
+                    error.message,
+                    "error"
+                );
+            } finally {
+                saveButton.disabled = false;
+            }
+        }
+
+        async function cancelEntry() {
+            if (!selectedEntry) {
+                return;
+            }
+
+            const reason = window.prompt(
+                "Motif de l’annulation :",
+                selectedEntry.cancelledReason ?? ""
+            );
+
+            if (reason === null) {
+                return;
+            }
+
+            try {
+                await apiFetch(
+                    "/api/program/manage/" +
+                    encodeURIComponent(
+                        selectedEntry.publicId
+                    ) +
+                    "/cancel",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            reason: reason.trim()
+                        })
+                    }
+                );
+
+                showMessage(
+                    "L’activité a été annulée.",
+                    "success"
+                );
+
+                await loadEntries();
+            } catch (error) {
+                showMessage(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+
+        async function deleteEntry() {
+            if (
+                !selectedEntry ||
+                !currentUser.permissions.isSuperAdmin
+            ) {
+                return;
+            }
+
+            const confirmation = window.confirm(
+                "Supprimer définitivement cette activité ? Cette action est irréversible."
+            );
+
+            if (!confirmation) {
+                return;
+            }
+
+            try {
+                await apiFetch(
+                    "/api/program/manage/" +
+                    encodeURIComponent(
+                        selectedEntry.publicId
+                    ),
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                showMessage(
+                    "L’activité a été supprimée.",
+                    "success"
+                );
+
+                await loadEntries();
+            } catch (error) {
+                showMessage(
+                    error.message,
+                    "error"
+                );
+            }
+        }
+
+        async function startApplication() {
+            try {
+                const authenticated =
+                    await loadAuthentication();
+
+                if (!authenticated) {
+                    return;
+                }
+
+                await loadCreators();
+                await loadEntries();
+
+                loading.hidden = true;
+                application.hidden = false;
+            } catch (error) {
+                loading.replaceChildren();
+
+                const container =
+                    document.createElement("div");
+
+                const title =
+                    document.createElement("h1");
+
+                title.textContent =
+                    "Impossible d’ouvrir le programme";
+
+                const description =
+                    document.createElement("p");
+
+                description.textContent =
+                    error.message;
+
+                container.append(
+                    title,
+                    description
+                );
+
+                loading.append(container);
+            }
+        }
+
+        statusInput.addEventListener(
+            "change",
+            updateFormStatus
+        );
+
+        programForm.addEventListener(
+            "submit",
+            saveEntry
+        );
+
+        newEntryButton.addEventListener(
+            "click",
+            resetForm
+        );
+
+        resetButton.addEventListener(
+            "click",
+            resetForm
+        );
+
+        cancelEntryButton.addEventListener(
+            "click",
+            cancelEntry
+        );
+
+        deleteEntryButton.addEventListener(
+            "click",
+            deleteEntry
+        );
+
+        startApplication();
+    </script>
+</body>
+
+</html>
