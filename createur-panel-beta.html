@@ -1,0 +1,2196 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="Panel créateur du JEvent 26 au profit de l’Association Petits Princes."
+  >
+
+  <title>Panel créateur — JEvent 26</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+
+      --background: #050b07;
+      --background-soft: #08110b;
+      --surface: rgba(15, 29, 19, 0.94);
+      --surface-light: rgba(24, 43, 29, 0.95);
+      --surface-hover: rgba(31, 56, 38, 0.98);
+
+      --border: rgba(255, 255, 255, 0.1);
+      --border-green: rgba(0, 178, 55, 0.45);
+
+      --text: #f4fff7;
+      --muted: #a8b8ad;
+
+      --green: #00b237;
+      --green-light: #35d966;
+      --green-dark: #007e27;
+
+      --yellow: #f7c948;
+      --red: #ff687d;
+      --blue: #67a9ff;
+
+      --shadow:
+        0 24px 70px rgba(0, 0, 0, 0.35);
+
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+
+      background:
+        radial-gradient(
+          circle at 10% 0%,
+          rgba(0, 178, 55, 0.2),
+          transparent 34%
+        ),
+        radial-gradient(
+          circle at 90% 15%,
+          rgba(0, 178, 55, 0.09),
+          transparent 30%
+        ),
+        linear-gradient(
+          180deg,
+          var(--background),
+          var(--background-soft)
+        );
+
+      color: var(--text);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    button:focus-visible,
+    textarea:focus-visible,
+    a:focus-visible {
+      outline: 3px solid
+        rgba(53, 217, 102, 0.65);
+
+      outline-offset: 3px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .container {
+      width: min(
+        1180px,
+        calc(100% - 32px)
+      );
+
+      margin: 0 auto;
+      padding: 24px 0 80px;
+    }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+
+      margin-bottom: 32px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      display: block;
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      display: block;
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+    }
+
+    .brand-subtitle {
+      display: block;
+      margin-top: 4px;
+
+      color: var(--muted);
+      font-size: 0.87rem;
+    }
+
+    .navigation {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navigation a {
+      padding: 10px 14px;
+
+      border: 1px solid var(--border);
+      border-radius: 11px;
+
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+
+      text-decoration: none;
+      font-weight: 750;
+    }
+
+    .navigation a:hover {
+      border-color: var(--border-green);
+      background: rgba(0, 178, 55, 0.1);
+    }
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      margin-bottom: 14px;
+      padding: 7px 11px;
+
+      border: 1px solid var(--border-green);
+      border-radius: 999px;
+
+      background: rgba(0, 178, 55, 0.1);
+      color: #90ffb1;
+
+      font-size: 0.82rem;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+
+      box-shadow:
+        0 0 16px rgba(0, 178, 55, 0.8);
+    }
+
+    .hero h1 {
+      max-width: 900px;
+      margin: 0;
+
+      font-size: clamp(
+        2.3rem,
+        7vw,
+        5rem
+      );
+
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 18px 0 0;
+
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(280px, 360px);
+
+      gap: 24px;
+      align-items: start;
+    }
+
+    .main-column,
+    .side-column {
+      display: grid;
+      gap: 24px;
+    }
+
+    .card {
+      overflow: hidden;
+
+      border: 1px solid var(--border);
+      border-radius: 22px;
+
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: -0.025em;
+    }
+
+    .card-header p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .card-content {
+      padding: 24px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .profile-avatar {
+      display: block;
+      width: 88px;
+      height: 88px;
+      flex: 0 0 auto;
+
+      border: 3px solid
+        rgba(0, 178, 55, 0.55);
+
+      border-radius: 50%;
+      object-fit: cover;
+
+      background: var(--surface-light);
+      box-shadow:
+        0 10px 28px
+        rgba(0, 178, 55, 0.18);
+    }
+
+    .profile-name {
+      margin: 0;
+      font-size: 1.45rem;
+      letter-spacing: -0.025em;
+    }
+
+    .profile-login {
+      margin: 5px 0 0;
+      color: var(--muted);
+    }
+
+    .profile-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    .profile-links a {
+      padding: 8px 11px;
+
+      border: 1px solid var(--border);
+      border-radius: 10px;
+
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.86rem;
+      font-weight: 750;
+    }
+
+    .profile-links a:hover {
+      border-color: var(--green);
+      color: #91ffb2;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 7px 11px;
+      border-radius: 999px;
+
+      font-size: 0.8rem;
+      font-weight: 850;
+    }
+
+    .status.neutral {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e7eee9;
+    }
+
+    .status.draft {
+      background: rgba(103, 169, 255, 0.13);
+      color: #bcd7ff;
+    }
+
+    .status.pending {
+      background: rgba(247, 201, 72, 0.14);
+      color: #ffe496;
+    }
+
+    .status.approved {
+      background: rgba(0, 178, 55, 0.14);
+      color: #8dffaf;
+    }
+
+    .status.rejected {
+      background: rgba(255, 104, 125, 0.14);
+      color: #ffc1ca;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-bottom: 0;
+
+      border-radius: 14px 14px 0 0;
+      background: var(--surface-light);
+    }
+
+    .toolbar-button {
+      min-width: 39px;
+      min-height: 36px;
+      padding: 7px 10px;
+
+      border: 1px solid var(--border);
+      border-radius: 8px;
+
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .toolbar-button:hover {
+      border-color: var(--green);
+      background: rgba(0, 178, 55, 0.12);
+    }
+
+    .description-editor {
+      display: block;
+      width: 100%;
+      min-height: 390px;
+      resize: vertical;
+
+      padding: 18px;
+
+      border: 1px solid var(--border);
+      border-radius: 0 0 14px 14px;
+
+      background: #071009;
+      color: var(--text);
+
+      line-height: 1.65;
+      tab-size: 2;
+    }
+
+    .description-editor:read-only {
+      cursor: not-allowed;
+      opacity: 0.72;
+    }
+
+    .editor-information {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 11px;
+      margin-top: 18px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      min-height: 44px;
+      padding: 11px 17px;
+
+      border-radius: 11px;
+
+      background: var(--green);
+      color: #001c08;
+
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+
+      transition:
+        transform 150ms ease,
+        background 150ms ease,
+        opacity 150ms ease;
+    }
+
+    .button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: var(--green-light);
+    }
+
+    .button.secondary {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+    }
+
+    .button.secondary:hover:not(:disabled) {
+      border-color: var(--green);
+      background: rgba(0, 178, 55, 0.1);
+    }
+
+    .button.danger {
+      border: 1px solid
+        rgba(255, 104, 125, 0.4);
+
+      background:
+        rgba(255, 104, 125, 0.12);
+
+      color: #ffc1ca;
+    }
+
+    .button:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+      transform: none;
+    }
+
+    .preview-box,
+    .public-description {
+      min-height: 130px;
+      padding: 21px;
+
+      border: 1px solid var(--border);
+      border-radius: 15px;
+
+      background: rgba(2, 10, 5, 0.5);
+      line-height: 1.7;
+    }
+
+    .markdown-content > :first-child {
+      margin-top: 0;
+    }
+
+    .markdown-content > :last-child {
+      margin-bottom: 0;
+    }
+
+    .markdown-content h1,
+    .markdown-content h2,
+    .markdown-content h3 {
+      margin:
+        1.5em 0
+        0.55em;
+
+      line-height: 1.2;
+      letter-spacing: -0.035em;
+    }
+
+    .markdown-content h1 {
+      font-size: 2rem;
+    }
+
+    .markdown-content h2 {
+      font-size: 1.55rem;
+    }
+
+    .markdown-content h3 {
+      font-size: 1.25rem;
+    }
+
+    .markdown-content p {
+      margin: 0 0 1em;
+    }
+
+    .markdown-content strong {
+      color: #a0ffbc;
+    }
+
+    .markdown-content blockquote {
+      margin: 1.2em 0;
+      padding: 10px 17px;
+
+      border-left: 4px solid var(--green);
+      background: rgba(0, 178, 55, 0.08);
+      color: #d6e8db;
+    }
+
+    .markdown-content code {
+      padding: 3px 6px;
+      border-radius: 6px;
+
+      background: rgba(255, 255, 255, 0.08);
+      color: #a8ffc1;
+
+      font-family:
+        "Cascadia Code",
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+    }
+
+    .markdown-content pre {
+      overflow: auto;
+      padding: 16px;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      background: #020704;
+    }
+
+    .markdown-content pre code {
+      padding: 0;
+      background: none;
+    }
+
+    .markdown-content hr {
+      margin: 28px 0;
+      border: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .markdown-empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .notice {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+
+      border: 1px solid var(--border);
+      border-radius: 12px;
+
+      line-height: 1.55;
+    }
+
+    .notice.info {
+      border-color: rgba(103, 169, 255, 0.3);
+      background: rgba(103, 169, 255, 0.09);
+      color: #c8ddff;
+    }
+
+    .notice.warning {
+      border-color: rgba(247, 201, 72, 0.3);
+      background: rgba(247, 201, 72, 0.09);
+      color: #ffe7a5;
+    }
+
+    .notice.error {
+      border-color: rgba(255, 104, 125, 0.3);
+      background: rgba(255, 104, 125, 0.09);
+      color: #ffc5ce;
+    }
+
+    .notice.success {
+      border-color: rgba(0, 178, 55, 0.35);
+      background: rgba(0, 178, 55, 0.1);
+      color: #9dffba;
+    }
+
+    .onboarding-list {
+      display: grid;
+      gap: 11px;
+      margin: 0 0 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .onboarding-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+
+      padding: 12px;
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .step-number {
+      display: grid;
+      width: 27px;
+      height: 27px;
+      flex: 0 0 auto;
+      place-items: center;
+
+      border-radius: 50%;
+      background: rgba(0, 178, 55, 0.16);
+      color: #99ffb7;
+
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .metadata {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .metadata-row {
+      display: grid;
+      grid-template-columns:
+        minmax(110px, 0.8fr)
+        minmax(0, 1.2fr);
+
+      gap: 13px;
+
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .metadata-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .metadata dt {
+      color: var(--muted);
+    }
+
+    .metadata dd {
+      margin: 0;
+      text-align: right;
+      font-weight: 750;
+      word-break: break-word;
+    }
+
+    .page-message {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 100;
+
+      width: min(
+        430px,
+        calc(100% - 40px)
+      );
+
+      padding: 15px 17px;
+
+      border: 1px solid var(--border);
+      border-radius: 13px;
+
+      background: #122017;
+      box-shadow: var(--shadow);
+
+      line-height: 1.5;
+    }
+
+    .page-message.success {
+      border-color: rgba(0, 178, 55, 0.5);
+      color: #a5ffbf;
+    }
+
+    .page-message.error {
+      border-color: rgba(255, 104, 125, 0.5);
+      color: #ffc3cd;
+    }
+
+    .loading-screen {
+      display: grid;
+      min-height: 70vh;
+      place-items: center;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 46px;
+      height: 46px;
+      margin: 0 auto 18px;
+
+      border: 4px solid
+        rgba(255, 255, 255, 0.1);
+
+      border-top-color: var(--green);
+      border-radius: 50%;
+
+      animation:
+        spin 800ms linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 880px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side-column {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        width: min(
+          100% - 22px,
+          1180px
+        );
+      }
+
+      .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .brand-logo {
+        width: 56px;
+        height: 56px;
+      }
+
+      .card-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .card-content,
+      .card-header {
+        padding: 19px;
+      }
+
+      .profile {
+        align-items: flex-start;
+      }
+
+      .profile-avatar {
+        width: 70px;
+        height: 70px;
+      }
+
+      .editor-information {
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="site-header">
+      <a class="brand" href="/">
+        <img
+          class="brand-logo"
+          src="assets/jevent_logo.png"
+          alt="Logo du JEvent 26"
+        >
+
+        <span>
+          <span class="brand-title">
+            JEvent 26
+          </span>
+
+          <span class="brand-subtitle">
+            Au profit de l’Association Petits Princes
+          </span>
+        </span>
+      </a>
+
+      <nav
+        class="navigation"
+        aria-label="Navigation principale"
+      >
+        <a href="/">Accueil</a>
+        <a href="/compte.html">Mon compte</a>
+      </nav>
+    </header>
+
+    <main>
+      <section
+        id="loadingScreen"
+        class="loading-screen"
+      >
+        <div>
+          <div
+            class="loading-spinner"
+            aria-hidden="true"
+          ></div>
+
+          <p>
+            Chargement de ton espace créateur…
+          </p>
+        </div>
+      </section>
+
+      <div id="application" hidden>
+        <section class="hero">
+          <div class="eyebrow">
+            <span
+              class="eyebrow-dot"
+              aria-hidden="true"
+            ></span>
+
+            Panel créateur bêta
+          </div>
+
+          <h1>
+            Ton espace JEvent 26
+          </h1>
+
+          <p>
+            Personnalise ta page publique et prépare ta
+            participation à l’événement du 25 au 27 octobre
+            2026, avec une fin dans la nuit du 27 au
+            28 octobre.
+          </p>
+        </section>
+
+        <div class="layout">
+          <div class="main-column">
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <h2>Description publique</h2>
+
+                  <p>
+                    Cette version reste visible tant qu’une
+                    nouvelle description n’a pas été approuvée.
+                  </p>
+                </div>
+
+                <span
+                  id="publicStatus"
+                  class="status approved"
+                >
+                  Version publique
+                </span>
+              </div>
+
+              <div class="card-content">
+                <div
+                  id="publicDescription"
+                  class="
+                    public-description
+                    markdown-content
+                  "
+                ></div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <h2>Modifier la description</h2>
+
+                  <p>
+                    Utilise le Markdown pour structurer ta
+                    présentation.
+                  </p>
+                </div>
+
+                <span
+                  id="editorStatus"
+                  class="status neutral"
+                >
+                  Chargement…
+                </span>
+              </div>
+
+              <div class="card-content">
+                <div
+                  id="editorNotice"
+                  class="notice info"
+                  hidden
+                ></div>
+
+                <div
+                  id="rejectionNotice"
+                  class="notice error"
+                  hidden
+                >
+                  <strong>
+                    Dernier refus
+                  </strong>
+
+                  <p id="rejectionReason"></p>
+                </div>
+
+                <div
+                  class="editor-toolbar"
+                  aria-label="Outils Markdown"
+                >
+                  <button
+                    class="toolbar-button"
+                    type="button"
+                    data-action="bold"
+                    title="Gras"
+                  >
+                    B
+                  </button>
+
+                  <button
+                    class="toolbar-button"
+                    type="button"
+                    data-action="italic"
+                    title="Italique"
+                  >
+                    I
+                  </button>
+
+                  <button
+                    class="toolbar-button"
+                    type="button"
+                    data-action="heading"
+                    title="Titre"
+                  >
+                    H
+                  </button>
+
+                  <button
+                    class="toolbar-button"
+                    type="button"
+                    data-action="list"
+                    title="Liste"
+                  >
+                    • Liste
+                  </button>
+
+                  <button
+                    class="toolbar-button"
+                    type="button"
+                    data-action="quote"
+                    title="Citation"
+                  >
+                    “
+                  </button>
+
+                  <button
+                    class="toolbar-button"
+                    type="button"
+                    data-action="code"
+                    title="Code"
+                  >
+                    &lt;/&gt;
+                  </button>
+                </div>
+
+                <textarea
+                  id="descriptionEditor"
+                  class="description-editor"
+                  maxlength="20000"
+                  spellcheck="true"
+                  placeholder="# Ma présentation
+
+Je participe au **JEvent 26** au profit de l’Association Petits Princes."
+                ></textarea>
+
+                <div class="editor-information">
+                  <span>
+                    HTML, JavaScript, images et liens
+                    externes interdits.
+                  </span>
+
+                  <span id="characterCounter">
+                    0 / 20 000 caractères
+                  </span>
+                </div>
+
+                <div class="action-row">
+                  <button
+                    id="saveDraftButton"
+                    class="button secondary"
+                    type="button"
+                  >
+                    Enregistrer le brouillon
+                  </button>
+
+                  <button
+                    id="submitButton"
+                    class="button"
+                    type="button"
+                  >
+                    Envoyer en validation
+                  </button>
+
+                  <button
+                    id="cancelSubmissionButton"
+                    class="button danger"
+                    type="button"
+                    hidden
+                  >
+                    Annuler la soumission
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <h2>Aperçu Markdown</h2>
+
+                  <p>
+                    Aperçu de la description avant sa
+                    publication.
+                  </p>
+                </div>
+              </div>
+
+              <div class="card-content">
+                <div
+                  id="markdownPreview"
+                  class="
+                    preview-box
+                    markdown-content
+                  "
+                ></div>
+              </div>
+            </section>
+          </div>
+
+          <aside class="side-column">
+            <section class="card">
+              <div class="card-content">
+                <div class="profile">
+                  <img
+                    id="creatorAvatar"
+                    class="profile-avatar"
+                    src="jevent_logo.png"
+                    alt=""
+                  >
+
+                  <div>
+                    <h2
+                      id="creatorName"
+                      class="profile-name"
+                    >
+                      Créateur
+                    </h2>
+
+                    <p
+                      id="creatorLogin"
+                      class="profile-login"
+                    ></p>
+
+                    <div class="profile-links">
+                      <a
+                        id="twitchLink"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Voir la chaîne
+                      </a>
+
+                      <a
+                        id="donationLink"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        hidden
+                      >
+                        Faire un don
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section
+              id="onboardingCard"
+              class="card"
+              hidden
+            >
+              <div class="card-header">
+                <div>
+                  <h2>Première connexion</h2>
+
+                  <p>
+                    Quelques étapes avant de commencer.
+                  </p>
+                </div>
+              </div>
+
+              <div class="card-content">
+                <ol class="onboarding-list">
+                  <li>
+                    <span class="step-number">1</span>
+                    <span>
+                      Vérifie les informations de ta chaîne.
+                    </span>
+                  </li>
+
+                  <li>
+                    <span class="step-number">2</span>
+                    <span>
+                      Rédige ta description en Markdown.
+                    </span>
+                  </li>
+
+                  <li>
+                    <span class="step-number">3</span>
+                    <span>
+                      Vérifie ton lien de cagnotte.
+                    </span>
+                  </li>
+
+                  <li>
+                    <span class="step-number">4</span>
+                    <span>
+                      Termine la visite guidée.
+                    </span>
+                  </li>
+                </ol>
+
+                <button
+                  id="completeOnboardingButton"
+                  class="button"
+                  type="button"
+                >
+                  Terminer la visite
+                </button>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <div>
+                  <h2>Informations</h2>
+                </div>
+              </div>
+
+              <div class="card-content">
+                <dl class="metadata">
+                  <div class="metadata-row">
+                    <dt>Rôle</dt>
+                    <dd id="accessRole">—</dd>
+                  </div>
+
+                  <div class="metadata-row">
+                    <dt>Page</dt>
+                    <dd id="creatorSlug">—</dd>
+                  </div>
+
+                  <div class="metadata-row">
+                    <dt>Profil lié</dt>
+                    <dd id="claimedStatus">—</dd>
+                  </div>
+
+                  <div class="metadata-row">
+                    <dt>Validation</dt>
+                    <dd id="moderationStatus">—</dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div
+    id="pageMessage"
+    class="page-message"
+    role="status"
+    aria-live="polite"
+    hidden
+  ></div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/marked@18.0.7/lib/marked.umd.js"
+  ></script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/dompurify@3.4.7/dist/purify.min.js"
+  ></script>
+
+  <script>
+    const API_URL =
+      "https://api-beta.jevent.julot.fr";
+
+    const loadingScreen =
+      document.querySelector("#loadingScreen");
+
+    const application =
+      document.querySelector("#application");
+
+    const creatorAvatar =
+      document.querySelector("#creatorAvatar");
+
+    const creatorName =
+      document.querySelector("#creatorName");
+
+    const creatorLogin =
+      document.querySelector("#creatorLogin");
+
+    const twitchLink =
+      document.querySelector("#twitchLink");
+
+    const donationLink =
+      document.querySelector("#donationLink");
+
+    const accessRole =
+      document.querySelector("#accessRole");
+
+    const creatorSlug =
+      document.querySelector("#creatorSlug");
+
+    const claimedStatus =
+      document.querySelector("#claimedStatus");
+
+    const moderationStatus =
+      document.querySelector("#moderationStatus");
+
+    const onboardingCard =
+      document.querySelector("#onboardingCard");
+
+    const completeOnboardingButton =
+      document.querySelector(
+        "#completeOnboardingButton"
+      );
+
+    const publicDescription =
+      document.querySelector(
+        "#publicDescription"
+      );
+
+    const descriptionEditor =
+      document.querySelector(
+        "#descriptionEditor"
+      );
+
+    const markdownPreview =
+      document.querySelector(
+        "#markdownPreview"
+      );
+
+    const characterCounter =
+      document.querySelector(
+        "#characterCounter"
+      );
+
+    const editorStatus =
+      document.querySelector("#editorStatus");
+
+    const editorNotice =
+      document.querySelector("#editorNotice");
+
+    const rejectionNotice =
+      document.querySelector(
+        "#rejectionNotice"
+      );
+
+    const rejectionReason =
+      document.querySelector(
+        "#rejectionReason"
+      );
+
+    const saveDraftButton =
+      document.querySelector(
+        "#saveDraftButton"
+      );
+
+    const submitButton =
+      document.querySelector("#submitButton");
+
+    const cancelSubmissionButton =
+      document.querySelector(
+        "#cancelSubmissionButton"
+      );
+
+    const pageMessage =
+      document.querySelector("#pageMessage");
+
+    const toolbarButtons =
+      document.querySelectorAll(
+        ".toolbar-button"
+      );
+
+    const currentPage =
+      new URL(window.location.href);
+
+    const requestedCreatorId =
+      currentPage.searchParams.get(
+        "creatorId"
+      );
+
+    let panelData = null;
+    let workspaceData = null;
+    let messageTimeout = null;
+
+    function createApiPath(pathname) {
+      if (!requestedCreatorId) {
+        return pathname;
+      }
+
+      const separator =
+        pathname.includes("?")
+          ? "&"
+          : "?";
+
+      return (
+        pathname +
+        separator +
+        "creatorId=" +
+        encodeURIComponent(
+          requestedCreatorId
+        )
+      );
+    }
+
+    async function apiFetch(
+      pathname,
+      options = {}
+    ) {
+      const response = await fetch(
+        API_URL + pathname,
+        {
+          ...options,
+          credentials: "include",
+          headers: {
+            ...(options.body
+              ? {
+                  "Content-Type":
+                    "application/json"
+                }
+              : {}),
+            ...(options.headers ?? {})
+          }
+        }
+      );
+
+      const responseText =
+        await response.text();
+
+      let data;
+
+      try {
+        data = responseText
+          ? JSON.parse(responseText)
+          : {};
+      } catch {
+        data = {
+          error:
+            "La réponse de l’API est invalide."
+        };
+      }
+
+      if (!response.ok) {
+        const error = new Error(
+          data.error ??
+          `Erreur HTTP ${response.status}`
+        );
+
+        error.status = response.status;
+        error.data = data;
+
+        throw error;
+      }
+
+      return data;
+    }
+
+    function showMessage(
+      text,
+      type = "success"
+    ) {
+      window.clearTimeout(messageTimeout);
+
+      pageMessage.textContent = text;
+      pageMessage.className =
+        `page-message ${type}`;
+
+      pageMessage.hidden = false;
+
+      messageTimeout = window.setTimeout(
+        () => {
+          pageMessage.hidden = true;
+        },
+        6000
+      );
+    }
+
+    function renderMarkdown(
+      markdown,
+      target
+    ) {
+      const source =
+        String(markdown ?? "").trim();
+
+      if (!source) {
+        target.replaceChildren();
+
+        const empty =
+          document.createElement("p");
+
+        empty.className = "markdown-empty";
+        empty.textContent =
+          "Aucune description pour le moment.";
+
+        target.append(empty);
+        return;
+      }
+
+      if (
+        typeof window.marked ===
+          "undefined" ||
+        typeof window.DOMPurify ===
+          "undefined"
+      ) {
+        target.textContent = source;
+        return;
+      }
+
+      const rendered =
+        window.marked.parse(source, {
+          gfm: true,
+          breaks: true
+        });
+
+      const clean =
+        window.DOMPurify.sanitize(
+          rendered,
+          {
+            ALLOWED_TAGS: Array.of(
+              "p",
+              "br",
+              "strong",
+              "em",
+              "del",
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "ul",
+              "ol",
+              "li",
+              "blockquote",
+              "pre",
+              "code",
+              "hr"
+            ),
+
+            ALLOWED_ATTR: Array.of(
+              "class"
+            )
+          }
+        );
+
+      target.innerHTML = clean;
+    }
+
+    function setStatus(
+      element,
+      text,
+      type
+    ) {
+      element.textContent = text;
+      element.className =
+        `status ${type}`;
+    }
+
+    function updateCounter() {
+      const length =
+        descriptionEditor.value.length;
+
+      characterCounter.textContent =
+        `${length.toLocaleString("fr-FR")} ` +
+        "/ 20 000 caractères";
+
+      renderMarkdown(
+        descriptionEditor.value,
+        markdownPreview
+      );
+    }
+
+    function setEditorLocked(locked) {
+      descriptionEditor.readOnly = locked;
+
+      saveDraftButton.disabled = locked;
+      submitButton.disabled = locked;
+
+      for (const button of toolbarButtons) {
+        button.disabled = locked;
+      }
+    }
+
+    function fillProfile() {
+      const creator = panelData.creator;
+      const access = panelData.access;
+
+      creatorName.textContent =
+        creator.twitchDisplayName;
+
+      creatorLogin.textContent =
+        `@${creator.twitchLogin}`;
+
+      creatorAvatar.src =
+        creator.twitchProfileImageUrl ||
+        "jevent_logo.png";
+
+      creatorAvatar.alt =
+        `Avatar de ${creator.twitchDisplayName}`;
+
+      twitchLink.href =
+        "https://www.twitch.tv/" +
+        encodeURIComponent(
+          creator.twitchLogin
+        );
+
+      if (creator.donationUrl) {
+        donationLink.href =
+          creator.donationUrl;
+
+        donationLink.hidden = false;
+      } else {
+        donationLink.hidden = true;
+      }
+
+      creatorSlug.textContent =
+        `/${creator.slug}`;
+
+      claimedStatus.textContent =
+        creator.claimed
+          ? "Oui"
+          : "Non";
+
+      const roleLabels = {
+        owner: "Créateur",
+        delegate: "Délégataire",
+        creator_moderator:
+          "Modérateur créateur",
+        super_admin:
+          "Super administrateur"
+      };
+
+      accessRole.textContent =
+        roleLabels[access.memberRole] ??
+        access.memberRole ??
+        "—";
+
+      moderationStatus.textContent =
+        workspaceData.creator
+          .moderationBypass
+          ? "Publication directe"
+          : "Validation obligatoire";
+
+      onboardingCard.hidden =
+        creator.onboardingCompleted;
+    }
+
+    function fillDescriptionWorkspace() {
+      const workspace = workspaceData;
+
+      renderMarkdown(
+        workspace.creator
+          .publicDescriptionMarkdown,
+        publicDescription
+      );
+
+      rejectionNotice.hidden = true;
+      editorNotice.hidden = true;
+      cancelSubmissionButton.hidden = true;
+
+      if (workspace.pending) {
+        descriptionEditor.value =
+          workspace.pending.markdown;
+
+        setStatus(
+          editorStatus,
+          "En attente",
+          "pending"
+        );
+
+        editorNotice.textContent =
+          "Cette version est en attente de validation. " +
+          "La description publique précédente reste affichée.";
+
+        editorNotice.className =
+          "notice warning";
+
+        editorNotice.hidden = false;
+        cancelSubmissionButton.hidden = false;
+
+        setEditorLocked(true);
+        updateCounter();
+        return;
+      }
+
+      setEditorLocked(false);
+
+      if (workspace.draft) {
+        descriptionEditor.value =
+          workspace.draft.markdown;
+
+        setStatus(
+          editorStatus,
+          "Brouillon enregistré",
+          "draft"
+        );
+
+        editorNotice.textContent =
+          "Un brouillon est enregistré. " +
+          "Il n’est pas encore visible publiquement.";
+
+        editorNotice.className =
+          "notice info";
+
+        editorNotice.hidden = false;
+        updateCounter();
+        return;
+      }
+
+      if (workspace.lastRejected) {
+        descriptionEditor.value =
+          workspace.lastRejected.markdown;
+
+        setStatus(
+          editorStatus,
+          "À corriger",
+          "rejected"
+        );
+
+        rejectionReason.textContent =
+          workspace.lastRejected
+            .moderationNote ||
+          "Aucune explication fournie.";
+
+        rejectionNotice.hidden = false;
+
+        editorNotice.textContent =
+          "La dernière proposition a été replacée " +
+          "dans l’éditeur. Enregistre-la pour créer " +
+          "un nouveau brouillon.";
+
+        editorNotice.className =
+          "notice warning";
+
+        editorNotice.hidden = false;
+        updateCounter();
+        return;
+      }
+
+      descriptionEditor.value =
+        workspace.creator
+          .publicDescriptionMarkdown ||
+        "";
+
+      setStatus(
+        editorStatus,
+        "Nouvelle version",
+        "neutral"
+      );
+
+      updateCounter();
+    }
+
+    async function loadAuthentication() {
+      const data = await apiFetch(
+        "/api/auth/me"
+      );
+
+      if (!data.authenticated) {
+        window.location.href =
+          API_URL +
+          "/api/auth/twitch/start?returnTo=" +
+          encodeURIComponent(
+            "/createur-panel-beta.html"
+          );
+
+        return false;
+      }
+
+      if (
+        !data.user.permissions
+          .canAccessCreatorPanel
+      ) {
+        throw new Error(
+          "Aucun espace créateur ne t’est associé."
+        );
+      }
+
+      return true;
+    }
+
+    async function loadPanel() {
+      const panelPath =
+        createApiPath(
+          "/api/creator-panel"
+        );
+
+      const workspacePath =
+        createApiPath(
+          "/api/creator-panel/description"
+        );
+
+      const results = await Promise.all(
+        Array.of(
+          apiFetch(panelPath),
+          apiFetch(workspacePath)
+        )
+      );
+
+      panelData = results[0];
+      workspaceData = results[1];
+
+      fillProfile();
+      fillDescriptionWorkspace();
+    }
+
+    async function reloadWorkspace() {
+      workspaceData = await apiFetch(
+        createApiPath(
+          "/api/creator-panel/description"
+        )
+      );
+
+      fillProfile();
+      fillDescriptionWorkspace();
+    }
+
+    async function saveDraft() {
+      const markdown =
+        descriptionEditor.value.trim();
+
+      if (!markdown) {
+        showMessage(
+          "La description ne peut pas être vide.",
+          "error"
+        );
+
+        return;
+      }
+
+      saveDraftButton.disabled = true;
+      submitButton.disabled = true;
+
+      try {
+        await apiFetch(
+          createApiPath(
+            "/api/creator-panel/description/draft"
+          ),
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              markdown
+            })
+          }
+        );
+
+        showMessage(
+          "Brouillon enregistré.",
+          "success"
+        );
+
+        await reloadWorkspace();
+      } catch (error) {
+        const validationMessages =
+          error.data?.validationErrors
+            ?.map(item => item.message)
+            .join(" ");
+
+        showMessage(
+          validationMessages ||
+          error.message,
+          "error"
+        );
+      } finally {
+        if (!workspaceData?.pending) {
+          saveDraftButton.disabled = false;
+          submitButton.disabled = false;
+        }
+      }
+    }
+
+    async function submitDraft() {
+      const confirmation =
+        window.confirm(
+          "Envoyer cette description aux modérateurs ?"
+        );
+
+      if (!confirmation) {
+        return;
+      }
+
+      saveDraftButton.disabled = true;
+      submitButton.disabled = true;
+
+      try {
+        const result = await apiFetch(
+          createApiPath(
+            "/api/creator-panel/description/submit"
+          ),
+          {
+            method: "POST"
+          }
+        );
+
+        if (result.automaticallyApproved) {
+          showMessage(
+            "Description publiée automatiquement.",
+            "success"
+          );
+        } else {
+          showMessage(
+            "Description envoyée aux modérateurs.",
+            "success"
+          );
+        }
+
+        await reloadWorkspace();
+      } catch (error) {
+        showMessage(
+          error.message,
+          "error"
+        );
+
+        saveDraftButton.disabled = false;
+        submitButton.disabled = false;
+      }
+    }
+
+    async function cancelSubmission() {
+      const confirmation =
+        window.confirm(
+          "Annuler la soumission et revenir au brouillon ?"
+        );
+
+      if (!confirmation) {
+        return;
+      }
+
+      cancelSubmissionButton.disabled = true;
+
+      try {
+        await apiFetch(
+          createApiPath(
+            "/api/creator-panel/description/cancel"
+          ),
+          {
+            method: "POST"
+          }
+        );
+
+        showMessage(
+          "La soumission est redevenue un brouillon.",
+          "success"
+        );
+
+        await reloadWorkspace();
+      } catch (error) {
+        showMessage(
+          error.message,
+          "error"
+        );
+      } finally {
+        cancelSubmissionButton.disabled = false;
+      }
+    }
+
+    async function completeOnboarding() {
+      completeOnboardingButton.disabled = true;
+
+      try {
+        await apiFetch(
+          createApiPath(
+            "/api/creator-panel/onboarding/complete"
+          ),
+          {
+            method: "POST"
+          }
+        );
+
+        panelData.creator
+          .onboardingCompleted = true;
+
+        onboardingCard.hidden = true;
+
+        showMessage(
+          "Visite guidée terminée.",
+          "success"
+        );
+      } catch (error) {
+        showMessage(
+          error.message,
+          "error"
+        );
+
+        completeOnboardingButton.disabled =
+          false;
+      }
+    }
+
+    function wrapSelection(
+      before,
+      after,
+      fallback
+    ) {
+      if (descriptionEditor.readOnly) {
+        return;
+      }
+
+      const start =
+        descriptionEditor.selectionStart;
+
+      const end =
+        descriptionEditor.selectionEnd;
+
+      const selectedText =
+        descriptionEditor.value.slice(
+          start,
+          end
+        ) || fallback;
+
+      descriptionEditor.setRangeText(
+        before + selectedText + after,
+        start,
+        end,
+        "select"
+      );
+
+      descriptionEditor.focus();
+      updateCounter();
+    }
+
+    function insertLinePrefix(
+      prefix,
+      fallback
+    ) {
+      if (descriptionEditor.readOnly) {
+        return;
+      }
+
+      const start =
+        descriptionEditor.selectionStart;
+
+      const end =
+        descriptionEditor.selectionEnd;
+
+      const selectedText =
+        descriptionEditor.value.slice(
+          start,
+          end
+        ) || fallback;
+
+      const lines =
+        selectedText.split("\n");
+
+      const transformed =
+        lines
+          .map(line => prefix + line)
+          .join("\n");
+
+      descriptionEditor.setRangeText(
+        transformed,
+        start,
+        end,
+        "select"
+      );
+
+      descriptionEditor.focus();
+      updateCounter();
+    }
+
+    function handleToolbar(action) {
+      if (action === "bold") {
+        wrapSelection(
+          "**",
+          "**",
+          "texte en gras"
+        );
+
+        return;
+      }
+
+      if (action === "italic") {
+        wrapSelection(
+          "*",
+          "*",
+          "texte en italique"
+        );
+
+        return;
+      }
+
+      if (action === "heading") {
+        insertLinePrefix(
+          "## ",
+          "Mon titre"
+        );
+
+        return;
+      }
+
+      if (action === "list") {
+        insertLinePrefix(
+          "- ",
+          "Élément"
+        );
+
+        return;
+      }
+
+      if (action === "quote") {
+        insertLinePrefix(
+          "> ",
+          "Citation"
+        );
+
+        return;
+      }
+
+      if (action === "code") {
+        wrapSelection(
+          "`",
+          "`",
+          "code"
+        );
+      }
+    }
+
+    async function startApplication() {
+      try {
+        const authenticated =
+          await loadAuthentication();
+
+        if (!authenticated) {
+          return;
+        }
+
+        await loadPanel();
+
+        loadingScreen.hidden = true;
+        application.hidden = false;
+      } catch (error) {
+        loadingScreen.innerHTML = "";
+
+        const errorMessage =
+          document.createElement("div");
+
+        const title =
+          document.createElement("h1");
+
+        title.textContent =
+          "Impossible de charger le panel";
+
+        const description =
+          document.createElement("p");
+
+        description.textContent =
+          error.message;
+
+        errorMessage.append(
+          title,
+          description
+        );
+
+        loadingScreen.append(
+          errorMessage
+        );
+      }
+    }
+
+    descriptionEditor.addEventListener(
+      "input",
+      updateCounter
+    );
+
+    saveDraftButton.addEventListener(
+      "click",
+      saveDraft
+    );
+
+    submitButton.addEventListener(
+      "click",
+      submitDraft
+    );
+
+    cancelSubmissionButton.addEventListener(
+      "click",
+      cancelSubmission
+    );
+
+    completeOnboardingButton.addEventListener(
+      "click",
+      completeOnboarding
+    );
+
+    for (const button of toolbarButtons) {
+      button.addEventListener(
+        "click",
+        () => {
+          handleToolbar(
+            button.dataset.action
+          );
+        }
+      );
+    }
+
+    startApplication();
+  </script>
+</body>
+</html>
