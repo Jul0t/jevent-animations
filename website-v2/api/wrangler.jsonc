@@ -1,0 +1,48 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+
+  "name": "jevent-v2-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-09",
+
+  "workers_dev": true,
+
+  "routes": [
+    {
+      "pattern": "api-beta.jevent.julot.fr",
+      "custom_domain": true
+    }
+  ],
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "jevent-v2-db",
+      "database_id": "cb774752-cfc3-403c-9375-fb99f39fca13"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "jevent-v2-media"
+    }
+  ],
+
+  "vars": {
+    "SITE_URL": "https://jevent.julot.fr",
+    "ALLOWED_ORIGIN": "https://jevent.julot.fr,http://localhost:8787",
+
+    "TWITCH_CLIENT_ID": "ct11ln0kektcmhwtfnoo8uxego7q29",
+    "TWITCH_REDIRECT_URI": "https://api-beta.jevent.julot.fr/api/auth/twitch/callback",
+
+    "EVENT_NAME": "JEvent 26",
+    "EVENT_TIMEZONE": "Europe/Paris",
+    "EVENT_START": "2026-10-23T16:00:00+02:00",
+    "EVENT_END": "2026-10-26T04:00:00+01:00",
+
+    "CHARITY_NAME": "Association Petits Princes",
+
+    "STREAMLABS_TEAM_URL": "https://streamlabscharity.com/teams/@jevent-26/jevent-2026"
+  }
+}
