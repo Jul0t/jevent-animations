@@ -125,12 +125,73 @@
       }
 
       .je-calendar-event {
-        padding: 3px 7px;
-        text-align: left;
-        cursor: pointer;
-        font-size: .78rem;
-        line-height: 1.25;
-      }
+  padding: 10px 7px;
+  text-align: left;
+  cursor: grab;
+  font-size: .78rem;
+  line-height: 1.25;
+  touch-action: none;
+  user-select: none;
+}
+
+.je-calendar-event:active {
+  cursor: grabbing;
+}
+
+.je-calendar-event.is-moving {
+  z-index: 20;
+  opacity: .82;
+  cursor: grabbing;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .45);
+}
+
+.je-calendar-event.is-resizing {
+  z-index: 20;
+  opacity: .82;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, .45);
+}
+
+.je-calendar-resize {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  z-index: 2;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .35);
+  cursor: ns-resize;
+}
+
+.je-calendar-resize:hover {
+  background: rgba(255, 255, 255, .75);
+}
+
+.je-calendar-resize[data-edge="start"] {
+  top: 2px;
+}
+
+.je-calendar-resize[data-edge="end"] {
+  bottom: 2px;
+}
+
+.je-calendar-drag-time {
+  position: absolute;
+  right: 5px;
+  bottom: 4px;
+  left: 5px;
+  overflow: hidden;
+  color: #d9ffe4;
+  font-size: .7rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
 
       .je-calendar-event strong,
       .je-calendar-event span {
@@ -308,6 +369,71 @@
                 Number(value.slice(14, 16));
         }
 
+        function clamp(value, minimum, maximum) {
+            return Math.max(
+                minimum,
+                Math.min(maximum, value)
+            );
+        }
+
+        function getDayColumnFromPoint(clientX, clientY) {
+            const pointedElement =
+                document.elementFromPoint(clientX, clientY);
+
+            return pointedElement?.closest(
+                ".je-calendar-day"
+            ) ?? null;
+        }
+
+        function getEventLocalRange(entry) {
+            const startsAt = adapter.toLocal(entry.startsAt);
+            const endsAt = adapter.toLocal(entry.endsAt);
+
+            if (!startsAt || !endsAt) {
+                return null;
+            }
+
+            return {
+                startsAt,
+                endsAt,
+                startDate: startsAt.slice(0, 10),
+                endDate: endsAt.slice(0, 10),
+                startMinute: minuteOfDay(startsAt),
+                endMinute: minuteOfDay(endsAt)
+            };
+        }
+
+        function setFormRange(date, start, end) {
+            document.querySelector("#startInput").value =
+                inputDateTime(date, start);
+
+            document.querySelector("#endInput").value =
+                inputDateTime(date, end);
+        }
+
+        function setEventPosition(
+            element,
+            start,
+            end,
+            left = "2px",
+            width = "calc(100% - 4px)"
+        ) {
+            element.style.top = `${start}px`;
+            element.style.height =
+                `${Math.max(12, end - start)}px`;
+            element.style.left = left;
+            element.style.width = width;
+
+            const time =
+                element.querySelector(".je-calendar-drag-time");
+
+            if (time) {
+                time.textContent =
+                    `${clock(start)} – ${clock(end)}`;
+            }
+        }
+
+
         function setEditorOwner() {
             ownerInput.value = activeCreatorId;
         }
@@ -328,15 +454,18 @@
             );
         }
 
-        function openEditor() {
+        function openEditor({
+            preserveOrigin = false
+        } = {}) {
             if (!dialog.open) {
                 dialog.showModal();
             }
 
             document.querySelector("#titleInput").focus();
 
-            // Référence après ouverture, avec les valeurs préremplies.
-            editorOrigin = snapshot();
+            if (!preserveOrigin) {
+                editorOrigin = snapshot();
+            }
         }
 
         function requestClose() {
@@ -354,8 +483,8 @@
             }
 
             dialog.close();
+            render();
         }
-
 
         closeButton.addEventListener("click", requestClose);
         dialog.addEventListener("cancel", event => {
@@ -544,36 +673,110 @@
                     }
 
                     for (const segment of overlapGroup) {
-                        const { entry, start, end, lane } = segment;
-                        const button = document.createElement("button");
+                        const {
+                            entry,
+                            start,
+                            end,
+                            lane
+                        } = segment;
+
+                        const button =
+                            document.createElement("button");
 
                         button.type = "button";
                         button.className = "je-calendar-event";
                         button.dataset.status = entry.status;
-                        button.style.top = `${start}px`;
-                        button.style.height = `${Math.max(12, end - start)}px`;
-                        button.style.left =
-                            `calc(${lane * 100 / laneEnds.length}% + 2px)`;
-                        button.style.width =
-                            `calc(${100 / laneEnds.length}% - 4px)`;
+                        button.dataset.publicId = entry.publicId;
 
-                        const title = document.createElement("strong");
+                        setEventPosition(
+                            button,
+                            start,
+                            end,
+                            `calc(${lane * 100 / laneEnds.length}% + 2px)`,
+                            `calc(${100 / laneEnds.length}% - 4px)`
+                        );
+
+                        const startHandle =
+                            document.createElement("span");
+
+                        startHandle.className =
+                            "je-calendar-resize";
+                        startHandle.dataset.edge = "start";
+                        startHandle.title =
+                            "Modifier l’heure de début";
+                        startHandle.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                        const title =
+                            document.createElement("strong");
+
                         title.textContent = entry.title;
 
-                        const time = document.createElement("span");
-                        time.textContent = `${clock(start)} – ${clock(end)}`;
+                        const time =
+                            document.createElement("span");
 
-                        button.title = `${entry.title} — ${time.textContent}`;
-                        button.setAttribute("aria-label", button.title);
-                        button.append(title, time);
+                        time.className =
+                            "je-calendar-drag-time";
 
-                        // Aucun badge d’objectif fictif ou de valeur « aucun ».
-                        button.addEventListener("click", () => {
-                            adapter.select(entry);
-                            openEditor();
-                        });
+                        time.textContent =
+                            `${clock(start)} – ${clock(end)}`;
+
+                        const endHandle =
+                            document.createElement("span");
+
+                        endHandle.className =
+                            "je-calendar-resize";
+                        endHandle.dataset.edge = "end";
+                        endHandle.title =
+                            "Modifier l’heure de fin";
+                        endHandle.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                        button.title =
+                            `${entry.title} — ${time.textContent}`;
+
+                        button.setAttribute(
+                            "aria-label",
+                            button.title
+                        );
+
+                        button.append(
+                            startHandle,
+                            title,
+                            time,
+                            endHandle
+                        );
+
+                        button.addEventListener(
+                            "pointerdown",
+                            event => {
+                                const edge =
+                                    event.target.closest(
+                                        ".je-calendar-resize"
+                                    )?.dataset.edge;
+
+                                const mode =
+                                    edge === "start"
+                                        ? "resize-start"
+                                        : edge === "end"
+                                            ? "resize-end"
+                                            : "move";
+
+                                beginEventGesture(
+                                    event,
+                                    entry,
+                                    button,
+                                    mode
+                                );
+                            }
+                        );
 
                         column.append(button);
+
                     }
                 }
 
@@ -584,6 +787,303 @@
             feedback.textContent = activeCreatorId
                 ? "Sélection par pas de 15 minutes."
                 : "Aucun calendrier modifiable avec ce compte.";
+        }
+
+        function beginEventGesture(
+            event,
+            entry,
+            element,
+            mode
+        ) {
+            if (
+                event.pointerType === "touch" ||
+                event.button !== 0 ||
+                gesture
+            ) {
+                return;
+            }
+
+            const range = getEventLocalRange(entry);
+
+            if (!range) {
+                return;
+            }
+
+            /*
+             * Les activités qui traversent minuit restent modifiables
+             * via le formulaire. Leur manipulation directe est évitée
+             * pour ne pas tronquer leur durée.
+             */
+            if (range.startDate !== range.endDate) {
+                adapter.select(entry);
+                openEditor();
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const originColumn = element.closest(
+                ".je-calendar-day"
+            );
+
+            const duration =
+                range.endMinute - range.startMinute;
+
+            const pointerMinute =
+                snappedMinute(event, originColumn);
+
+            gesture = {
+                type: "event",
+                mode,
+                pointerId: event.pointerId,
+                entry,
+                element,
+                originColumn,
+                targetColumn: originColumn,
+                originDate: originColumn.dataset.date,
+                targetDate: originColumn.dataset.date,
+                originalStart: range.startMinute,
+                originalEnd: range.endMinute,
+                duration,
+                grabOffset:
+                    pointerMinute - range.startMinute,
+                start: range.startMinute,
+                end: range.endMinute,
+                moved: false
+            };
+
+            element.classList.add(
+                mode === "move"
+                    ? "is-moving"
+                    : "is-resizing"
+            );
+
+            element.setPointerCapture(event.pointerId);
+            element.addEventListener(
+                "pointermove",
+                moveEventGesture
+            );
+            element.addEventListener(
+                "pointerup",
+                finishEventGesture
+            );
+            element.addEventListener(
+                "pointercancel",
+                cancelEventGesture
+            );
+            element.addEventListener(
+                "lostpointercapture",
+                cancelEventGesture
+            );
+        }
+
+        function moveEventGesture(event) {
+            if (
+                !gesture ||
+                gesture.type !== "event" ||
+                event.pointerId !== gesture.pointerId
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const targetColumn =
+                getDayColumnFromPoint(
+                    event.clientX,
+                    event.clientY
+                ) ?? gesture.targetColumn;
+
+            if (!targetColumn) {
+                return;
+            }
+
+            const pointerMinute =
+                snappedMinute(event, targetColumn);
+
+            let start = gesture.start;
+            let end = gesture.end;
+
+            if (gesture.mode === "move") {
+                start = clamp(
+                    pointerMinute - gesture.grabOffset,
+                    0,
+                    DAY_MINUTES - gesture.duration
+                );
+
+                /*
+                 * La différence entre le pointeur et le début doit aussi
+                 * respecter le pas de quinze minutes.
+                 */
+                start =
+                    Math.round(start / STEP) * STEP;
+
+                end = start + gesture.duration;
+            }
+
+            if (gesture.mode === "resize-start") {
+                start = clamp(
+                    pointerMinute,
+                    0,
+                    gesture.originalEnd - STEP
+                );
+
+                end = gesture.originalEnd;
+            }
+
+            if (gesture.mode === "resize-end") {
+                start = gesture.originalStart;
+
+                end = clamp(
+                    pointerMinute,
+                    gesture.originalStart + STEP,
+                    DAY_MINUTES
+                );
+            }
+
+            if (
+                gesture.mode !== "move" &&
+                targetColumn !== gesture.originColumn
+            ) {
+                return;
+            }
+
+            gesture.start = start;
+            gesture.end = end;
+            gesture.targetColumn =
+                gesture.mode === "move"
+                    ? targetColumn
+                    : gesture.originColumn;
+            gesture.targetDate =
+                gesture.targetColumn.dataset.date;
+
+            gesture.moved =
+                gesture.targetDate !== gesture.originDate ||
+                start !== gesture.originalStart ||
+                end !== gesture.originalEnd;
+
+            if (
+                gesture.element.parentElement !==
+                gesture.targetColumn
+            ) {
+                gesture.targetColumn.append(
+                    gesture.element
+                );
+            }
+
+            setEventPosition(
+                gesture.element,
+                start,
+                end
+            );
+
+            feedback.textContent =
+                `${gesture.entry.title} : ` +
+                `${gesture.targetDate} ` +
+                `${clock(start)} → ${clock(end)}`;
+        }
+
+        function clearEventGesture() {
+            if (
+                !gesture ||
+                gesture.type !== "event"
+            ) {
+                return null;
+            }
+
+            const previous = gesture;
+            gesture = null;
+
+            previous.element.removeEventListener(
+                "pointermove",
+                moveEventGesture
+            );
+            previous.element.removeEventListener(
+                "pointerup",
+                finishEventGesture
+            );
+            previous.element.removeEventListener(
+                "pointercancel",
+                cancelEventGesture
+            );
+            previous.element.removeEventListener(
+                "lostpointercapture",
+                cancelEventGesture
+            );
+
+            if (
+                previous.element.hasPointerCapture(
+                    previous.pointerId
+                )
+            ) {
+                previous.element.releasePointerCapture(
+                    previous.pointerId
+                );
+            }
+
+            previous.element.classList.remove(
+                "is-moving",
+                "is-resizing"
+            );
+
+            return previous;
+        }
+
+        function finishEventGesture(event) {
+            if (
+                !gesture ||
+                gesture.type !== "event" ||
+                event.pointerId !== gesture.pointerId
+            ) {
+                return;
+            }
+
+            moveEventGesture(event);
+
+            const result = clearEventGesture();
+
+            if (!result.moved) {
+                adapter.select(result.entry);
+                openEditor();
+                render();
+                return;
+            }
+
+            adapter.select(result.entry);
+
+            editorOrigin = snapshot();
+
+            setFormRange(
+                result.targetDate,
+                result.start,
+                result.end
+            );
+
+            openEditor({
+                preserveOrigin: true
+            });
+
+
+            feedback.textContent =
+                "Horaires modifiés dans le formulaire. " +
+                "Clique sur Enregistrer pour les conserver.";
+
+            /*
+             * Le rendu des données enregistrées ne doit pas remplacer
+             * immédiatement l’aperçu. Il sera actualisé après la sauvegarde
+             * ou après la fermeture du panneau.
+             */
+        }
+
+        function cancelEventGesture() {
+            const result = clearEventGesture();
+
+            if (!result) {
+                return;
+            }
+
+            render();
         }
 
         function snappedMinute(event, column) {
@@ -619,6 +1119,7 @@
             column.append(preview);
 
             gesture = {
+                type: "selection",
                 pointerId: event.pointerId,
                 column,
                 preview,
@@ -701,9 +1202,20 @@
             render();
         }
 
-        document.addEventListener("keydown", event => {
-            if (event.key === "Escape" && gesture) cancelSelection();
-        });
+        document.addEventListener(
+            "keydown",
+            event => {
+                if (event.key !== "Escape" || !gesture) {
+                    return;
+                }
+
+                if (gesture.type === "event") {
+                    cancelEventGesture();
+                } else {
+                    cancelSelection();
+                }
+            }
+        );
 
         owner.addEventListener("change", () => {
             activeCreatorId = owner.value;
