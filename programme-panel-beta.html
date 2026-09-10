@@ -2499,9 +2499,13 @@
               savedPublicId
           );
 
-        if (savedEntry) {
-          selectEntry(savedEntry);
-        }
+          if (savedEntry) {
+              selectEntry(savedEntry);
+
+              // Le formulaire correspond désormais à l’activité enregistrée.
+              visualCalendar.markSaved();
+          }
+
       } catch (error) {
         if (
           error.status === 409 &&

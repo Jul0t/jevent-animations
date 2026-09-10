@@ -744,6 +744,13 @@
         // Position de départ : midi, plutôt que minuit.
         scroll.scrollTop = 12 * 60;
 
-        return { render };
+        return {
+            render,
+
+            markSaved() {
+                editorOrigin = snapshot();
+            }
+        };
+
     };
 })();
