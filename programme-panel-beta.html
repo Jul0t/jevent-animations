@@ -2287,13 +2287,6 @@
   }
 }
 
-  donationGoals =
-    Array.isArray(data.goals)
-      ? data.goals
-      : Array.isArray(data.donationGoals)
-        ? data.donationGoals
-        : [];
-
     async function loadEntries(
       preserveSelection = false
     ) {
