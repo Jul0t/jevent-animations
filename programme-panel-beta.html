@@ -1,17 +1,12 @@
 <!doctype html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta
-    name="description"
-    content="Gestion des programmes des créateurs du JEvent 26."
-  >
+  <meta name="description" content="Gestion des programmes des créateurs du JEvent 26.">
 
   <title>Gestion du programme — JEvent 26</title>
 
@@ -67,21 +62,15 @@
       margin: 0;
 
       background:
-        radial-gradient(
-          circle at 8% 0%,
+        radial-gradient(circle at 8% 0%,
           rgba(0, 178, 55, 0.21),
-          transparent 34%
-        ),
-        radial-gradient(
-          circle at 92% 12%,
+          transparent 34%),
+        radial-gradient(circle at 92% 12%,
           rgba(0, 178, 55, 0.08),
-          transparent 27%
-        ),
-        linear-gradient(
-          180deg,
+          transparent 27%),
+        linear-gradient(180deg,
           var(--background),
-          var(--background-soft)
-        );
+          var(--background-soft));
 
       color: var(--text);
     }
@@ -102,8 +91,7 @@
     select:focus-visible,
     textarea:focus-visible,
     a:focus-visible {
-      outline: 3px solid
-        rgba(56, 220, 105, 0.65);
+      outline: 3px solid rgba(56, 220, 105, 0.65);
 
       outline-offset: 3px;
     }
@@ -113,10 +101,8 @@
     }
 
     .container {
-      width: min(
-        1450px,
-        calc(100% - 32px)
-      );
+      width: min(1450px,
+          calc(100% - 32px));
 
       margin: 0 auto;
       padding: 24px 0 80px;
@@ -224,11 +210,9 @@
     .hero h1 {
       margin: 0;
 
-      font-size: clamp(
-        2.4rem,
-        7vw,
-        5rem
-      );
+      font-size: clamp(2.4rem,
+          7vw,
+          5rem);
 
       line-height: 0.97;
       letter-spacing: -0.06em;
@@ -269,8 +253,7 @@
     .layout {
       display: grid;
       grid-template-columns:
-        minmax(280px, 390px)
-        minmax(0, 1fr);
+        minmax(280px, 390px) minmax(0, 1fr);
 
       gap: 22px;
       align-items: start;
@@ -595,8 +578,7 @@
 
       padding: 7px 9px;
 
-      border: 1px solid
-        rgba(0, 178, 55, 0.4);
+      border: 1px solid rgba(0, 178, 55, 0.4);
 
       border-radius: 999px;
 
@@ -734,16 +716,14 @@
     }
 
     .button.warning {
-      border: 1px solid
-        rgba(247, 201, 72, 0.4);
+      border: 1px solid rgba(247, 201, 72, 0.4);
 
       background: rgba(247, 201, 72, 0.12);
       color: #ffe7a5;
     }
 
     .button.danger {
-      border: 1px solid
-        rgba(255, 104, 125, 0.4);
+      border: 1px solid rgba(255, 104, 125, 0.4);
 
       background: rgba(255, 104, 125, 0.12);
       color: #ffc5ce;
@@ -769,8 +749,7 @@
       height: 46px;
       margin: 0 auto 17px;
 
-      border: 4px solid
-        rgba(255, 255, 255, 0.1);
+      border: 4px solid rgba(255, 255, 255, 0.1);
 
       border-top-color: var(--green);
       border-radius: 50%;
@@ -782,8 +761,7 @@
       max-width: 620px;
       padding: 32px;
 
-      border: 1px solid
-        rgba(255, 104, 125, 0.3);
+      border: 1px solid rgba(255, 104, 125, 0.3);
 
       border-radius: 18px;
       background: rgba(255, 104, 125, 0.07);
@@ -801,10 +779,8 @@
       bottom: 20px;
       z-index: 100;
 
-      width: min(
-        430px,
-        calc(100% - 40px)
-      );
+      width: min(430px,
+          calc(100% - 40px));
 
       padding: 15px 17px;
 
@@ -849,10 +825,8 @@
 
     @media (max-width: 680px) {
       .container {
-        width: min(
-          100% - 22px,
-          1450px
-        );
+        width: min(100% - 22px,
+            1450px);
       }
 
       .site-header,
@@ -885,11 +859,7 @@
   <div class="container">
     <header class="site-header">
       <a class="brand" href="/">
-        <img
-          class="brand-logo"
-          src="/assets/jevent_logo.png"
-          alt="Logo du JEvent 26"
-        >
+        <img class="brand-logo" src="/assets/jevent_logo.png" alt="Logo du JEvent 26">
 
         <span>
           <span class="brand-title">
@@ -902,10 +872,7 @@
         </span>
       </a>
 
-      <nav
-        class="navigation"
-        aria-label="Navigation principale"
-      >
+      <nav class="navigation" aria-label="Navigation principale">
         <a href="/">Accueil</a>
 
         <a href="/programme.html">
@@ -919,15 +886,9 @@
     </header>
 
     <main>
-      <section
-        id="loading"
-        class="loading"
-      >
+      <section id="loading" class="loading">
         <div>
-          <div
-            class="spinner"
-            aria-hidden="true"
-          ></div>
+          <div class="spinner" aria-hidden="true"></div>
 
           <p>Chargement du programme…</p>
         </div>
@@ -936,10 +897,7 @@
       <div id="application" hidden>
         <section class="hero">
           <div class="eyebrow">
-            <span
-              class="eyebrow-dot"
-              aria-hidden="true"
-            ></span>
+            <span class="eyebrow-dot" aria-hidden="true"></span>
 
             Programmes des créateurs
           </div>
@@ -963,11 +921,7 @@
             </span>
           </div>
 
-          <button
-            id="newEntryButton"
-            class="button"
-            type="button"
-          >
+          <button id="newEntryButton" class="button" type="button">
             Nouvelle activité
           </button>
         </section>
@@ -983,18 +937,12 @@
                 </p>
               </div>
 
-              <span
-                id="entryCountBadge"
-                class="count-badge"
-              >
+              <span id="entryCountBadge" class="count-badge">
                 0
               </span>
             </div>
 
-            <div
-              id="entryList"
-              class="entry-list"
-            ></div>
+            <div id="entryList" class="entry-list"></div>
           </aside>
 
           <section class="card">
@@ -1009,10 +957,7 @@
                 </p>
               </div>
 
-              <span
-                id="formStatus"
-                class="status draft"
-              >
+              <span id="formStatus" class="status draft">
                 Brouillon
               </span>
             </div>
@@ -1025,13 +970,7 @@
                       Titre de l’activité
                     </label>
 
-                    <input
-                      id="titleInput"
-                      class="input"
-                      type="text"
-                      maxlength="150"
-                      required
-                    >
+                    <input id="titleInput" class="input" type="text" maxlength="150" required>
                   </div>
 
                   <div class="field full">
@@ -1039,15 +978,31 @@
                       Programme du créateur
                     </label>
 
-                    <select
-                      id="primaryCreatorInput"
-                      class="select"
-                      required
-                    >
+                    <select id="primaryCreatorInput" class="select" required>
                       <option value="">
                         Sélectionner un créateur
                       </option>
                     </select>
+
+                    <div class="field full">
+                      <label for="donationGoalInput">
+                        Objectif de dons associé
+                        <span style="color: var(--muted); font-weight: 600;">
+                          — facultatif
+                        </span>
+                      </label>
+
+                      <select id="donationGoalInput" class="select">
+                        <option value="">
+                          Aucun objectif associé
+                        </option>
+                      </select>
+
+                      <span id="donationGoalHelp" class="field-help">
+                        Si un objectif est sélectionné, l’activité sera affichée
+                        comme étant sous réserve de son atteinte.
+                      </span>
+                    </div>
 
                     <span class="field-help">
                       L’activité apparaîtra dans le programme
@@ -1061,14 +1016,8 @@
                       Début
                     </label>
 
-                    <input
-                      id="startInput"
-                      class="input"
-                      type="datetime-local"
-                      min="2026-10-25T16:00"
-                      max="2026-10-28T04:00"
-                      required
-                    >
+                    <input id="startInput" class="input" type="datetime-local" min="2026-10-25T16:00"
+                      max="2026-10-28T04:00" required>
                   </div>
 
                   <div class="field">
@@ -1076,14 +1025,8 @@
                       Fin
                     </label>
 
-                    <input
-                      id="endInput"
-                      class="input"
-                      type="datetime-local"
-                      min="2026-10-25T16:00"
-                      max="2026-10-28T04:00"
-                      required
-                    >
+                    <input id="endInput" class="input" type="datetime-local" min="2026-10-25T16:00"
+                      max="2026-10-28T04:00" required>
                   </div>
 
                   <div class="field">
@@ -1091,10 +1034,7 @@
                       Catégorie
                     </label>
 
-                    <select
-                      id="categoryInput"
-                      class="select"
-                    >
+                    <select id="categoryInput" class="select">
                       <option value="gaming">
                         Gaming
                       </option>
@@ -1134,10 +1074,7 @@
                       Statut
                     </label>
 
-                    <select
-                      id="statusInput"
-                      class="select"
-                    >
+                    <select id="statusInput" class="select">
                       <option value="draft">
                         Brouillon
                       </option>
@@ -1157,12 +1094,8 @@
                       Description Markdown
                     </label>
 
-                    <textarea
-                      id="descriptionInput"
-                      class="textarea"
-                      maxlength="10000"
-                      placeholder="Description facultative de l’activité."
-                    ></textarea>
+                    <textarea id="descriptionInput" class="textarea" maxlength="10000"
+                      placeholder="Description facultative de l’activité."></textarea>
 
                     <span class="field-help">
                       Le HTML, le JavaScript et les liens sont
@@ -1175,12 +1108,7 @@
                       Lien externe facultatif
                     </label>
 
-                    <input
-                      id="externalUrlInput"
-                      class="input"
-                      type="url"
-                      placeholder="https://..."
-                    >
+                    <input id="externalUrlInput" class="input" type="url" placeholder="https://...">
 
                     <span class="field-help">
                       Le lien doit obligatoirement utiliser HTTPS.
@@ -1192,13 +1120,8 @@
                       Créateurs participants
                     </label>
 
-                    <input
-                      id="participantSearchInput"
-                      class="input"
-                      type="search"
-                      autocomplete="off"
-                      placeholder="Rechercher un invité par nom ou login Twitch…"
-                    >
+                    <input id="participantSearchInput" class="input" type="search" autocomplete="off"
+                      placeholder="Rechercher un invité par nom ou login Twitch…">
 
                     <span class="field-help">
                       Facultatif : ajoute uniquement les autres
@@ -1207,95 +1130,49 @@
                       automatiquement.
                     </span>
 
-                    <div
-                      id="participantSearchResults"
-                      class="participant-search-results"
-                      hidden
-                    ></div>
+                    <div id="participantSearchResults" class="participant-search-results" hidden></div>
 
-                    <div
-                      id="selectedParticipants"
-                      class="selected-participants"
-                    ></div>
+                    <div id="selectedParticipants" class="selected-participants"></div>
                   </div>
 
-                  <div
-                    id="cancelReasonField"
-                    class="field full"
-                    hidden
-                  >
+                  <div id="cancelReasonField" class="field full" hidden>
                     <label for="cancelReasonInput">
                       Motif de l’annulation
                     </label>
 
-                    <textarea
-                      id="cancelReasonInput"
-                      class="textarea"
-                      maxlength="1000"
-                    ></textarea>
+                    <textarea id="cancelReasonInput" class="textarea" maxlength="1000"></textarea>
                   </div>
                 </div>
 
-                <div
-                  id="conflictNotice"
-                  class="notice warning"
-                  hidden
-                >
+                <div id="conflictNotice" class="notice warning" hidden>
                   <strong>
                     Conflits d’horaires détectés
                   </strong>
 
-                  <div
-                    id="conflictList"
-                    class="conflict-list"
-                  ></div>
+                  <div id="conflictList" class="conflict-list"></div>
 
-                  <label
-                    id="overrideLabel"
-                    class="override-label"
-                    hidden
-                  >
-                    <input
-                      id="overrideConflictsInput"
-                      type="checkbox"
-                    >
+                  <label id="overrideLabel" class="override-label" hidden>
+                    <input id="overrideConflictsInput" type="checkbox">
 
                     Ignorer ces conflits
                   </label>
                 </div>
 
                 <div class="action-row">
-                  <button
-                    id="saveButton"
-                    class="button"
-                    type="submit"
-                  >
+                  <button id="saveButton" class="button" type="submit">
                     Enregistrer
                   </button>
 
-                  <button
-                    id="resetButton"
-                    class="button secondary"
-                    type="button"
-                  >
+                  <button id="resetButton" class="button secondary" type="button">
                     Réinitialiser
                   </button>
 
-                  <button
-                    id="cancelEntryButton"
-                    class="button warning"
-                    type="button"
-                    hidden
-                  >
+                  <button id="cancelEntryButton" class="button warning" type="button" hidden>
                     Annuler l’activité
                   </button>
 
-                  <buttonfunction renderEntries() {function renderEntries() {
-                    id="deleteEntryButton"
-                    class="button danger"
-                    type="button"
-                    hidden
-                  >
+                  <button function renderEntries() {function renderEntries() { id="deleteEntryButton"
+                    class="button danger" type="button" hidden>
                     Supprimer définitivement
                   </button>
                 </div>
@@ -1307,15 +1184,9 @@
     </main>
   </div>
 
-  <div
-    id="pageMessage"
-    class="page-message"
-    role="status"
-    aria-live="polite"
-    hidden
-  ></div>
+  <div id="pageMessage" class="page-message" role="status" aria-live="polite" hidden></div>
 
-    <script src="./programme-calendar-beta.js?v=1"></script>
+  <script src="./programme-calendar-beta.js?v=1"></script>
 
   <script>
     const API_URL =
@@ -1366,6 +1237,16 @@
     const primaryCreatorInput =
       document.querySelector(
         "#primaryCreatorInput"
+      );
+
+    const donationGoalInput =
+      document.querySelector(
+        "#donationGoalInput"
+      );
+
+    const donationGoalHelp =
+      document.querySelector(
+        "#donationGoalHelp"
       );
 
     const startInput =
@@ -1455,6 +1336,7 @@
     let currentUser = null;
     let creators = Array.of();
     let entries = Array.of();
+    let donationGoals = Array.of();
     let selectedEntry = null;
     let selectedGuestIds = Array.of();
     let messageTimeout = null;
@@ -1497,9 +1379,9 @@
           headers: {
             ...(options.body
               ? {
-                  "Content-Type":
-                    "application/json"
-                }
+                "Content-Type":
+                  "application/json"
+              }
               : {}),
             ...(options.headers ?? {})
           }
@@ -1992,10 +1874,10 @@
         entry.primaryCreator
           ?.twitchDisplayName
           ? (
-              "Programme de " +
-              entry.primaryCreator
-                .twitchDisplayName
-            )
+            "Programme de " +
+            entry.primaryCreator
+              .twitchDisplayName
+          )
           : "Programme non attribué";
 
       const time =
@@ -2026,15 +1908,15 @@
       participants.textContent =
         guests.length > 0
           ? (
-              "Avec " +
-              guests
-                .map(
-                  participant =>
-                    participant
-                      .twitchDisplayName
-                )
-                .join(", ")
-            )
+            "Avec " +
+            guests
+              .map(
+                participant =>
+                  participant
+                    .twitchDisplayName
+              )
+              .join(", ")
+          )
           : "Sans invité";
 
       const status =
@@ -2065,7 +1947,7 @@
     }
 
     function renderEntries() {
-        visualCalendar.render();
+      visualCalendar.render();
       entryList.replaceChildren();
 
       entryCount.textContent =
@@ -2169,7 +2051,10 @@
       participantSearchResults.hidden =
         true;
 
+      donationGoalInput.value = "";
+
       renderPrimaryCreators();
+      renderDonationGoals();
       renderSelectedGuests();
 
       updateFormStatus();
@@ -2236,6 +2121,12 @@
         entry.primaryCreator?.id ?? null
       );
 
+      renderDonationGoals(
+        entry.donationGoal?.publicId ??
+        entry.donationGoalPublicId ??
+        null
+      );
+
       renderSelectedGuests();
 
       participantSearchInput.value = "";
@@ -2285,6 +2176,9 @@
 
         participantIds:
           getSelectedGuestIds(),
+
+        donationGoalPublicId:
+          donationGoalInput.value || null,
 
         primaryCreatorId:
           getPrimaryCreatorId(),
@@ -2390,10 +2284,10 @@
       const restored =
         selectedPublicId
           ? entries.find(
-              entry =>
-                entry.publicId ===
-                selectedPublicId
-            )
+            entry =>
+              entry.publicId ===
+              selectedPublicId
+          )
           : null;
 
       if (restored) {
@@ -2460,11 +2354,11 @@
       try {
         const pathname = selectedEntry
           ? (
-              "/api/program/manage/" +
-              encodeURIComponent(
-                selectedEntry.publicId
-              )
+            "/api/program/manage/" +
+            encodeURIComponent(
+              selectedEntry.publicId
             )
+          )
           : "/api/program/manage";
 
         const method =
@@ -2499,12 +2393,12 @@
               savedPublicId
           );
 
-          if (savedEntry) {
-              selectEntry(savedEntry);
+        if (savedEntry) {
+          selectEntry(savedEntry);
 
-              // Le formulaire correspond désormais à l’activité enregistrée.
-              visualCalendar.markSaved();
-          }
+          // Le formulaire correspond désormais à l’activité enregistrée.
+          visualCalendar.markSaved();
+        }
 
       } catch (error) {
         if (
@@ -2625,20 +2519,41 @@
       }
     }
 
-    const visualCalendar = window.createJEventCalendar({
+    const visualCalendar =
+      window.createJEventCalendar({
         getUser: () => currentUser,
 
-        getCreators: () => getManageablePrimaryCreators(),
+        getCreators: () =>
+          getManageablePrimaryCreators(),
 
         getEntries: () => entries,
 
-        toLocal: value => toLocalInputValue(value),
+        getDonationGoals: () =>
+          donationGoals,
+
+        toLocal: value =>
+          toLocalInputValue(value),
 
         reset: () => resetForm(),
 
-        select: entry => selectEntry(entry)
-    });
+        select: entry =>
+          selectEntry(entry)
+      });
 
+    function formatMoney(
+      amountCents,
+      currency = "EUR"
+    ) {
+      return new Intl.NumberFormat(
+        "fr-FR",
+        {
+          style: "currency",
+          currency
+        }
+      ).format(
+        Number(amountCents || 0) / 100
+      );
+    }
 
     async function startApplication() {
       try {
@@ -2656,6 +2571,7 @@
          * 3. entries et rendu du formulaire
          */
         await loadCreators();
+        await loadDonationGoals();
         await loadEntries();
 
         loading.hidden = true;
@@ -2750,6 +2666,113 @@
       }
     );
 
+    primaryCreatorInput.addEventListener(
+      "change",
+      () => {
+        renderDonationGoals();
+      }
+    );
+
+
+    function getGoalCreatorId(goal) {
+      return String(
+        goal.creatorId ??
+        goal.creator?.id ??
+        ""
+      );
+    }
+
+    function getGoalsForCreator(creatorId) {
+      if (!creatorId) {
+        return Array.of();
+      }
+
+      return donationGoals
+        .filter(
+          goal =>
+            getGoalCreatorId(goal) ===
+            String(creatorId)
+        )
+        .filter(
+          goal =>
+            goal.status !== "archived"
+        )
+        .sort(
+          (first, second) =>
+            Number(first.thresholdCents || 0) -
+            Number(second.thresholdCents || 0)
+        );
+    }
+
+    function renderDonationGoals(
+      selectedPublicId = null
+    ) {
+      const creatorId =
+        getPrimaryCreatorId();
+
+      const goals =
+        getGoalsForCreator(creatorId);
+
+      donationGoalInput.replaceChildren();
+
+      const emptyOption =
+        document.createElement("option");
+
+      emptyOption.value = "";
+      emptyOption.textContent =
+        "Aucun objectif associé";
+
+      donationGoalInput.append(emptyOption);
+
+      for (const goal of goals) {
+        const option =
+          document.createElement("option");
+
+        option.value =
+          String(goal.publicId);
+
+        option.textContent =
+          `${formatMoney(
+            goal.thresholdCents,
+            goal.currency ?? "EUR"
+          )} — ${goal.title}`;
+
+        donationGoalInput.append(option);
+      }
+
+      const selectedExists =
+        selectedPublicId &&
+        goals.some(
+          goal =>
+            String(goal.publicId) ===
+            String(selectedPublicId)
+        );
+
+      donationGoalInput.value =
+        selectedExists
+          ? String(selectedPublicId)
+          : "";
+
+      donationGoalInput.disabled =
+        !creatorId || goals.length === 0;
+
+      if (!creatorId) {
+        donationGoalHelp.textContent =
+          "Sélectionne d’abord le créateur principal.";
+        return;
+      }
+
+      if (goals.length === 0) {
+        donationGoalHelp.textContent =
+          "Ce streamer n’a aucun objectif disponible.";
+        return;
+      }
+
+      donationGoalHelp.textContent =
+        "L’activité sera conditionnée à l’atteinte de l’objectif sélectionné.";
+    }
+
+
     /*
      * Aucun rendu dépendant de currentUser ne doit être
      * exécuté avant cette fonction.
@@ -2757,4 +2780,5 @@
     startApplication();
   </script>
 </body>
+
 </html>

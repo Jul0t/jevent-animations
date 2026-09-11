@@ -247,6 +247,29 @@
         padding: 12px 18px;
         border-bottom: 1px solid var(--border);
       }
+
+      .je-calendar-goal {
+  display: block;
+  margin-top: 5px;
+  padding: 3px 5px;
+  overflow: hidden;
+
+  border-radius: 5px;
+  background: rgba(247, 201, 72, .15);
+  color: #ffe7a5;
+
+  font-size: .67rem;
+  font-weight: 850;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.je-calendar-goal.is-reached {
+  background: rgba(56, 220, 105, .16);
+  color: #b8ffc9;
+}
+
     `;
         document.head.append(style);
 
@@ -433,6 +456,54 @@
             }
         }
 
+        async function resolveDonationGoalId(
+            env,
+            donationGoalPublicId,
+            primaryCreatorId
+        ) {
+            if (!donationGoalPublicId) {
+                return null;
+            }
+
+            const goal = await env.DB.prepare(`
+    SELECT
+      id,
+      creator_id,
+      status
+    FROM donation_goals
+    WHERE public_id = ?
+    LIMIT 1
+  `)
+                .bind(donationGoalPublicId)
+                .first();
+
+            if (!goal) {
+                throw new HttpError(
+                    400,
+                    "L’objectif de dons sélectionné n’existe pas."
+                );
+            }
+
+            if (
+                Number(goal.creator_id) !==
+                Number(primaryCreatorId)
+            ) {
+                throw new HttpError(
+                    400,
+                    "Cet objectif n’appartient pas au créateur du programme."
+                );
+            }
+
+            if (goal.status === "archived") {
+                throw new HttpError(
+                    400,
+                    "Cet objectif de dons est archivé."
+                );
+            }
+
+            return Number(goal.id);
+        }
+
 
         function setEditorOwner() {
             ownerInput.value = activeCreatorId;
@@ -555,6 +626,21 @@
         function visibleEntries() {
             return adapter.getEntries().filter(
                 entry => String(entry.primaryCreator?.id) === activeCreatorId
+            );
+        }
+
+        function formatGoalAmount(goal) {
+            return new Intl.NumberFormat(
+                "fr-FR",
+                {
+                    style: "currency",
+                    currency:
+                        goal.currency ?? "EUR"
+                }
+            ).format(
+                Number(
+                    goal.thresholdCents || 0
+                ) / 100
             );
         }
 
@@ -723,6 +809,35 @@
                         time.textContent =
                             `${clock(start)} – ${clock(end)}`;
 
+                        const donationGoal =
+                            resolveDonationGoal(entry);
+
+                        let goalBadge = null;
+
+                        if (donationGoal) {
+                            goalBadge =
+                                document.createElement("span");
+
+                            goalBadge.className =
+                                "je-calendar-goal";
+
+                            if (donationGoal.reached) {
+                                goalBadge.classList.add(
+                                    "is-reached"
+                                );
+
+                                goalBadge.textContent =
+                                    "✓ Objectif atteint";
+                            } else {
+                                goalBadge.textContent =
+                                    "🎯 Sous réserve d’objectif atteint";
+                            }
+
+                            goalBadge.title =
+                                `${donationGoal.title} — ` +
+                                `${formatGoalAmount(donationGoal)}`;
+                        }
+
                         const endHandle =
                             document.createElement("span");
 
@@ -743,10 +858,16 @@
                             "aria-label",
                             button.title
                         );
-
                         button.append(
                             startHandle,
-                            title,
+                            title
+                        );
+
+                        if (goalBadge) {
+                            button.append(goalBadge);
+                        }
+
+                        button.append(
                             time,
                             endHandle
                         );
