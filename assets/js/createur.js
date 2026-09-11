@@ -612,7 +612,6 @@
     />
   </svg>
 `;
-
                 edit.title =
                     `Modifier ${goal.title}`;
 
