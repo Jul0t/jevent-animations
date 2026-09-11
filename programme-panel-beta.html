@@ -2122,8 +2122,8 @@
       );
 
       renderDonationGoals(
-        entry.donationGoal?.publicId ??
-        entry.donationGoalPublicId ??
+        entry.goal?.publicId ??
+        entry.goalPublicId ??
         null
       );
 
@@ -2177,8 +2177,9 @@
         participantIds:
           getSelectedGuestIds(),
 
-        donationGoalPublicId:
+        goalPublicId:
           donationGoalInput.value || null,
+
 
         primaryCreatorId:
           getPrimaryCreatorId(),
@@ -2186,6 +2187,9 @@
         cancelledReason:
           cancelReasonInput.value.trim() ||
           null,
+
+        goalPublicId:
+          donationGoalInput.value || null,
 
         overrideConflicts:
           overrideConflictsInput.checked
@@ -2266,26 +2270,26 @@
     }
 
     async function loadDonationGoals() {
-  try {
-    const data = await apiFetch(
-      "/api/donation-goals/manage"
-    );
+      try {
+        const data = await apiFetch(
+          "/api/donation-goals/manage"
+        );
 
-    donationGoals =
-      Array.isArray(data.goals)
-        ? data.goals
-        : Array.isArray(data.donationGoals)
-          ? data.donationGoals
-          : [];
-  } catch (error) {
-    console.error(
-      "Impossible de charger les objectifs de dons :",
-      error
-    );
+        donationGoals =
+          Array.isArray(data.goals)
+            ? data.goals
+            : Array.isArray(data.donationGoals)
+              ? data.donationGoals
+              : [];
+      } catch (error) {
+        console.error(
+          "Impossible de charger les objectifs de dons :",
+          error
+        );
 
-    donationGoals = [];
-  }
-}
+        donationGoals = [];
+      }
+    }
 
     async function loadEntries(
       preserveSelection = false

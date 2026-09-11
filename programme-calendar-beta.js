@@ -456,54 +456,26 @@
             }
         }
 
-        async function resolveDonationGoalId(
-            env,
-            donationGoalPublicId,
-            primaryCreatorId
-        ) {
-            if (!donationGoalPublicId) {
+        function resolveDonationGoal(entry) {
+            if (entry.goal) {
+                return entry.goal;
+            }
+
+            const publicId =
+                entry.goalPublicId;
+
+            if (!publicId) {
                 return null;
             }
 
-            const goal = await env.DB.prepare(`
-    SELECT
-      id,
-      creator_id,
-      status
-    FROM donation_goals
-    WHERE public_id = ?
-    LIMIT 1
-  `)
-                .bind(donationGoalPublicId)
-                .first();
-
-            if (!goal) {
-                throw new HttpError(
-                    400,
-                    "L’objectif de dons sélectionné n’existe pas."
-                );
-            }
-
-            if (
-                Number(goal.creator_id) !==
-                Number(primaryCreatorId)
-            ) {
-                throw new HttpError(
-                    400,
-                    "Cet objectif n’appartient pas au créateur du programme."
-                );
-            }
-
-            if (goal.status === "archived") {
-                throw new HttpError(
-                    400,
-                    "Cet objectif de dons est archivé."
-                );
-            }
-
-            return Number(goal.id);
+            return (
+                adapter.getDonationGoals?.().find(
+                    goal =>
+                        String(goal.publicId) ===
+                        String(publicId)
+                ) ?? null
+            );
         }
-
 
         function setEditorOwner() {
             ownerInput.value = activeCreatorId;
