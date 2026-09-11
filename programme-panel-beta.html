@@ -2269,27 +2269,24 @@
           );
     }
 
-    async function loadDonationGoals() {
-      try {
-        const data = await apiFetch(
-          "/api/donation-goals/manage"
-        );
+async function loadDonationGoals() {
+  try {
+    const data = await apiFetch(
+      "/api/goals/manage"
+    );
 
-        donationGoals =
-          Array.isArray(data.goals)
-            ? data.goals
-            : Array.isArray(data.donationGoals)
-              ? data.donationGoals
-              : [];
-      } catch (error) {
-        console.error(
-          "Impossible de charger les objectifs de dons :",
-          error
-        );
+    donationGoals = Array.isArray(data.goals)
+      ? data.goals
+      : [];
+  } catch (error) {
+    console.error(
+      "Impossible de charger les objectifs de dons :",
+      error
+    );
 
-        donationGoals = [];
-      }
-    }
+    donationGoals = [];
+  }
+}
 
     async function loadEntries(
       preserveSelection = false
