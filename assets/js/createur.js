@@ -1174,66 +1174,43 @@
 
 
     async function loadPage() {
-        const slug = getSlug();
+  const slug = getSlug();
+  if (!slug) {
+    throw new Error("Aucun créateur sélectionné.");
+  }
 
-        if (!slug) {
-            throw new Error(
-                "Aucun créateur n’a été sélectionné."
-            );
-        }
+  try {
+    const creatorData = await apiFetch("/api/creators/" + encodeURIComponent(slug));
+    const goalsData = await apiFetch("/api/goals/creator/" + encodeURIComponent(slug));
+    await loadCurrentUser();
 
-        const [creatorData, goalsData] =
-            await Promise.all([
-                apiFetch(
-                    "/api/creators/" +
-                    encodeURIComponent(slug)
-                ),
+    creator = creatorData.creator;
+    publicGoals = Array.isArray(goalsData?.goals) ? goalsData.goals : [];
 
-                apiFetch(
-                    "/api/goals/creator/" +
-                    encodeURIComponent(slug)
-                ),
+    if (!creator) throw new Error("Créateur introuvable.");
 
-                loadCurrentUser()
-            ]);
+    canManage = canUserManageCreator();
 
-        creator = creatorData.creator;
-
-        publicGoals = Array.isArray(
-            goalsData.goals
-        )
-            ? goalsData.goals
-            : [];
-
-        canManage = canUserManageCreator();
-
-        if (canManage) {
-            const manageData =
-                await apiFetch("/api/goals/manage");
-
-            manageableGoals = Array.isArray(
-                manageData.goals
-            )
-                ? manageData.goals
-                : [];
-        }
-
-        fillProfile();
-        renderGoals();
-
-        elements.editGoalsButton.hidden =
-            !canManage;
-
-        elements.editDescriptionButton.hidden =
-            !canManage;
-
-
-        elements.addGoalButton.hidden =
-            !canManage;
-
-        elements.loading.hidden = true;
-        elements.profile.hidden = false;
+    if (canManage) {
+      const manageData = await apiFetch("/api/goals/manage");
+      manageableGoals = Array.isArray(manageData?.goals) ? manageData.goals : [];
+    } else {
+      manageableGoals = [];
     }
+
+    fillProfile();
+    renderGoals();
+  } catch (error) {
+    console.error(error);
+    elements.errorMessage.textContent = error.message || "Erreur de chargement.";
+    elements.profile.hidden = true;
+    elements.errorState.hidden = false;
+  } finally {
+    elements.loading.hidden = true;
+  }
+}
+
+loadPage();
 
     elements.editGoalsButton.addEventListener(
         "click",
