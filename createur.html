@@ -1,21 +1,30 @@
 <!doctype html>
 <html lang="fr">
-
 <head>
   <meta charset="UTF-8">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
 
   <title>Créateur — JEvent 26</title>
 
-  <link rel="stylesheet" href="/assets/css/createur.css">
+  <link
+    rel="stylesheet"
+    href="/assets/css/createur.css"
+  >
 </head>
 
 <body>
   <div class="page-shell">
     <header class="site-header">
       <a class="brand" href="/">
-        <img class="brand-logo" src="/assets/jevent_logo.png" alt="JEvent 26">
+        <img
+          class="brand-logo"
+          src="/assets/jevent_logo.png"
+          alt="JEvent 26"
+        >
 
         <span>
           <strong>JEvent 26</strong>
@@ -40,7 +49,10 @@
         <h1>Profil indisponible</h1>
         <p id="errorMessage"></p>
 
-        <a class="button button-secondary" href="/createurs.html">
+        <a
+          class="button button-secondary"
+          href="/createurs.html"
+        >
           Voir les créateurs
         </a>
       </section>
@@ -52,7 +64,12 @@
           </div>
 
           <div class="profile-summary">
-            <img id="creatorAvatar" class="creator-avatar" src="/assets/jevent_logo.png" alt="">
+            <img
+              id="creatorAvatar"
+              class="creator-avatar"
+              src="/assets/jevent_logo.png"
+              alt=""
+            >
 
             <div class="profile-identity">
               <div class="profile-title-line">
@@ -61,28 +78,48 @@
                   <p id="creatorLogin"></p>
                 </div>
 
-                <button id="editGoalsButton" class="icon-button" type="button" title="Gérer les objectifs"
-                  aria-label="Gérer les objectifs" hidden>
-                  edit.innerHTML = `
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 20h4L19 9l-4-4L4 16v4zm2-3.2
-         9-9 1.2 1.2-9 9H6v-1.2zM17.5
-         6.5l1-1a1.4 1.4 0 0 1 2 2l-1
-         1-2-2z" />
-                  </svg>
-                  `;
-
+                <button
+                  id="editGoalsButton"
+                  class="icon-button"
+                  type="button"
+                  title="Gérer les objectifs"
+                  aria-label="Gérer les objectifs"
+                  hidden
+                >
+                  <svg
+  viewBox="0 0 24 24"
+  aria-hidden="true"
+>
+  <path
+    d="M4 20h4L19 9l-4-4L4 16v4zm2-3.2
+       9-9 1.2 1.2-9 9H6v-1.2zM17.5
+       6.5l1-1a1.4 1.4 0 0 1 2 2l-1
+       1-2-2z"
+  />
+</svg>
                 </button>
               </div>
 
               <div id="liveStatus" class="live-status"></div>
 
               <div class="profile-actions">
-                <a id="twitchButton" class="button button-secondary" href="#" target="_blank" rel="noopener noreferrer">
+                <a
+                  id="twitchButton"
+                  class="button button-secondary"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Voir sur Twitch
                 </a>
 
-                <a id="donationButton" class="button button-primary" href="#" target="_blank" rel="noopener noreferrer">
+                <a
+                  id="donationButton"
+                  class="button button-primary"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Faire un don
                 </a>
               </div>
@@ -100,7 +137,10 @@
                 </div>
               </header>
 
-              <div id="description" class="markdown-content"></div>
+              <div
+                id="description"
+                class="markdown-content"
+              ></div>
             </section>
 
             <section class="content-card goals-card">
@@ -114,7 +154,12 @@
                   </p>
                 </div>
 
-                <button id="addGoalButton" class="button button-primary" type="button" hidden>
+                <button
+                  id="addGoalButton"
+                  class="button button-primary"
+                  type="button"
+                  hidden
+                >
                   + Ajouter un objectif
                 </button>
               </header>
@@ -136,7 +181,10 @@
                 </div>
               </header>
 
-              <div id="liveInformation" class="information-list"></div>
+              <div
+                id="liveInformation"
+                class="information-list"
+              ></div>
             </section>
           </aside>
         </div>
@@ -154,7 +202,12 @@
           </h2>
         </div>
 
-        <button id="closeGoalDialog" class="close-button" type="button" aria-label="Fermer">
+        <button
+          id="closeGoalDialog"
+          class="close-button"
+          type="button"
+          aria-label="Fermer"
+        >
           ×
         </button>
       </div>
@@ -165,14 +218,27 @@
         <label class="field">
           <span>Titre *</span>
 
-          <input id="goalTitle" type="text" maxlength="160" required placeholder="Ex. Karaoké en direct">
+          <input
+            id="goalTitle"
+            type="text"
+            maxlength="160"
+            required
+            placeholder="Ex. Karaoké en direct"
+          >
         </label>
 
         <label class="field">
           <span>Montant à atteindre *</span>
 
           <div class="money-input">
-            <input id="goalAmount" type="number" min="0.01" step="0.01" required placeholder="500">
+            <input
+              id="goalAmount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              required
+              placeholder="500"
+            >
             <span>€</span>
           </div>
         </label>
@@ -180,8 +246,12 @@
         <label class="field">
           <span>Description facultative</span>
 
-          <textarea id="goalDescription" rows="5" maxlength="2000"
-            placeholder="Explique ce qui sera débloqué…"></textarea>
+          <textarea
+            id="goalDescription"
+            rows="5"
+            maxlength="2000"
+            placeholder="Explique ce qui sera débloqué…"
+          ></textarea>
         </label>
 
         <label class="field">
@@ -196,20 +266,37 @@
           </select>
         </label>
 
-        <p id="goalFormMessage" class="form-message" role="status"></p>
+        <p
+          id="goalFormMessage"
+          class="form-message"
+          role="status"
+        ></p>
       </div>
 
       <footer class="dialog-actions">
-        <button id="deleteGoalButton" class="button button-danger" type="button" hidden>
+        <button
+          id="deleteGoalButton"
+          class="button button-danger"
+          type="button"
+          hidden
+        >
           Supprimer
         </button>
 
         <div class="dialog-actions-right">
-          <button id="cancelGoalButton" class="button button-secondary" type="button">
+          <button
+            id="cancelGoalButton"
+            class="button button-secondary"
+            type="button"
+          >
             Annuler
           </button>
 
-          <button id="saveGoalButton" class="button button-primary" type="submit">
+          <button
+            id="saveGoalButton"
+            class="button button-primary"
+            type="submit"
+          >
             Enregistrer
           </button>
         </div>
@@ -217,11 +304,14 @@
     </form>
   </dialog>
 
-  <script src="https://cdn.jsdelivr.net/npm/marked@18.0.12/lib/marked.umd.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/marked@18.0.12/lib/marked.umd.js"
+  ></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.15/dist/purify.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/dompurify@3.4.15/dist/purify.min.js"
+  ></script>
 
   <script src="/assets/js/createur.js"></script>
 </body>
-
 </html>
