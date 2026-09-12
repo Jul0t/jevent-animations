@@ -1322,24 +1322,28 @@
         }
     );
 
+(function initCreatorPage() {
+  (async () => {
+    try {
+      await loadPage();
 
-    // Remplace ton code d'init actuel (en bas du fichier)
-    (function initCreatorPage() {
-        console.log("[createur] init");
-
-        loadPage().catch(error => {
-            console.error("[createur] loadPage error:", error);
-
-            // Sécurise l'affichage d'un message même si un élément manque
-            if (elements.loading) elements.loading.hidden = true;
-            if (elements.profile) elements.profile.hidden = true;
-            if (elements.errorState) elements.errorState.hidden = false;
-            if (elements.errorMessage) {
-                elements.errorMessage.textContent =
-                    error?.message || "Impossible de charger le profil.";
-            } else {
-                alert(error?.message || "Impossible de charger le profil.");
-            }
-        });
-    })()
-});
+      // sécurité d'affichage
+      elements.loading.hidden = true;
+      elements.errorState.hidden = true;
+      if (elements.profile) elements.profile.hidden = false;
+    } catch (error) {
+      console.error(error);
+      elements.loading.hidden = true;
+      if (elements.profile) elements.profile.hidden = true;
+      elements.errorState.hidden = false;
+      if (elements.errorMessage) elements.errorMessage.textContent = error.message || "Impossible de charger le profil.";
+    } finally {
+      // garde la page visible si les données ont bien chargé
+      if (creator && elements.profile) {
+        elements.loading.hidden = true;
+        elements.errorState.hidden = true;
+        elements.profile.hidden = false;
+      }
+    }
+  })();
+})()});
