@@ -10,7 +10,7 @@
   <div class="page-shell">
     <header class="site-header">
       <a class="brand" href="/">
-        <img class="brand-logo" src="/assets/jevent_logo.png" alt="JEvent 26" />
+        <img class="brand-logo" src="/assets/jevent_logo.png" alt="JEvent 26">
         <span>
           <strong>JEvent 26</strong>
           <small>Association Petits Princes</small>
@@ -32,7 +32,7 @@
       <section id="errorState" class="error-state" hidden>
         <h1>Profil indisponible</h1>
         <p id="errorMessage"></p>
-        <a class="button button-secondary" href="/createurs.html">Voir les créateurs</a>
+        <a class="button button-secondary" href="/createurs.html">Retour aux créateurs</a>
       </section>
 
       <div id="profile" hidden>
@@ -42,7 +42,7 @@
           </div>
 
           <div class="profile-summary">
-            <img id="creatorAvatar" class="creator-avatar" src="/assets/jevent_logo.png" alt="" />
+            <img id="creatorAvatar" class="creator-avatar" src="/assets/jevent_logo.png" alt="">
 
             <div class="profile-identity">
               <div class="profile-title-line">
@@ -50,7 +50,6 @@
                   <h1 id="creatorName">Créateur</h1>
                   <p id="creatorLogin"></p>
                 </div>
-
                 <button
                   id="editGoalsButton"
                   class="icon-button"
@@ -60,7 +59,7 @@
                   hidden
                 >
                   <svg class="icon-pencil" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 20h4L19 9l-4-4L4 16v4zm2-3.2 9-9 1.2 1.2-9 9H6v-1.2zM17.5 6.5l1-1a1.4 1.4 0 0 1 2 2l-1 1-2-2z" />
+                    <path d="M4 20h4L19 9l-4-4L4 16v4zm2-3.2 9-9 1.2 1.2-9 9H6v-1.2zM17.5 6.5l1-1a1.4 1.4 0 0 1 2 2l-1 1-2-2z"></path>
                   </svg>
                 </button>
               </div>
@@ -83,7 +82,6 @@
                   <p class="eyebrow">Le créateur</p>
                   <h2>À propos</h2>
                 </div>
-
                 <button
                   id="editDescriptionButton"
                   class="icon-button"
@@ -93,7 +91,7 @@
                   hidden
                 >
                   <svg class="icon-pencil" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 20h4L19 9l-4-4L4 16v4zm2-3.2 9-9 1.2 1.2-9 9H6v-1.2zM17.5 6.5l1-1a1.4 1.4 0 0 1 2 2l-1 1-2-2z" />
+                    <path d="M4 20h4L19 9l-4-4L4 16v4zm2-3.2 9-9 1.2 1.2-9 9H6v-1.2zM17.5 6.5l1-1a1.4 1.4 0 0 1 2 2l-1 1-2-2z"></path>
                   </svg>
                 </button>
               </header>
@@ -106,7 +104,7 @@
                 <div>
                   <p class="eyebrow">Défis solidaires</p>
                   <h2>Objectifs de dons</h2>
-                  <p>Les défis débloqués grâce à la cagnotte du JEvent.</p>
+                  <p>Ils dépendent du montant atteint par le créateur.</p>
                 </div>
                 <button
                   id="addGoalButton"
@@ -119,9 +117,7 @@
               </header>
 
               <div id="goalsList" class="goals-list"></div>
-              <p id="goalsEmpty" class="empty-message" hidden>
-                Aucun objectif de dons n’a encore été publié.
-              </p>
+              <p id="goalsEmpty" class="empty-message" hidden>Aucun objectif de dons n’a encore été publié.</p>
             </section>
           </div>
 
@@ -141,7 +137,7 @@
     </main>
   </div>
 
-  <!-- Popup d’édition de goal -->
+  <!-- Modal objectifs -->
   <dialog id="goalDialog" class="goal-dialog">
     <form id="goalForm">
       <div class="dialog-heading">
@@ -157,19 +153,19 @@
 
         <label class="field">
           <span>Titre *</span>
-          <input id="goalTitle" type="text" maxlength="160" required placeholder="Ex. Karaoké en direct" />
+          <input id="goalTitle" type="text" maxlength="160" required placeholder="Ex. Défi karaoké">
         </label>
 
         <label class="field">
-          <span>Montant à atteindre *</span>
+          <span>Montant à atteindre (€) *</span>
           <div class="money-input">
-            <input id="goalAmount" type="number" min="0.01" step="0.01" required placeholder="500" />
+            <input id="goalAmount" type="number" min="0.01" step="0.01" required placeholder="500">
             <span>€</span>
           </div>
         </label>
 
         <label class="field">
-          <span>Description facultative</span>
+          <span>Description (facultatif)</span>
           <textarea id="goalDescription" rows="5" maxlength="2000" placeholder="Explique ce qui sera débloqué…"></textarea>
         </label>
 
@@ -186,7 +182,7 @@
     </form>
   </dialog>
 
-  <!-- Popup description -->
+  <!-- Modal description -->
   <dialog id="descriptionDialog" class="goal-dialog">
     <form id="descriptionForm">
       <div class="dialog-heading">
@@ -219,6 +215,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/marked@18.0.12/lib/marked.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.15/dist/purify.min.js"></script>
-  <script src="/assets/js/createur.js"></script>
+  <script src="/assets/js/createur.js?v=2"></script>
 </body>
 </html>
