@@ -951,3 +951,15 @@ img {
     width: 100%;
   }
 }
+
+.icon-pencil {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;          /* utilise la couleur du parent */
+  stroke: currentColor;        /* au cas où */
+  display: block;
+}
+
+.icon-button, .goal-edit {
+  color: #fff;   /* blanc */
+}
