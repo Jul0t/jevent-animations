@@ -603,15 +603,14 @@
                 edit.type = "button";
                 edit.className = "goal-edit";
                 edit.innerHTML = `
-  <svg viewBox="0 0 24 24" aria-hidden="true">
+  <svg class="icon-pencil" viewBox="0 0 24 24" aria-hidden="true">
     <path
-      d="M4 20h4L19 9l-4-4L4 16v4zm2-3.2
-         9-9 1.2 1.2-9 9H6v-1.2zM17.5
-         6.5l1-1a1.4 1.4 0 0 1 2 2l-1
-         1-2-2z"
+      d="M4 20h4L19 9l-4-4L4 16v4zm2-3.2 9-9 1.2 1.2-9 9H6v-1.2zM17.5 6.5l1-1a1.4 1.4 0 0 1 2 2l-1 1-2-2z"
+      fill="currentColor"
     />
   </svg>
 `;
+
                 edit.title =
                     `Modifier ${goal.title}`;
 
@@ -1322,28 +1321,29 @@
         }
     );
 
-(function initCreatorPage() {
-  (async () => {
-    try {
-      await loadPage();
+    (function initCreatorPage() {
+        (async () => {
+            try {
+                await loadPage();
 
-      // sécurité d'affichage
-      elements.loading.hidden = true;
-      elements.errorState.hidden = true;
-      if (elements.profile) elements.profile.hidden = false;
-    } catch (error) {
-      console.error(error);
-      elements.loading.hidden = true;
-      if (elements.profile) elements.profile.hidden = true;
-      elements.errorState.hidden = false;
-      if (elements.errorMessage) elements.errorMessage.textContent = error.message || "Impossible de charger le profil.";
-    } finally {
-      // garde la page visible si les données ont bien chargé
-      if (creator && elements.profile) {
-        elements.loading.hidden = true;
-        elements.errorState.hidden = true;
-        elements.profile.hidden = false;
-      }
-    }
-  })();
-})()});
+                // sécurité d'affichage
+                elements.loading.hidden = true;
+                elements.errorState.hidden = true;
+                if (elements.profile) elements.profile.hidden = false;
+            } catch (error) {
+                console.error(error);
+                elements.loading.hidden = true;
+                if (elements.profile) elements.profile.hidden = true;
+                elements.errorState.hidden = false;
+                if (elements.errorMessage) elements.errorMessage.textContent = error.message || "Impossible de charger le profil.";
+            } finally {
+                // garde la page visible si les données ont bien chargé
+                if (creator && elements.profile) {
+                    elements.loading.hidden = true;
+                    elements.errorState.hidden = true;
+                    elements.profile.hidden = false;
+                }
+            }
+        })();
+    })()
+});
