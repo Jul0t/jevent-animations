@@ -1212,90 +1212,53 @@
 
 loadPage();
 
-    elements.editGoalsButton.addEventListener(
-        "click",
-        () => {
-            document.querySelector(
-                ".goals-card"
-            ).scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        }
-    );
+function onSafe(element, event, handler) {
+  if (element) {
+    element.addEventListener(event, handler);
+  }
+}
 
-    elements.addGoalButton.addEventListener(
-        "click",
-        () => openGoalDialog()
-    );
+onSafe(
+  elements.editGoalsButton,
+  "click",
+  () => {
+    document.querySelector(".goals-card")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+  }
+);
 
-    elements.goalForm.addEventListener(
-        "submit",
-        saveGoal
-    );
+onSafe(
+  elements.addGoalButton,
+  "click",
+  () => openGoalDialog()
+);
 
-    elements.deleteGoalButton.addEventListener(
-        "click",
-        deleteGoal
-    );
+onSafe(
+  elements.goalForm,
+  "submit",
+  saveGoal
+);
 
-    elements.closeGoalDialog.addEventListener(
-        "click",
-        requestCloseDialog
-    );
+onSafe(
+  elements.deleteGoalButton,
+  "click",
+  deleteGoal
+);
 
-    elements.cancelGoalButton.addEventListener(
-        "click",
-        requestCloseDialog
-    );
+onSafe(
+  elements.closeGoalDialog,
+  "click",
+  requestCloseDialog
+);
 
-    elements.goalDialog.addEventListener(
-        "cancel",
-        event => {
-            event.preventDefault();
-            requestCloseDialog();
-        }
-    );
-
-    elements.editDescriptionButton
-        .addEventListener(
-            "click",
-            openDescriptionDialog
-        );
-
-    elements.saveDescriptionButton
-        .addEventListener(
-            "click",
-            saveDescriptionDraft
-        );
-
-    elements.descriptionForm
-        .addEventListener(
-            "submit",
-            submitDescription
-        );
-
-    elements.closeDescriptionDialog
-        .addEventListener(
-            "click",
-            requestCloseDescription
-        );
-
-    elements.cancelDescriptionButton
-        .addEventListener(
-            "click",
-            requestCloseDescription
-        );
-
-    elements.descriptionDialog
-        .addEventListener(
-            "cancel",
-            event => {
-                event.preventDefault();
-                requestCloseDescription();
-            }
-        );
-
+onSafe(
+  elements.cancelGoalButton,
+  "click",
+  requestErride
+);
 
     loadPage().catch(error => {
         elements.loading.hidden = true;
