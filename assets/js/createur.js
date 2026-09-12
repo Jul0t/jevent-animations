@@ -1173,147 +1173,173 @@
     }
 
 
-    async function loadPage() {
-  const slug = getSlug();
-  if (!slug) {
-    throw new Error("Aucun créateur sélectionné.");
-  }
-
-  try {
-    const creatorData = await apiFetch("/api/creators/" + encodeURIComponent(slug));
-    const goalsData = await apiFetch("/api/goals/creator/" + encodeURIComponent(slug));
-    await loadCurrentUser();
-
-    creator = creatorData.creator;
-    publicGoals = Array.isArray(goalsData?.goals) ? goalsData.goals : [];
-
-    if (!creator) throw new Error("Créateur introuvable.");
-
-    canManage = canUserManageCreator();
-
-    if (canManage) {
-      const manageData = await apiFetch("/api/goals/manage");
-      manageableGoals = Array.isArray(manageData?.goals) ? manageData.goals : [];
-    } else {
-      manageableGoals = [];
+    function ensureElements() {
+        const ids = [
+            "loading", "errorState", "errorMessage", "profile", "goalsList",
+            "creatorName", "creatorAvatar", "description"
+        ];
+        for (const id of ids) {
+            if (!document.getElementById(id)) {
+                console.error("ID manquant dans le HTML:", id);
+            }
+        }
     }
 
-    fillProfile();
-    renderGoals();
-  } catch (error) {
-    console.error(error);
-    elements.errorMessage.textContent = error.message || "Erreur de chargement.";
-    elements.profile.hidden = true;
-    elements.errorState.hidden = false;
-  } finally {
-    elements.loading.hidden = true;
-  }
-}
+    ensureElements();
 
-loadPage();
+    async function loadPage() {
+        const slug = getSlug();
+        if (!slug) {
+            throw new Error("Aucun créateur sélectionné.");
+        }
 
-function onSafe(element, event, handler) {
-  if (element) {
-    element.addEventListener(event, handler);
-  }
-}
+        try {
+            const creatorData = await apiFetch("/api/creators/" + encodeURIComponent(slug));
+            const goalsData = await apiFetch("/api/goals/creator/" + encodeURIComponent(slug));
+            await loadCurrentUser();
 
-onSafe(
-  elements.editGoalsButton,
-  "click",
-  () => {
-    document.querySelector(".goals-card")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-  }
-);
+            creator = creatorData.creator;
+            publicGoals = Array.isArray(goalsData?.goals) ? goalsData.goals : [];
 
-onSafe(
-  elements.addGoalButton,
-  "click",
-  () => openGoalDialog()
-);
+            if (!creator) throw new Error("Créateur introuvable.");
 
-onSafe(
-  elements.goalForm,
-  "submit",
-  saveGoal
-);
+            canManage = canUserManageCreator();
 
-onSafe(
-  elements.deleteGoalButton,
-  "click",
-  deleteGoal
-);
+            if (canManage) {
+                const manageData = await apiFetch("/api/goals/manage");
+                manageableGoals = Array.isArray(manageData?.goals) ? manageData.goals : [];
+            } else {
+                manageableGoals = [];
+            }
 
-onSafe(
-  elements.closeGoalDialog,
-  "click",
-  requestCloseDialog
-);
+            fillProfile();
+            renderGoals();
+        } catch (error) {
+            console.error(error);
+            elements.errorMessage.textContent = error.message || "Erreur de chargement.";
+            elements.profile.hidden = true;
+            elements.errorState.hidden = false;
+        } finally {
+            elements.loading.hidden = true;
+        }
+    }
 
-onSafe(
-  elements.cancelGoalButton,
-  "click",
-  requestCloseDialog
-);
+    loadPage();
 
-onSafe(
-  elements.goalDialog,
-  "cancel",
-  event => {
-    event.preventDefault();
-    requestCloseDialog();
-  }
-);
+    function onSafe(element, event, handler) {
+        if (element) {
+            element.addEventListener(event, handler);
+        }
+    }
 
-onSafe(
-  elements.editDescriptionButton,
-  "click",
-  openDescriptionDialog
-);
+    onSafe(
+        elements.editGoalsButton,
+        "click",
+        () => {
+            document.querySelector(".goals-card")
+                ?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+        }
+    );
 
-onSafe(
-  elements.saveDescriptionButton,
-  "click",
-  saveDescriptionDraft
-);
+    onSafe(
+        elements.addGoalButton,
+        "click",
+        () => openGoalDialog()
+    );
 
-onSafe(
-  elements.descriptionForm,
-  "submit",
-  submitDescription
-);
+    onSafe(
+        elements.goalForm,
+        "submit",
+        saveGoal
+    );
 
-onSafe(
-  elements.closeDescriptionDialog,
-  "click",
-  requestCloseDescription
-);
+    onSafe(
+        elements.deleteGoalButton,
+        "click",
+        deleteGoal
+    );
 
-onSafe(
-  elements.cancelDescriptionButton,
-  "click",
-  requestCloseDescription
-);
+    onSafe(
+        elements.closeGoalDialog,
+        "click",
+        requestCloseDialog
+    );
 
-onSafe(
-  elements.descriptionDialog,
-  "cancel",
-  event => {
-    event.preventDefault();
-    requestCloseDescription();
-  }
-);
+    onSafe(
+        elements.cancelGoalButton,
+        "click",
+        requestCloseDialog
+    );
 
-    loadPage().catch(error => {
-        elements.loading.hidden = true;
-        elements.profile.hidden = true;
-        elements.errorState.hidden = false;
+    onSafe(
+        elements.goalDialog,
+        "cancel",
+        event => {
+            event.preventDefault();
+            requestCloseDialog();
+        }
+    );
 
-        elements.errorMessage.textContent =
-            error.message;
-    });
-})();
+    onSafe(
+        elements.editDescriptionButton,
+        "click",
+        openDescriptionDialog
+    );
+
+    onSafe(
+        elements.saveDescriptionButton,
+        "click",
+        saveDescriptionDraft
+    );
+
+    onSafe(
+        elements.descriptionForm,
+        "submit",
+        submitDescription
+    );
+
+    onSafe(
+        elements.closeDescriptionDialog,
+        "click",
+        requestCloseDescription
+    );
+
+    onSafe(
+        elements.cancelDescriptionButton,
+        "click",
+        requestCloseDescription
+    );
+
+    onSafe(
+        elements.descriptionDialog,
+        "cancel",
+        event => {
+            event.preventDefault();
+            requestCloseDescription();
+        }
+    );
+
+
+    // Remplace ton code d'init actuel (en bas du fichier)
+    (function initCreatorPage() {
+        console.log("[createur] init");
+
+        loadPage().catch(error => {
+            console.error("[createur] loadPage error:", error);
+
+            // Sécurise l'affichage d'un message même si un élément manque
+            if (elements.loading) elements.loading.hidden = true;
+            if (elements.profile) elements.profile.hidden = true;
+            if (elements.errorState) elements.errorState.hidden = false;
+            if (elements.errorMessage) {
+                elements.errorMessage.textContent =
+                    error?.message || "Impossible de charger le profil.";
+            } else {
+                alert(error?.message || "Impossible de charger le profil.");
+            }
+        });
+    })()
+});
