@@ -1257,7 +1257,55 @@ onSafe(
 onSafe(
   elements.cancelGoalButton,
   "click",
-  requestErride
+  requestCloseDialog
+);
+
+onSafe(
+  elements.goalDialog,
+  "cancel",
+  event => {
+    event.preventDefault();
+    requestCloseDialog();
+  }
+);
+
+onSafe(
+  elements.editDescriptionButton,
+  "click",
+  openDescriptionDialog
+);
+
+onSafe(
+  elements.saveDescriptionButton,
+  "click",
+  saveDescriptionDraft
+);
+
+onSafe(
+  elements.descriptionForm,
+  "submit",
+  submitDescription
+);
+
+onSafe(
+  elements.closeDescriptionDialog,
+  "click",
+  requestCloseDescription
+);
+
+onSafe(
+  elements.cancelDescriptionButton,
+  "click",
+  requestCloseDescription
+);
+
+onSafe(
+  elements.descriptionDialog,
+  "cancel",
+  event => {
+    event.preventDefault();
+    requestCloseDescription();
+  }
 );
 
     loadPage().catch(error => {
